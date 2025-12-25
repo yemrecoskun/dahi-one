@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dahi's One - Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>dahi's One Admin Panel</h1>
+            <p>NFC Tag Yönetim Sistemi</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="create">NFC Tag Oluştur</button>
+            <button class="tab-btn" data-tab="list">Tag Listesi</button>
+            <button class="tab-btn" data-tab="info">Tag Bilgisi</button>
+            <button class="tab-btn" data-tab="stats">İstatistikler</button>
+        </nav>
+
+        <!-- NFC Tag Oluştur -->
+        <section id="create" class="tab-content active">
+            <div class="card">
+                <h2>Yeni NFC Tag Oluştur</h2>
+                <form id="createForm">
+                    <div class="form-group">
+                        <label for="characterId">Karakter ID *</label>
+                        <select id="characterId" required>
+                            <option value="">Seçiniz...</option>
+                            <option value="puls">Puls</option>
+                            <option value="zest">Zest</option>
+                            <option value="lumo">Lumo</option>
+                            <option value="vigo">Vigo</option>
+                            <option value="aura">Aura</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="redirectType">Yönlendirme Tipi *</label>
+                        <select id="redirectType" required>
+                            <option value="">Seçiniz...</option>
+                            <option value="character">Karakter Sayfası</option>
+                            <option value="store">Mağaza</option>
+                            <option value="campaign">Kampanya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="customUrlGroup" style="display: none;">
+                        <label for="customUrl">Özel URL *</label>
+                        <input type="url" id="customUrl" placeholder="https://dahis.io/campaign">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isActive" checked>
+                            Aktif
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Tag Oluştur</button>
+                </form>
+
+                <div id="createResult" class="result"></div>
+            </div>
+        </section>
+
+        <!-- Tag Listesi -->
+        <section id="list" class="tab-content">
+            <div class="card">
+                <h2>NFC Tag Listesi</h2>
+                <div class="filter-group">
+                    <label for="filterCharacter">Karakter Filtrele:</label>
+                    <select id="filterCharacter" onchange="loadTagList()">
+                        <option value="">Tümü</option>
+                        <option value="puls">Puls</option>
+                        <option value="zest">Zest</option>
+                        <option value="lumo">Lumo</option>
+                        <option value="vigo">Vigo</option>
+                        <option value="aura">Aura</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="loadTagList()">Yenile</button>
+                </div>
+                <div id="tagList" class="tag-list"></div>
+            </div>
+        </section>
+
+        <!-- Tag Bilgisi -->
+        <section id="info" class="tab-content">
+            <div class="card">
+                <h2>NFC Tag Bilgisi</h2>
+                <form id="infoForm">
+                    <div class="form-group">
+                        <label for="infoNfcId">NFC Tag ID (UUID)</label>
+                        <input type="text" id="infoNfcId" placeholder="550e8400-e29b-41d4-a716-446655440000" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Bilgi Getir</button>
+                </form>
+                <div id="infoResult" class="result"></div>
+            </div>
+        </section>
+
+        <!-- İstatistikler -->
+        <section id="stats" class="tab-content">
+            <div class="card">
+                <h2>NFC Okutma İstatistikleri</h2>
+                <form id="statsForm">
+                    <div class="form-group">
+                        <label for="statsCharacterId">Karakter ID (Opsiyonel)</label>
+                        <select id="statsCharacterId">
+                            <option value="">Tümü</option>
+                            <option value="puls">Puls</option>
+                            <option value="zest">Zest</option>
+                            <option value="lumo">Lumo</option>
+                            <option value="vigo">Vigo</option>
+                            <option value="aura">Aura</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">İstatistikleri Getir</button>
+                </form>
+                <div id="statsResult" class="result"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

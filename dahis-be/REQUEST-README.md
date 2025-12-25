@@ -10,7 +10,7 @@ NFC tag okutulduğunda karakter sayfasına yönlendirir.
 
 **Endpoint:**
 ```
-GET https://nfcredirect-6elk3up56q-uc.a.run.app?nfcId={nfcId}
+GET 
 ```
 
 veya

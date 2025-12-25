@@ -52,6 +52,7 @@ exports.nfcRedirect = onRequest({cors: true}, async (req, res) => {
 
     switch (redirectType) {
       case "character":
+        // Redirect to character detail page
         redirectUrl = `https://dahis.io/character/${characterId}`;
         break;
       case "store":
@@ -164,6 +165,51 @@ exports.nfcStats = onRequest({cors: true}, async (req, res) => {
     });
   } catch (error) {
     logger.error("NFC stats error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+});
+
+/**
+ * NFC Tag Listesi Getir
+ * GET /nfcList?characterId={id}
+ */
+exports.nfcList = onRequest({cors: true}, async (req, res) => {
+  try {
+    const characterId = req.query.characterId;
+
+    let query = db.collection("nfc_tags")
+        .orderBy("createdAt", "desc");
+
+    if (characterId) {
+      query = query.where("characterId", "==", characterId);
+    }
+
+    const snapshot = await query.limit(100).get();
+    const tags = [];
+
+    snapshot.forEach((doc) => {
+      const tagData = doc.data();
+      tags.push({
+        id: doc.id,
+        nfcId: tagData.nfcId,
+        characterId: tagData.characterId,
+        redirectType: tagData.redirectType,
+        isActive: tagData.isActive,
+        customUrl: tagData.customUrl || null,
+        createdAt: tagData.createdAt,
+      });
+    });
+
+    return res.json({
+      status: "success",
+      count: tags.length,
+      data: tags,
+    });
+  } catch (error) {
+    logger.error("NFC list error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",

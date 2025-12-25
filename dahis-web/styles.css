@@ -1561,6 +1561,198 @@ body {
         font-size: 1rem;
     }
 
+/* Character Detail Page */
+.character-detail-section {
+    min-height: 100vh;
+    padding: 120px 0 80px;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+}
+
+.character-detail-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.character-detail-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 4rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.character-detail-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.character-detail-icon-wrapper {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: float 6s ease-in-out infinite;
+}
+
+.character-detail-img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.character-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.character-detail-name {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.character-detail-description {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.character-detail-traits {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.character-detail-trait {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+}
+
+.character-detail-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.character-detail-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.character-detail-stats .stat-label {
+    min-width: 80px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.character-detail-stats .stat-bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.character-detail-stats .stat-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.character-detail-stats .stat-value {
+    min-width: 50px;
+    text-align: right;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.character-detail-buy-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 1.2rem 3rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.character-detail-buy-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+}
+
+.character-detail-back {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    display: block;
+    margin-top: 1rem;
+}
+
+.character-detail-back:hover {
+    color: white;
+}
+
+.character-detail-error {
+    text-align: center;
+    padding: 4rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    color: white;
+}
+
+.character-detail-error h2 {
+    color: #ff4444;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 968px) {
+    .character-detail-card {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+    }
+    
+    .character-detail-icon-wrapper {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .character-detail-name {
+        font-size: 2rem;
+    }
+}
+
     .character-card {
         padding: 1.5rem;
     }
@@ -1568,5 +1760,15 @@ body {
     .story-content {
         font-size: 1rem;
     }
+}
+
+/* NFC Components - Hidden (will be enabled later) */
+.nfc-section {
+    display: none !important;
+}
+
+.nfc-tag-single,
+.nfc-hero-link {
+    display: none !important;
 }
 
