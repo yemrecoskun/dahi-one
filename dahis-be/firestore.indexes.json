@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "nfc_scans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "characterId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "nfc_scans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "nfcId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,34 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  email: String
+  photoUrl: String
+}
+
+type SubscriptionType @table {
+  name: String!
+  createdAt: Timestamp!
+  description: String
+}
+
+type UserSubscription @table {
+  name: String!
+  cost: Float!
+  billingCycle: String!
+  nextDueDate: Date!
+  createdAt: Timestamp!
+  description: String
+  reminderEnabled: Boolean
+  currency: String
+  isActive: Boolean
+  user: User
+  subscriptionType: SubscriptionType
+}
+
+type PaymentHistory @table {
+  paymentDate: Date!
+  amountPaid: Float!
+  createdAt: Timestamp!
+  confirmationNumber: String
+  subscription: UserSubscription
+}

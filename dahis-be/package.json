@@ -1,0 +1,7 @@
+{
+  "name": "dahis-be",
+  "version": "1.0.0",
+  "description": "dahi's One Backend - Firebase Functions & Firestore",
+  "private": true
+}
+

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dahi's</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-69TYYFHVDK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-69TYYFHVDK');
+    </script>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="gradient-text">dahi's One</span>
+            </h1>
+            <p class="hero-subtitle">Harmonya'nın Ritmini Koruyan Kahramanlar</p>
+            <div class="hero-characters">
+                <div class="character-orb" data-character="puls" style="--color: #ff4444;">
+                    <img src="kirmizi.png" alt="Puls" class="orb-image">
+                    <div class="orb-glow"></div>
+                </div>
+                <div class="character-orb" data-character="zest" style="--color: #ff8844;">
+                    <img src="turuncu.png" alt="Zest" class="orb-image">
+                    <div class="orb-glow"></div>
+                </div>
+                <div class="character-orb" data-character="lumo" style="--color: #ffdd44;">
+                    <img src="sari.png" alt="Lumo" class="orb-image">
+                    <div class="orb-glow"></div>
+                </div>
+                <div class="character-orb" data-character="vigo" style="--color: #44dd88;">
+                    <img src="yesil.png" alt="Vigo" class="orb-image">
+                    <div class="orb-glow"></div>
+                </div>
+                <div class="character-orb" data-character="aura" style="--color: #4488ff;">
+                    <img src="mavi.png" alt="Aura" class="orb-image">
+                    <div class="orb-glow"></div>
+                </div>
+            </div>
+            <a href="#nfc" class="nfc-tag-single">
+                <div class="nfc-tag-icon">📱</div>
+                <span class="nfc-tag-text">NFC</span>
+            </a>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" id="homeBtn">dahi's</div>
+            <ul class="nav-menu">
+                <li><a href="#hero" class="nav-link">Ana Sayfa</a></li>
+                <li><a href="#characters" class="nav-link">Onelar</a></li>
+                <li><a href="#seasons-id" class="nav-link">Sezonlar</a></li>
+                <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Characters Section -->
+    <section id="characters" class="characters-section">
+        <div class="container">
+            <h2 class="section-title">Onelarımız</h2>
+            <div class="characters-grid">
+                <!-- Puls -->
+                <div class="character-card" data-character="puls">
+                    <div class="card-glow" style="--glow-color: #ff4444;"></div>
+                    <div class="character-icon" style="background: linear-gradient(135deg, #ff4444, #ff6666);">
+                        <img src="kirmizi.png" alt="Puls" class="character-image">
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h3 class="character-name">Puls</h3>
+                    <p class="character-description">Cesur, hızlı karar veren ve liderlik ruhuna sahip tutkulu deha. Kararlı ve motive edici.</p>
+                    <div class="character-traits">
+                        <span class="trait">Lider</span>
+                        <span class="trait">Cesur</span>
+                        <span class="trait">Tutkulu</span>
+                    </div>
+                </div>
+
+                <!-- Zest -->
+                <div class="character-card" data-character="zest">
+                    <div class="card-glow" style="--glow-color: #ff8844;"></div>
+                    <div class="character-icon" style="background: linear-gradient(135deg, #ff8844, #ffaa66);">
+                        <img src="turuncu.png" alt="Zest" class="character-image">
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h3 class="character-name">Zest</h3>
+                    <p class="character-description">Hiperaktif, sosyal ve macera peşinde koşan enerji küpü. Maceracı ve hevesli.</p>
+                    <div class="character-traits">
+                        <span class="trait">Enerjik</span>
+                        <span class="trait">Maceracı</span>
+                        <span class="trait">Sosyal</span>
+                    </div>
+                </div>
+
+                <!-- Lumo -->
+                <div class="character-card" data-character="lumo">
+                    <div class="card-glow" style="--glow-color: #ffdd44;"></div>
+                    <div class="character-icon" style="background: linear-gradient(135deg, #ffdd44, #ffee66);">
+                        <img src="sari.png" alt="Lumo" class="character-image">
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h3 class="character-name">Lumo</h3>
+                    <p class="character-description">Fikirleri ışık saçan, her zaman neşeli ve yaratıcı zeka. Enerjik ve problem çözücü.</p>
+                    <div class="character-traits">
+                        <span class="trait">Yaratıcı</span>
+                        <span class="trait">Neşeli</span>
+                        <span class="trait">Zeki</span>
+                    </div>
+                </div>
+
+                <!-- Vigo -->
+                <div class="character-card" data-character="vigo">
+                    <div class="card-glow" style="--glow-color: #44dd88;"></div>
+                    <div class="character-icon" style="background: linear-gradient(135deg, #44dd88, #66ffaa);">
+                        <img src="yesil.png" alt="Vigo" class="character-image">
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h3 class="character-name">Vigo</h3>
+                    <p class="character-description">Doğayı seven, huzurlu ve sürdürülebilir enerji dehası. Bilge ve araştırmacı.</p>
+                    <div class="character-traits">
+                        <span class="trait">Bilge</span>
+                        <span class="trait">Huzurlu</span>
+                        <span class="trait">Doğa Sever</span>
+                    </div>
+                </div>
+
+                <!-- Aura -->
+                <div class="character-card" data-character="aura">
+                    <div class="card-glow" style="--glow-color: #4488ff;"></div>
+                    <div class="character-icon" style="background: linear-gradient(135deg, #4488ff, #66aaff);">
+                        <img src="mavi.png" alt="Aura" class="character-image">
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h3 class="character-name">Aura</h3>
+                    <p class="character-description">Odaklanmış, sakin ve stratejik düşünen teknoloji uzmanı. Mantıklı ve planlayıcı.</p>
+                    <div class="character-traits">
+                        <span class="trait">Stratejik</span>
+                        <span class="trait">Sakin</span>
+                        <span class="trait">Teknoloji Uzmanı</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NFC Section -->
+    <section id="nfc" class="nfc-section">
+        <div class="container">
+            <div class="nfc-content">
+                <span class="nfc-icon">📱</span>
+                <h2 class="nfc-title">NFC ile Anında Keşfet</h2>
+                <p class="nfc-description">
+                    Onelarımızın her birinde NFC teknolojisi var! Telefonunuzu saate yaklaştırın ve karakterin dünyasına anında girin.
+                </p>
+                <div class="nfc-features">
+                    <div class="nfc-feature">
+                        <span class="nfc-feature-icon">⚡</span>
+                        <span>Karakterin özel sayfasına anında ulaş</span>
+                    </div>
+                    <div class="nfc-feature">
+                        <span class="nfc-feature-icon">📖</span>
+                        <span>Hikayesini ve özelliklerini keşfet</span>
+                    </div>
+                    <div class="nfc-feature">
+                        <span class="nfc-feature-icon">🛒</span>
+                        <span>Mağazadan kolayca satın al</span>
+                    </div>
+                    <div class="nfc-feature">
+                        <span class="nfc-feature-icon">🎁</span>
+                        <span>Özel içerik ve kampanyalara eriş</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seasons Section -->
+    <div id="seasons-id">
+        <section id="seasons" class="seasons-section">
+            <div class="container">
+                <h2 class="section-title">Sezonlar</h2>
+                <div class="seasons-grid" id="seasonsGrid">
+                    <!-- Seasons will be dynamically loaded -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Season Detail Page (Hidden by default) -->
+    <section id="seasonDetail" class="season-detail-section" style="display: none;">
+        <div class="container">
+            <button class="back-btn" id="backToSeasons">
+                <span>←</span> Sezonlara Dön
+            </button>
+            <div class="season-header" id="seasonHeader">
+                <!-- Season info will be loaded here -->
+            </div>
+            <div class="season-summary" id="seasonSummary">
+                <!-- Season summary will be loaded here -->
+            </div>
+            <div class="episodes-list" id="episodesList">
+                <!-- Episodes will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Episode Detail Page (Hidden by default) -->
+    <section id="episodeDetail" class="episode-detail-section" style="display: none;">
+        <div class="container">
+            <button class="back-btn" id="backToSeason">
+                <span>←</span> Sezona Dön
+            </button>
+            <div class="episode-content" id="episodeContent">
+                <!-- Episode content will be loaded here -->
+            </div>
+            <div class="episode-navigation" id="episodeNavigation">
+                <!-- Navigation buttons will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Character Detail Modal -->
+    <div id="characterModal" class="character-modal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-character-info" id="modalCharacterInfo">
+                <!-- Character details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 dahi's One - Harmonya'nın Kahramanları</p>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

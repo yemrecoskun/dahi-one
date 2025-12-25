@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dahi's - Yakında</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-69TYYFHVDK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-69TYYFHVDK');
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .intro-container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 2rem;
+        }
+
+        .intro-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 5s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .intro-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: #b0b0b8;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .coming-soon {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 4rem;
+            letter-spacing: 2px;
+            animation: pulse-text 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Watch/Clock Design */
+        .watch-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .watch {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .watch:nth-child(1) {
+            background: linear-gradient(135deg, #ff4444, #ff6666);
+            animation-delay: 0s;
+        }
+
+        .watch:nth-child(2) {
+            background: linear-gradient(135deg, #ff8844, #ffaa66);
+            animation-delay: 0.2s;
+        }
+
+        .watch:nth-child(3) {
+            background: linear-gradient(135deg, #ffdd44, #ffee66);
+            animation-delay: 0.4s;
+        }
+
+        .watch:nth-child(4) {
+            background: linear-gradient(135deg, #44dd88, #66ffaa);
+            animation-delay: 0.6s;
+        }
+
+        .watch:nth-child(5) {
+            background: linear-gradient(135deg, #4488ff, #66aaff);
+            animation-delay: 0.8s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+        }
+
+        .watch-face {
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .watch-center {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            position: absolute;
+            z-index: 3;
+        }
+
+        .watch-hand {
+            position: absolute;
+            background: #fff;
+            border-radius: 2px;
+            transform-origin: bottom center;
+        }
+
+        .watch-hand.hour {
+            width: 4px;
+            height: 30%;
+            bottom: 50%;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            animation: rotate-hour 12s linear infinite;
+        }
+
+        .watch-hand.minute {
+            width: 3px;
+            height: 40%;
+            bottom: 50%;
+            left: 50%;
+            transform: translateX(-50%) rotate(90deg);
+            animation: rotate-minute 6s linear infinite;
+        }
+
+        @keyframes rotate-hour {
+            from { transform: translateX(-50%) rotate(45deg); }
+            to { transform: translateX(-50%) rotate(405deg); }
+        }
+
+        @keyframes rotate-minute {
+            from { transform: translateX(-50%) rotate(90deg); }
+            to { transform: translateX(-50%) rotate(450deg); }
+        }
+
+        /* Background Effects */
+        .bg-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #050508 100%);
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float-orb 20s ease-in-out infinite;
+        }
+
+        .bg-orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #667eea 0%, transparent 70%);
+            top: -250px;
+            left: -250px;
+        }
+
+        .bg-orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #764ba2 0%, transparent 70%);
+            bottom: -250px;
+            right: -250px;
+            animation-delay: 10s;
+        }
+
+        @keyframes float-orb {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .watch {
+                width: 80px;
+                height: 80px;
+            }
+
+            .watch-container {
+                gap: 1rem;
+            }
+        }
+        /* Audio Player */
+        .audio-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .audio-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .audio-toggle.playing {
+            animation: pulse-audio 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-audio {
+            0%, 100% {
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 5px 30px rgba(102, 126, 234, 0.8);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .audio-controls {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .audio-toggle {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="music/theme.mp3" type="audio/mpeg">
+        <source src="music/theme.ogg" type="audio/ogg">
+        Tarayıcınız müzik çalmayı desteklemiyor.
+    </audio>
+    <div class="bg-gradient"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+
+    <div class="intro-container">
+        <h1 class="intro-title">dahi's one</h1>
+        <p class="intro-subtitle">Harmonya'nın Ritmini Koruyan Kahramanlar</p>
+        
+        <div class="watch-container">
+            <div class="watch">
+                <div class="watch-face">
+                    <div class="watch-hand hour"></div>
+                    <div class="watch-hand minute"></div>
+                    <div class="watch-center"></div>
+                </div>
+            </div>
+            <div class="watch">
+                <div class="watch-face">
+                    <div class="watch-hand hour"></div>
+                    <div class="watch-hand minute"></div>
+                    <div class="watch-center"></div>
+                </div>
+            </div>
+            <div class="watch">
+                <div class="watch-face">
+                    <div class="watch-hand hour"></div>
+                    <div class="watch-hand minute"></div>
+                    <div class="watch-center"></div>
+                </div>
+            </div>
+            <div class="watch">
+                <div class="watch-face">
+                    <div class="watch-hand hour"></div>
+                    <div class="watch-hand minute"></div>
+                    <div class="watch-center"></div>
+                </div>
+            </div>
+            <div class="watch">
+                <div class="watch-face">
+                    <div class="watch-hand hour"></div>
+                    <div class="watch-hand minute"></div>
+                    <div class="watch-center"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="coming-soon">YAKINDA...</p>
+    </div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <button class="audio-toggle" id="audioToggle" aria-label="Müzik Aç/Kapat">
+            <span id="audioIcon">♪</span>
+        </button>
+    </div>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const audioToggle = document.getElementById('audioToggle');
+        const audioIcon = document.getElementById('audioIcon');
+        let isPlaying = false;
+
+        // Müzik çalma kontrolü
+        audioToggle.addEventListener('click', function() {
+            if (isPlaying) {
+                audio.pause();
+                audioIcon.textContent = '♪';
+                audioToggle.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                audio.play().catch(e => {
+                    console.log('Müzik çalınamadı:', e);
+                });
+                audioIcon.textContent = '♫';
+                audioToggle.classList.add('playing');
+                isPlaying = true;
+            }
+        });
+
+        // Sayfa yüklendiğinde otomatik çalma (kullanıcı etkileşimi sonrası)
+        document.addEventListener('click', function() {
+            if (!isPlaying && audio.readyState >= 2) {
+                audio.play().catch(e => {
+                    console.log('Müzik çalınamadı:', e);
+                });
+                audioIcon.textContent = '♫';
+                audioToggle.classList.add('playing');
+                isPlaying = true;
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
+
