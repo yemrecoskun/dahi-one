@@ -1,7 +1,7 @@
 {
   "indexes": [
     {
-      "collectionGroup": "nfc_scans",
+      "collectionGroup": "dahios_scans",
       "queryScope": "COLLECTION",
       "fields": [
         {
@@ -15,11 +15,11 @@
       ]
     },
     {
-      "collectionGroup": "nfc_scans",
+      "collectionGroup": "dahios_scans",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "nfcId",
+          "fieldPath": "dahiosId",
           "order": "ASCENDING"
         },
         {
@@ -29,7 +29,7 @@
       ]
     },
     {
-      "collectionGroup": "nfc_tags",
+      "collectionGroup": "dahios_tags",
       "queryScope": "COLLECTION",
       "fields": [
         {

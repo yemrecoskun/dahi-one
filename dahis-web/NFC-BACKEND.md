@@ -1,12 +1,12 @@
-# NFC Backend Entegrasyonu
+# dahiOS Backend Entegrasyonu
 
 ## Genel Bakış
 
-Her dahi's One saatinde NFC etiketi bulunuyor. NFC'ye okutulduğunda backend'e istek atılır ve dinamik URL yönlendirmesi yapılır.
+Her dahi's One saatinde dahiOS etiketi bulunuyor. dahiOS'ye okutulduğunda backend'e istek atılır ve dinamik URL yönlendirmesi yapılır.
 
-## NFC URL Yapısı
+## dahiOS URL Yapısı
 
-### Örnek NFC URL Formatı:
+### Örnek dahiOS URL Formatı:
 ```
 https://api.dahis.io/nfc/{nfc-id}
 ```
@@ -19,7 +19,7 @@ https://dahis.io/nfc/{nfc-id}
 
 ## Backend Endpoint Yapısı
 
-### 1. NFC Okutma Endpoint'i
+### 1. dahiOS Okutma Endpoint'i
 
 **Endpoint:** `GET /nfc/{nfc-id}`
 
@@ -108,7 +108,7 @@ app.get('/nfc/:nfcId', async (req, res) => {
         if (!nfcTag || nfcTag.length === 0) {
             return res.status(404).json({
                 status: 'error',
-                message: 'NFC tag not found'
+                message: 'dahiOS tag not found'
             });
         }
         
@@ -141,7 +141,7 @@ app.get('/nfc/:nfcId', async (req, res) => {
         res.redirect(302, redirectUrl);
         
     } catch (error) {
-        console.error('NFC redirect error:', error);
+        console.error('dahiOS redirect error:', error);
         res.status(500).json({
             status: 'error',
             message: 'Internal server error'
@@ -178,7 +178,7 @@ def nfc_redirect(nfc_id):
         tag = cursor.fetchone()
         
         if not tag:
-            return {"status": "error", "message": "NFC tag not found"}, 404
+            return {"status": "error", "message": "dahiOS tag not found"}, 404
         
         # Yönlendirme URL'ini oluştur
         redirect_type = tag[3]  # redirect_type
@@ -220,9 +220,9 @@ https://api.dahis.io/nfc/{unique-nfc-id}
 
 ## Güvenlik
 
-1. **Rate Limiting**: NFC endpoint'ine rate limiting ekleyin
-2. **Validation**: NFC ID formatını doğrulayın
-3. **Logging**: Tüm NFC okutmalarını loglayın
+1. **Rate Limiting**: dahiOS endpoint'ine rate limiting ekleyin
+2. **Validation**: dahiOS ID formatını doğrulayın
+3. **Logging**: Tüm dahiOS okutmalarını loglayın
 4. **Analytics**: Hangi karakterlerin daha çok okutulduğunu takip edin
 
 ## İstatistikler

@@ -20,13 +20,13 @@ Bu endpoint deploy edilmeden tag listesi çalışmayacak.
 ## ✅ Link Özellikleri
 
 ### Tag Oluşturma
-- ✅ NFC Redirect URL gösteriliyor
+- ✅ dahiOS Redirect URL gösteriliyor
 - ✅ Yönlendirme URL gösteriliyor
 - ✅ Kopyala butonları var
 - ✅ Test butonları var
 
 ### Tag Bilgisi
-- ✅ NFC Redirect URL gösteriliyor
+- ✅ dahiOS Redirect URL gösteriliyor
 - ✅ Yönlendirme URL gösteriliyor
 - ✅ Kopyala butonları var
 - ✅ Test butonları var

@@ -2,7 +2,7 @@
 
 ## 📋 Özet
 
-Web sitesi artık `/character/{characterId}` formatındaki URL'leri destekliyor. NFC tag'lerden gelen yönlendirmeler doğrudan karakter detay modalını açacak.
+Web sitesi artık `/character/{characterId}` formatındaki URL'leri destekliyor. dahiOS tag'lerden gelen yönlendirmeler doğrudan karakter detay modalını açacak.
 
 ## 🔗 Desteklenen URL Formatları
 
@@ -88,7 +88,7 @@ redirectUrl = `https://dahis.io/character/${characterId}`;
    - Modal otomatik açılmalı
 
 2. **NFC Test:**
-   - NFC tag okuyun
+   - dahiOS tag okuyun
    - Karakter detay modalı açılmalı
 
 3. **Browser Navigation:**

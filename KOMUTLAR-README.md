@@ -214,12 +214,12 @@ git add dahis-panel/script.js
 
 ### Commit (Kısa Mesaj)
 ```bash
-git commit -m "feat: NFC tag düzenleme özelliği eklendi"
+git commit -m "feat: dahiOS tag düzenleme özelliği eklendi"
 ```
 
 ### Commit (Detaylı Mesaj)
 ```bash
-git commit -m "feat: NFC tag düzenleme özelliği
+git commit -m "feat: dahiOS tag düzenleme özelliği
 
 - Backend'e nfcUpdate endpoint'i eklendi
 - Panel'e tag düzenleme modal'ı eklendi

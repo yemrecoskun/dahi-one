@@ -6,7 +6,7 @@ dahi's One Backend API'lerine nasıl request atılacağını gösteren kılavuz.
 
 ### 1. NFC Redirect (Yönlendirme)
 
-NFC tag okutulduğunda karakter sayfasına yönlendirir.
+dahiOS tag okutulduğunda karakter sayfasına yönlendirir.
 
 **Endpoint:**
 ```
@@ -20,7 +20,7 @@ GET https://us-central1-dahisio.cloudfunctions.net/nfcRedirect?nfcId={nfcId}
 ```
 
 **Parametreler:**
-- `nfcId` (required): NFC tag ID'si (örn: `puls-001`)
+- `nfcId` (required): dahiOS tag ID'si (örn: `puls-001`)
 
 **Örnek Request:**
 
@@ -48,8 +48,8 @@ axios.get('https://nfcredirect-6elk3up56q-uc.a.run.app', {
 **Response:**
 - `302 Redirect` → Karakter sayfasına yönlendirir
 - `400 Bad Request` → NFC ID eksik
-- `404 Not Found` → NFC tag bulunamadı
-- `403 Forbidden` → NFC tag aktif değil
+- `404 Not Found` → dahiOS tag bulunamadı
+- `403 Forbidden` → dahiOS tag aktif değil
 - `500 Internal Server Error` → Sunucu hatası
 
 **Yönlendirme URL'leri:**
@@ -59,9 +59,9 @@ axios.get('https://nfcredirect-6elk3up56q-uc.a.run.app', {
 
 ---
 
-### 2. NFC Info (Bilgi)
+### 2. dahiOS Info (Bilgi)
 
-NFC tag bilgilerini getirir.
+dahiOS tag bilgilerini getirir.
 
 **Endpoint:**
 ```
@@ -75,7 +75,7 @@ GET https://us-central1-dahisio.cloudfunctions.net/nfcInfo?nfcId={nfcId}
 ```
 
 **Parametreler:**
-- `nfcId` (required): NFC tag ID'si
+- `nfcId` (required): dahiOS tag ID'si
 
 **Örnek Request:**
 
@@ -120,15 +120,15 @@ axios.get('https://nfcinfo-6elk3up56q-uc.a.run.app', {
 ```json
 {
   "status": "error",
-  "message": "NFC tag not found"
+  "message": "dahiOS tag not found"
 }
 ```
 
 ---
 
-### 3. NFC Stats (İstatistikler)
+### 3. dahiOS Stats (İstatistikler)
 
-NFC okutma istatistiklerini getirir.
+dahiOS okutma istatistiklerini getirir.
 
 **Endpoint:**
 ```
@@ -199,9 +199,9 @@ axios.get('https://nfcstats-6elk3up56q-uc.a.run.app', {
 
 ---
 
-### 4. NFC Create (Tag Oluştur) - UUID ile
+### 4. dahiOS Create (Tag Oluştur) - UUID ile
 
-Yeni NFC tag oluşturur. Tag ID otomatik olarak UUID olarak oluşturulur.
+Yeni dahiOS tag oluşturur. Tag ID otomatik olarak UUID olarak oluşturulur.
 
 **Endpoint:**
 ```
@@ -302,7 +302,7 @@ veya
 }
 ```
 
-**Not:** Oluşturulan `nfcId` UUID formatında olacaktır (örn: `550e8400-e29b-41d4-a716-446655440000`). Bu ID'yi NFC tag'inize yazdırmanız gerekecek.
+**Not:** Oluşturulan `nfcId` UUID formatında olacaktır (örn: `550e8400-e29b-41d4-a716-446655440000`). Bu ID'yi dahiOS tag'inize yazdırmanız gerekecek.
 
 ---
 
@@ -450,9 +450,9 @@ async function safeNfcRequest(nfcId) {
     const data = await response.json();
     return data;
   } catch (error) {
-    if (error.message === 'NFC tag not found') {
-      // NFC tag bulunamadı
-      console.error('NFC tag bulunamadı:', nfcId);
+    if (error.message === 'dahiOS tag not found') {
+      // dahiOS tag bulunamadı
+      console.error('dahiOS tag bulunamadı:', nfcId);
     } else if (error.message === 'NFC ID is required') {
       // NFC ID eksik
       console.error('NFC ID gerekli');
@@ -467,9 +467,9 @@ async function safeNfcRequest(nfcId) {
 
 ---
 
-## 📝 NFC Tag Oluşturma
+## 📝 dahiOS Tag Oluşturma
 
-NFC tag'leri artık UUID ile otomatik oluşturuluyor. `nfcCreate` endpoint'ini kullanarak yeni tag oluşturabilirsiniz.
+dahiOS tag'leri artık UUID ile otomatik oluşturuluyor. `nfcCreate` endpoint'ini kullanarak yeni tag oluşturabilirsiniz.
 
 **Örnek: Puls karakteri için tag oluştur**
 ```bash
@@ -492,7 +492,7 @@ curl -X POST "https://us-central1-dahisio.cloudfunctions.net/nfcCreate" \
 }
 ```
 
-Bu `nfcId` (UUID) değerini NFC tag'inize yazdırmanız gerekecek.
+Bu `nfcId` (UUID) değerini dahiOS tag'inize yazdırmanız gerekecek.
 
 **Not:** Eski manuel tag ID'leri (`puls-001` gibi) hala çalışır, ancak yeni tag'ler UUID formatında oluşturulur.
 

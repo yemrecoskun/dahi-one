@@ -4,9 +4,9 @@ Backend API endpoint'leri için basit ve kullanıcı dostu admin panel arayüzü
 
 ## 🚀 Özellikler
 
-- ✅ **NFC Tag Oluşturma**: UUID ile otomatik tag oluşturma
+- ✅ **dahiOS Tag Oluşturma**: UUID ile otomatik tag oluşturma
 - ✅ **Tag Bilgisi Sorgulama**: UUID ile tag bilgilerini görüntüleme
-- ✅ **İstatistikler**: NFC okutma istatistiklerini görüntüleme
+- ✅ **İstatistikler**: dahiOS okutma istatistiklerini görüntüleme
 - ✅ **Responsive Tasarım**: Mobil ve desktop uyumlu
 - ✅ **Modern UI**: Gradient tasarım ve animasyonlar
 
@@ -52,7 +52,7 @@ Dosyaları herhangi bir static hosting servisine yükleyebilirsiniz:
 
 Panel şu endpoint'leri kullanır:
 
-- `POST /nfcCreate` - NFC tag oluşturma
+- `POST /nfcCreate` - dahiOS tag oluşturma
 - `GET /nfcInfo?nfcId={uuid}` - Tag bilgisi getirme
 - `GET /nfcStats?characterId={id}` - İstatistikler
 
@@ -60,7 +60,7 @@ API Base URL: `https://us-central1-dahisio.cloudfunctions.net`
 
 ## 🎨 Özellikler
 
-### NFC Tag Oluştur
+### dahiOS Tag Oluştur
 - Karakter seçimi (Puls, Mavi, Sarı, Turuncu, Yeşil)
 - Yönlendirme tipi seçimi (Karakter, Mağaza, Kampanya)
 - Otomatik UUID oluşturma

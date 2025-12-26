@@ -1,14 +1,14 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // NFC Tags - Sadece okuma (public)
-    match /nfc_tags/{nfcId} {
+    // dahiOS Tags - Sadece okuma (public)
+    match /dahios_tags/{dahiosId} {
       allow read: if true;
       allow write: if false; // Sadece admin panelinden yazılabilir
     }
 
-    // NFC Scans - Sadece yazma (public), okuma yok
-    match /nfc_scans/{scanId} {
+    // dahiOS Scans - Sadece yazma (public), okuma yok
+    match /dahios_scans/{scanId} {
       allow read: if false; // Sadece admin panelinden okunabilir
       allow create: if true; // Herkes scan kaydedebilir
       allow update, delete: if false;

@@ -125,7 +125,7 @@ body {
     margin-bottom: 1rem;
 }
 
-/* NFC Tag Single */
+/* dahiOS Tag Single */
 .nfc-tag-single {
     display: flex;
     flex-direction: column;

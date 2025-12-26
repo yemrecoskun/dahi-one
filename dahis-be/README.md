@@ -1,20 +1,20 @@
 # dahi's One Backend - Firebase
 
-Firebase Functions ve Firestore kullanarak NFC yönlendirme sistemi.
+Firebase Functions ve Firestore kullanarak dahiOS yönlendirme sistemi.
 
 ## ✅ Kurulum Tamamlandı
 
 Firebase init başarıyla tamamlandı:
 - ✅ Firestore kuruldu
 - ✅ Functions codebase oluşturuldu (`dahisio/`)
-- ✅ NFC Functions kodları eklendi
+- ✅ dahiOS Functions kodları eklendi
 
 ## 📁 Proje Yapısı
 
 ```
 dahis-be/
 ├── dahisio/              # Functions codebase (JavaScript)
-│   ├── index.js         # NFC Functions kodları
+│   ├── index.js         # dahiOS Functions kodları
 │   └── package.json
 ├── firestore.rules      # Firestore güvenlik kuralları
 ├── firestore.indexes.json # Firestore indexleri
@@ -52,7 +52,7 @@ firebase deploy --only functions:dahisio
 
 ✅ **Tüm fonksiyonlar başarıyla deploy edildi!**
 
-### NFC Yönlendirme
+### dahiOS Yönlendirme
 ```
 https://nfcredirect-6elk3up56q-uc.a.run.app?nfcId={nfcId}
 ```
@@ -66,7 +66,7 @@ https://us-central1-dahisio.cloudfunctions.net/nfcRedirect?nfcId={nfcId}
 https://nfcredirect-6elk3up56q-uc.a.run.app?nfcId=puls-001
 ```
 
-### NFC Bilgisi
+### dahiOS Bilgisi
 ```
 https://nfcinfo-6elk3up56q-uc.a.run.app?nfcId={nfcId}
 ```
@@ -124,7 +124,7 @@ https://nfcstats-6elk3up56q-uc.a.run.app?characterId=puls
 }
 ```
 
-## 📝 Örnek NFC Tag Oluşturma
+## 📝 Örnek dahiOS Tag Oluşturma
 
 Firebase Console'dan veya Admin SDK ile:
 
@@ -132,7 +132,7 @@ Firebase Console'dan veya Admin SDK ile:
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-// Puls karakteri için NFC tag
+// Puls karakteri için dahiOS tag
 await db.collection('nfc_tags').doc('puls-001').set({
   nfcId: 'puls-001',
   characterId: 'puls',
@@ -170,6 +170,6 @@ firebase deploy --only functions:dahisio
 ## ⚠️ Notlar
 
 - Functions deploy için **Blaze plan** gerekiyor (aktif ✅)
-- NFC tag'leri Firebase Console'dan oluşturabilirsiniz
+- dahiOS tag'leri Firebase Console'dan oluşturabilirsiniz
 - Tüm fonksiyonlar `us-central1` region'unda çalışıyor
 

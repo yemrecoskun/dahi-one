@@ -1,8 +1,8 @@
 // API Base URL
 const API_BASE = 'https://us-central1-dahisio.cloudfunctions.net';
 
-// Generate NFC Redirect URL
-function generateNfcUrl(characterId, redirectType, customUrl) {
+// Generate dahiOS Redirect URL
+function generateDahiosUrl(characterId, redirectType, customUrl) {
     switch (redirectType) {
         case 'character':
             return `https://dahis.io/?character=${characterId}`;
@@ -62,7 +62,7 @@ document.getElementById('createForm').addEventListener('submit', async (e) => {
     }
     
     try {
-        const response = await fetch(`${API_BASE}/nfcCreate`, {
+        const response = await fetch(`${API_BASE}/dahiosCreate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,28 +73,28 @@ document.getElementById('createForm').addEventListener('submit', async (e) => {
         const data = await response.json();
         
         if (response.ok) {
-            const redirectUrl = generateNfcUrl(
+            const redirectUrl = generateDahiosUrl(
                 data.data.characterId,
                 data.data.redirectType,
                 data.data.customUrl
             );
-            const nfcRedirectUrl = `${API_BASE}/nfcRedirect?nfcId=${encodeURIComponent(data.data.nfcId)}`;
+            const dahiosRedirectUrl = `${API_BASE}/dahiosRedirect?dahiosId=${encodeURIComponent(data.data.dahiosId || data.data.nfcId)}`;
             
             resultDiv.className = 'result success';
             resultDiv.innerHTML = `
                 <strong>✅ Tag başarıyla oluşturuldu!</strong><br>
                 <div style="margin-top: 15px;">
                     <div style="margin-bottom: 15px;">
-                        <strong>NFC ID (UUID):</strong><br>
-                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.9rem; word-break: break-all;">${data.data.nfcId}</code>
-                        <button onclick="copyToClipboard('${data.data.nfcId}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
+                        <strong>dahiOS ID (UUID):</strong><br>
+                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.9rem; word-break: break-all;">${data.data.dahiosId || data.data.nfcId}</code>
+                        <button onclick="copyToClipboard('${data.data.dahiosId || data.data.nfcId}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
                     </div>
                     <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
-                        <strong>🔗 NFC Redirect URL (Backend):</strong><br>
+                        <strong>🔗 dahiOS Redirect URL (Backend):</strong><br>
                         <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <code style="background: #fff; padding: 8px; border-radius: 4px; font-size: 0.85rem; word-break: break-all; flex: 1; min-width: 200px;">${nfcRedirectUrl}</code>
-                            <button onclick="copyToClipboard('${nfcRedirectUrl}')" style="padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Kopyala</button>
-                            <a href="${nfcRedirectUrl}" target="_blank" style="padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; white-space: nowrap;">Test Et</a>
+                            <code style="background: #fff; padding: 8px; border-radius: 4px; font-size: 0.85rem; word-break: break-all; flex: 1; min-width: 200px;">${dahiosRedirectUrl}</code>
+                            <button onclick="copyToClipboard('${dahiosRedirectUrl}')" style="padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Kopyala</button>
+                            <a href="${dahiosRedirectUrl}" target="_blank" style="padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; white-space: nowrap;">Test Et</a>
                         </div>
                     </div>
                     <div style="margin-bottom: 15px; padding: 15px; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #4488ff;">
@@ -139,33 +139,33 @@ document.getElementById('infoForm').addEventListener('submit', async (e) => {
     resultDiv.style.display = 'block';
     
     try {
-        const response = await fetch(`${API_BASE}/nfcInfo?nfcId=${encodeURIComponent(nfcId)}`);
+        const response = await fetch(`${API_BASE}/dahiosInfo?dahiosId=${encodeURIComponent(nfcId)}`);
         const data = await response.json();
         
         if (response.ok) {
             // Get full tag info to determine redirect URL
-            // Note: nfcInfo doesn't return customUrl, so we'll use default
-            const redirectUrl = generateNfcUrl(
+            const dahiosId = data.data.dahiosId || data.data.nfcId;
+            const redirectUrl = generateDahiosUrl(
                 data.data.characterId,
                 data.data.redirectType,
-                null // customUrl not in response
+                data.data.customUrl || null
             );
-            const nfcRedirectUrl = `${API_BASE}/nfcRedirect?nfcId=${encodeURIComponent(data.data.nfcId)}`;
+            const dahiosRedirectUrl = `${API_BASE}/dahiosRedirect?dahiosId=${encodeURIComponent(dahiosId)}`;
             
             resultDiv.className = 'result success';
             resultDiv.innerHTML = `
                 <strong>✅ Tag Bilgileri</strong><br>
                 <div style="margin-top: 15px;">
                     <div style="margin-bottom: 15px;">
-                        <strong>NFC ID (UUID):</strong><br>
-                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.9rem; word-break: break-all;">${data.data.nfcId}</code>
-                        <button onclick="copyToClipboard('${data.data.nfcId}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
+                        <strong>dahiOS ID (UUID):</strong><br>
+                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.9rem; word-break: break-all;">${dahiosId}</code>
+                        <button onclick="copyToClipboard('${dahiosId}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
                     </div>
                     <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
-                        <strong>🔗 NFC Redirect URL (Backend):</strong><br>
-                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.85rem; word-break: break-all; max-width: 100%;">${nfcRedirectUrl}</code>
-                        <button onclick="copyToClipboard('${nfcRedirectUrl}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
-                        <a href="${nfcRedirectUrl}" target="_blank" style="margin-left: 10px; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block;">Test Et</a>
+                        <strong>🔗 dahiOS Redirect URL (Backend):</strong><br>
+                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.85rem; word-break: break-all; max-width: 100%;">${dahiosRedirectUrl}</code>
+                        <button onclick="copyToClipboard('${dahiosRedirectUrl}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
+                        <a href="${dahiosRedirectUrl}" target="_blank" style="margin-left: 10px; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block;">Test Et</a>
                     </div>
                     <div style="margin-bottom: 15px; padding: 15px; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #4488ff;">
                         <strong>🌐 Yönlendirme URL (Hedef):</strong><br>
@@ -212,8 +212,8 @@ document.getElementById('statsForm').addEventListener('submit', async (e) => {
     
     try {
         const url = characterId 
-            ? `${API_BASE}/nfcStats?characterId=${encodeURIComponent(characterId)}`
-            : `${API_BASE}/nfcStats`;
+            ? `${API_BASE}/dahiosStats?characterId=${encodeURIComponent(characterId)}`
+            : `${API_BASE}/dahiosStats`;
         
         const response = await fetch(url);
         const data = await response.json();
@@ -229,7 +229,7 @@ document.getElementById('statsForm').addEventListener('submit', async (e) => {
                     <table class="stats-table" style="margin-top: 15px;">
                         <thead>
                             <tr>
-                                <th>NFC ID</th>
+                                <th>dahiOS ID</th>
                                 <th>Karakter</th>
                                 <th>Tip</th>
                                 <th>IP Adresi</th>
@@ -240,14 +240,54 @@ document.getElementById('statsForm').addEventListener('submit', async (e) => {
                 `;
                 
                 data.data.forEach(scan => {
-                    const date = scan.timestamp ? new Date(scan.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Bilinmiyor';
+                    // Firestore timestamp formatını parse et
+                    let dateStr = 'Bilinmiyor';
+                    if (scan.timestamp) {
+                        try {
+                            let date;
+                            if (scan.timestamp.seconds) {
+                                // Firestore Timestamp formatı: {seconds: ..., nanoseconds: ...}
+                                date = new Date(scan.timestamp.seconds * 1000);
+                            } else if (scan.timestamp._seconds) {
+                                // Alternatif format
+                                date = new Date(scan.timestamp._seconds * 1000);
+                            } else if (scan.timestamp instanceof Date) {
+                                // Direkt Date objesi
+                                date = scan.timestamp;
+                            } else if (typeof scan.timestamp === 'string') {
+                                // ISO string formatı
+                                date = new Date(scan.timestamp);
+                            } else if (typeof scan.timestamp === 'number') {
+                                // Unix timestamp (milliseconds)
+                                date = new Date(scan.timestamp);
+                            } else {
+                                date = null;
+                            }
+                            
+                            if (date && !isNaN(date.getTime())) {
+                                dateStr = date.toLocaleString('tr-TR', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Date parse error:', e, scan.timestamp);
+                        }
+                    }
+                    
+                    const scanId = scan.dahiosId || scan.nfcId || 'N/A';
+                    const displayId = scanId !== 'N/A' ? `${scanId.substring(0, 20)}...` : 'N/A';
                     html += `
                         <tr>
-                            <td><code style="font-size: 0.85rem;">${scan.nfcId.substring(0, 20)}...</code></td>
-                            <td>${scan.characterId}</td>
-                            <td>${scan.redirectType}</td>
-                            <td>${scan.ipAddress}</td>
-                            <td>${date}</td>
+                            <td><code style="font-size: 0.85rem;">${displayId}</code></td>
+                            <td>${scan.characterId || 'N/A'}</td>
+                            <td>${scan.redirectType || 'N/A'}</td>
+                            <td>${scan.ipAddress || scan.ip || 'N/A'}</td>
+                            <td>${dateStr}</td>
                         </tr>
                     `;
                 });
@@ -287,8 +327,8 @@ async function loadTagList() {
     
     try {
         const url = filterCharacter 
-            ? `${API_BASE}/nfcList?characterId=${encodeURIComponent(filterCharacter)}`
-            : `${API_BASE}/nfcList`;
+            ? `${API_BASE}/dahiosList?characterId=${encodeURIComponent(filterCharacter)}`
+            : `${API_BASE}/dahiosList`;
         
         const response = await fetch(url);
         const data = await response.json();
@@ -298,7 +338,7 @@ async function loadTagList() {
                 listDiv.innerHTML = `
                     <div class="result info">
                         <strong>ℹ️ Henüz tag bulunmuyor.</strong><br>
-                        "NFC Tag Oluştur" sekmesinden yeni tag oluşturabilirsiniz.
+                        "dahiOS Tag Oluştur" sekmesinden yeni tag oluşturabilirsiniz.
                     </div>
                 `;
             } else {
@@ -309,17 +349,18 @@ async function loadTagList() {
                 `;
                 
                 data.data.forEach(tag => {
-                    const redirectUrl = generateNfcUrl(
+                    const dahiosId = tag.dahiosId || tag.nfcId;
+                    const redirectUrl = generateDahiosUrl(
                         tag.characterId,
                         tag.redirectType,
                         tag.customUrl
                     );
-                    const nfcRedirectUrl = `${API_BASE}/nfcRedirect?nfcId=${encodeURIComponent(tag.nfcId)}`;
+                    const dahiosRedirectUrl = `${API_BASE}/dahiosRedirect?dahiosId=${encodeURIComponent(dahiosId)}`;
                     
                     html += `
                         <div class="tag-item">
                             <div class="tag-item-header">
-                                <span class="tag-id">${tag.nfcId.substring(0, 24)}...</span>
+                                <span class="tag-id">${dahiosId.substring(0, 24)}...</span>
                                 <span class="tag-status ${tag.isActive ? 'active' : 'inactive'}">
                                     ${tag.isActive ? 'Aktif' : 'Pasif'}
                                 </span>
@@ -334,11 +375,11 @@ async function loadTagList() {
                                     <span class="tag-detail-value">${tag.redirectType}</span>
                                 </div>
                                 <div class="tag-detail-item" style="grid-column: 1 / -1;">
-                                    <span class="tag-detail-label">🔗 NFC Redirect URL (Backend)</span>
+                                    <span class="tag-detail-label">🔗 dahiOS Redirect URL (Backend)</span>
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
-                                        <code style="background: #f8f9fa; padding: 6px; border-radius: 4px; font-size: 0.8rem; flex: 1; min-width: 200px; word-break: break-all;">${nfcRedirectUrl}</code>
-                                        <button onclick="copyToClipboard('${nfcRedirectUrl}')" style="padding: 4px 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">Kopyala</button>
-                                        <a href="${nfcRedirectUrl}" target="_blank" style="padding: 4px 8px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.8rem; white-space: nowrap;">Test Et</a>
+                                        <code style="background: #f8f9fa; padding: 6px; border-radius: 4px; font-size: 0.8rem; flex: 1; min-width: 200px; word-break: break-all;">${dahiosRedirectUrl}</code>
+                                        <button onclick="copyToClipboard('${dahiosRedirectUrl}')" style="padding: 4px 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">Kopyala</button>
+                                        <a href="${dahiosRedirectUrl}" target="_blank" style="padding: 4px 8px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.8rem; white-space: nowrap;">Test Et</a>
                                     </div>
                                 </div>
                                 <div class="tag-detail-item" style="grid-column: 1 / -1;">
@@ -350,7 +391,7 @@ async function loadTagList() {
                                     </div>
                                 </div>
                                 <div class="tag-detail-item" style="grid-column: 1 / -1; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
-                                    <button onclick="openEditTagModal('${tag.nfcId}', '${tag.characterId}', '${tag.redirectType}', ${tag.isActive}, '${tag.customUrl || ''}')" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; width: 100%;">✏️ Düzenle</button>
+                                    <button onclick="openEditTagModal('${dahiosId}', '${tag.characterId}', '${tag.redirectType}', ${tag.isActive}, '${tag.customUrl || ''}')" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; width: 100%;">✏️ Düzenle</button>
                                 </div>
                             </div>
                         </div>
@@ -364,7 +405,7 @@ async function loadTagList() {
                 <div class="result error">
                     <strong>❌ Hata:</strong> ${data.message || 'Bilinmeyen hata'}<br>
                     <small style="margin-top: 10px; display: block; color: #666;">
-                        Endpoint: <code>${API_BASE}/nfcList</code><br>
+                        Endpoint: <code>${API_BASE}/dahiosList</code><br>
                         Backend deploy edildi mi kontrol edin: <code>firebase deploy --only functions:dahisio</code>
                     </small>
                 </div>
@@ -376,8 +417,8 @@ async function loadTagList() {
             <div class="result error">
                 <strong>❌ Bağlantı hatası:</strong> ${error.message}<br>
                 <small style="margin-top: 10px; display: block; color: #666;">
-                    Endpoint: <code>${API_BASE}/nfcList</code><br>
-                    Backend'in çalıştığından ve <code>nfcList</code> endpoint'inin deploy edildiğinden emin olun.
+                    Endpoint: <code>${API_BASE}/dahiosList</code><br>
+                    Backend'in çalıştığından ve <code>dahiosList</code> endpoint'inin deploy edildiğinden emin olun.
                 </small>
             </div>
         `;
@@ -435,7 +476,7 @@ document.getElementById('editTagForm').addEventListener('submit', async (e) => {
     
     try {
         const updateData = {
-            nfcId: nfcId,
+            dahiosId: dahiosId,
             characterId: characterId,
             redirectType: redirectType,
             isActive: isActive
@@ -445,7 +486,7 @@ document.getElementById('editTagForm').addEventListener('submit', async (e) => {
             updateData.customUrl = customUrl;
         }
         
-        const response = await fetch(`${API_BASE}/nfcUpdate`, {
+        const response = await fetch(`${API_BASE}/dahiosUpdate`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -460,7 +501,7 @@ document.getElementById('editTagForm').addEventListener('submit', async (e) => {
             resultDiv.innerHTML = `
                 <strong>✅ Tag başarıyla güncellendi!</strong><br>
                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                    <strong>NFC ID:</strong> ${data.data.nfcId}<br>
+                    <strong>dahiOS ID:</strong> ${data.data.dahiosId || data.data.nfcId}<br>
                     <strong>Karakter:</strong> ${data.data.characterId}<br>
                     <strong>Yönlendirme:</strong> ${data.data.redirectType}<br>
                     <strong>Durum:</strong> ${data.data.isActive ? 'Aktif' : 'Pasif'}

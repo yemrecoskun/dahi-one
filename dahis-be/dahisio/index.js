@@ -10,45 +10,46 @@ const db = admin.firestore();
 setGlobalOptions({maxInstances: 10});
 
 /**
- * NFC Tag Okutma - Karakter Yönlendirme
- * GET /nfcRedirect?nfcId={nfcId}
+ * dahiOS Tag Okutma - Karakter Yönlendirme
+ * GET /dahiosRedirect?dahiosId={dahiosId}
  */
-exports.nfcRedirect = onRequest({cors: true}, async (req, res) => {
+exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
   try {
-    const nfcId = req.query.nfcId;
+    // Backward compatibility
+    const dahiosId = req.query.dahiosId || req.query.nfcId;
 
-    if (!nfcId) {
+    if (!dahiosId) {
       return res.status(400).json({
         status: "error",
-        message: "NFC ID is required",
+        message: "dahiOS ID is required",
       });
     }
 
-    // Firestore'dan NFC tag bilgisini al
-    const nfcRef = db.collection("nfc_tags").doc(nfcId);
-    const nfcDoc = await nfcRef.get();
+    // Firestore'dan dahiOS tag bilgisini al
+    const dahiosRef = db.collection("dahios_tags").doc(dahiosId);
+    const dahiosDoc = await dahiosRef.get();
 
-    if (!nfcDoc.exists) {
+    if (!dahiosDoc.exists) {
       return res.status(404).json({
         status: "error",
-        message: "NFC tag not found",
+        message: "dahiOS tag not found",
       });
     }
 
-    const nfcData = nfcDoc.data();
+    const dahiosData = dahiosDoc.data();
 
     // Aktif değilse hata döndür
-    if (!nfcData.isActive) {
+    if (!dahiosData.isActive) {
       return res.status(403).json({
         status: "error",
-        message: "NFC tag is not active",
+        message: "dahiOS tag is not active",
       });
     }
 
     // Yönlendirme URL'ini oluştur
     let redirectUrl;
-    const redirectType = nfcData.redirectType || "character";
-    const characterId = nfcData.characterId;
+    const redirectType = dahiosData.redirectType || "character";
+    const characterId = dahiosData.characterId;
 
     switch (redirectType) {
       case "character":
@@ -59,16 +60,16 @@ exports.nfcRedirect = onRequest({cors: true}, async (req, res) => {
         redirectUrl = `https://dahis.shop/one-${characterId}`;
         break;
       case "campaign":
-        redirectUrl = nfcData.customUrl || "https://dahis.io";
+        redirectUrl = dahiosData.customUrl || "https://dahis.io";
         break;
       default:
-        redirectUrl = nfcData.customUrl ||
+        redirectUrl = dahiosData.customUrl ||
           `https://dahis.io/character/${characterId}`;
     }
 
     // İstatistik kaydet
-    await db.collection("nfc_scans").add({
-      nfcId: nfcId,
+    await db.collection("dahios_scans").add({
+      dahiosId: dahiosId,
       characterId: characterId,
       redirectType: redirectType,
       redirectUrl: redirectUrl,
@@ -80,7 +81,7 @@ exports.nfcRedirect = onRequest({cors: true}, async (req, res) => {
     // Yönlendirme
     return res.redirect(302, redirectUrl);
   } catch (error) {
-    logger.error("NFC redirect error:", error);
+    logger.error("dahiOS redirect error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -89,43 +90,45 @@ exports.nfcRedirect = onRequest({cors: true}, async (req, res) => {
 });
 
 /**
- * NFC Tag Bilgisi Getir
- * GET /nfcInfo?nfcId={nfcId}
+ * dahiOS Tag Bilgisi Getir
+ * GET /dahiosInfo?dahiosId={dahiosId}
  */
-exports.nfcInfo = onRequest({cors: true}, async (req, res) => {
+exports.dahiosInfo = onRequest({cors: true}, async (req, res) => {
   try {
-    const nfcId = req.query.nfcId;
+    // Backward compatibility
+    const dahiosId = req.query.dahiosId || req.query.nfcId;
 
-    if (!nfcId) {
+    if (!dahiosId) {
       return res.status(400).json({
         status: "error",
-        message: "NFC ID is required",
+        message: "dahiOS ID is required",
       });
     }
 
-    const nfcRef = db.collection("nfc_tags").doc(nfcId);
-    const nfcDoc = await nfcRef.get();
+    const dahiosRef = db.collection("dahios_tags").doc(dahiosId);
+    const dahiosDoc = await dahiosRef.get();
 
-    if (!nfcDoc.exists) {
+    if (!dahiosDoc.exists) {
       return res.status(404).json({
         status: "error",
-        message: "NFC tag not found",
+        message: "dahiOS tag not found",
       });
     }
 
-    const nfcData = nfcDoc.data();
+    const dahiosData = dahiosDoc.data();
 
     return res.json({
       status: "success",
       data: {
-        nfcId: nfcId,
-        characterId: nfcData.characterId,
-        redirectType: nfcData.redirectType,
-        isActive: nfcData.isActive,
+        dahiosId: dahiosId,
+        characterId: dahiosData.characterId,
+        redirectType: dahiosData.redirectType,
+        isActive: dahiosData.isActive,
+        customUrl: dahiosData.customUrl || null,
       },
     });
   } catch (error) {
-    logger.error("NFC info error:", error);
+    logger.error("dahiOS info error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -134,14 +137,14 @@ exports.nfcInfo = onRequest({cors: true}, async (req, res) => {
 });
 
 /**
- * NFC İstatistikleri Getir (Admin)
- * GET /nfcStats?characterId={id}
+ * dahiOS İstatistikleri Getir (Admin)
+ * GET /dahiosStats?characterId={id}
  */
-exports.nfcStats = onRequest({cors: true}, async (req, res) => {
+exports.dahiosStats = onRequest({cors: true}, async (req, res) => {
   try {
     const characterId = req.query.characterId;
 
-    let query = db.collection("nfc_scans")
+    let query = db.collection("dahios_scans")
         .orderBy("timestamp", "desc");
 
     if (characterId) {
@@ -152,10 +155,35 @@ exports.nfcStats = onRequest({cors: true}, async (req, res) => {
     const stats = [];
 
     snapshot.forEach((doc) => {
-      stats.push({
+      const data = doc.data();
+      // Timestamp'leri serialize et
+      const stat = {
         id: doc.id,
-        ...doc.data(),
-      });
+        dahiosId: data.dahiosId || data.nfcId, // Backward compatibility
+        characterId: data.characterId,
+        redirectType: data.redirectType,
+        redirectUrl: data.redirectUrl,
+        ipAddress: data.ipAddress || data.ip,
+        userAgent: data.userAgent,
+      };
+
+      // Timestamp'i düzgün formatla
+      if (data.timestamp) {
+        if (data.timestamp.toDate) {
+          // Firestore Timestamp objesi
+          stat.timestamp = {
+            seconds: Math.floor(data.timestamp.toDate().getTime() / 1000),
+            nanoseconds: 0,
+          };
+        } else if (data.timestamp.seconds) {
+          // Zaten serialize edilmiş
+          stat.timestamp = data.timestamp;
+        } else {
+          stat.timestamp = data.timestamp;
+        }
+      }
+
+      stats.push(stat);
     });
 
     return res.json({
@@ -164,7 +192,7 @@ exports.nfcStats = onRequest({cors: true}, async (req, res) => {
       data: stats,
     });
   } catch (error) {
-    logger.error("NFC stats error:", error);
+    logger.error("dahiOS stats error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -173,14 +201,14 @@ exports.nfcStats = onRequest({cors: true}, async (req, res) => {
 });
 
 /**
- * NFC Tag Listesi Getir
- * GET /nfcList?characterId={id}
+ * dahiOS Tag Listesi Getir
+ * GET /dahiosList?characterId={id}
  */
-exports.nfcList = onRequest({cors: true}, async (req, res) => {
+exports.dahiosList = onRequest({cors: true}, async (req, res) => {
   try {
     const characterId = req.query.characterId;
 
-    let query = db.collection("nfc_tags")
+    let query = db.collection("dahios_tags")
         .orderBy("createdAt", "desc");
 
     if (characterId) {
@@ -194,7 +222,7 @@ exports.nfcList = onRequest({cors: true}, async (req, res) => {
       const tagData = doc.data();
       tags.push({
         id: doc.id,
-        nfcId: tagData.nfcId,
+        dahiosId: tagData.dahiosId || tagData.nfcId, // Backward compatibility
         characterId: tagData.characterId,
         redirectType: tagData.redirectType,
         isActive: tagData.isActive,
@@ -209,7 +237,7 @@ exports.nfcList = onRequest({cors: true}, async (req, res) => {
       data: tags,
     });
   } catch (error) {
-    logger.error("NFC list error:", error);
+    logger.error("dahiOS list error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -218,11 +246,11 @@ exports.nfcList = onRequest({cors: true}, async (req, res) => {
 });
 
 /**
- * NFC Tag Oluştur (Admin) - UUID ile
- * POST /nfcCreate
+ * dahiOS Tag Oluştur (Admin) - UUID ile
+ * POST /dahiosCreate
  * Body: { characterId, redirectType, customUrl?, isActive? }
  */
-exports.nfcCreate = onRequest({cors: true}, async (req, res) => {
+exports.dahiosCreate = onRequest({cors: true}, async (req, res) => {
   try {
     // Sadece POST isteklerini kabul et
     if (req.method !== "POST") {
@@ -258,11 +286,11 @@ exports.nfcCreate = onRequest({cors: true}, async (req, res) => {
     }
 
     // UUID oluştur
-    const nfcId = uuidv4();
+    const dahiosId = uuidv4();
 
-    // NFC tag verisi
-    const nfcData = {
-      nfcId: nfcId,
+    // dahiOS tag verisi
+    const dahiosData = {
+      dahiosId: dahiosId,
       characterId: characterId,
       redirectType: redirectType,
       isActive: isActive,
@@ -272,19 +300,19 @@ exports.nfcCreate = onRequest({cors: true}, async (req, res) => {
 
     // customUrl varsa ekle
     if (customUrl) {
-      nfcData.customUrl = customUrl;
+      dahiosData.customUrl = customUrl;
     }
 
     // Firestore'a kaydet
-    await db.collection("nfc_tags").doc(nfcId).set(nfcData);
+    await db.collection("dahios_tags").doc(dahiosId).set(dahiosData);
 
-    logger.info("NFC tag created:", {nfcId, characterId});
+    logger.info("dahiOS tag created:", {dahiosId, characterId});
 
     return res.status(201).json({
       status: "success",
-      message: "NFC tag created successfully",
+      message: "dahiOS tag created successfully",
       data: {
-        nfcId: nfcId,
+        dahiosId: dahiosId,
         characterId: characterId,
         redirectType: redirectType,
         isActive: isActive,
@@ -292,7 +320,7 @@ exports.nfcCreate = onRequest({cors: true}, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error("NFC create error:", error);
+    logger.error("dahiOS create error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",
@@ -301,11 +329,11 @@ exports.nfcCreate = onRequest({cors: true}, async (req, res) => {
 });
 
 /**
- * NFC Tag Güncelle (Admin)
- * PUT /nfcUpdate
- * Body: { nfcId, characterId?, redirectType?, customUrl?, isActive? }
+ * dahiOS Tag Güncelle (Admin)
+ * PUT /dahiosUpdate
+ * Body: { dahiosId, characterId?, redirectType?, customUrl?, isActive? }
  */
-exports.nfcUpdate = onRequest({cors: true}, async (req, res) => {
+exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
   try {
     // Sadece PUT isteklerini kabul et
     if (req.method !== "PUT") {
@@ -315,23 +343,26 @@ exports.nfcUpdate = onRequest({cors: true}, async (req, res) => {
       });
     }
 
-    const {nfcId, characterId, redirectType, customUrl, isActive} = req.body;
+    const {dahiosId, nfcId, characterId, redirectType, customUrl, isActive} =
+      req.body;
+    // Backward compatibility
+    const tagId = dahiosId || nfcId;
 
     // Validasyon
-    if (!nfcId) {
+    if (!tagId) {
       return res.status(400).json({
         status: "error",
-        message: "nfcId is required",
+        message: "dahiosId is required",
       });
     }
 
     // Tag'i kontrol et
-    const tagDoc = await db.collection("nfc_tags").doc(nfcId).get();
+    const tagDoc = await db.collection("dahios_tags").doc(tagId).get();
 
     if (!tagDoc.exists) {
       return res.status(404).json({
         status: "error",
-        message: "NFC tag not found",
+        message: "dahiOS tag not found",
       });
     }
 
@@ -356,7 +387,8 @@ exports.nfcUpdate = onRequest({cors: true}, async (req, res) => {
       updateData.redirectType = redirectType;
     }
 
-    if (redirectType === "campaign" && customUrl === undefined && !tagData.customUrl) {
+    if (redirectType === "campaign" && customUrl === undefined &&
+        !tagData.customUrl) {
       return res.status(400).json({
         status: "error",
         message: "customUrl is required when redirectType is 'campaign'",
@@ -377,19 +409,20 @@ exports.nfcUpdate = onRequest({cors: true}, async (req, res) => {
     }
 
     // Firestore'da güncelle
-    await db.collection("nfc_tags").doc(nfcId).update(updateData);
+    await db.collection("dahios_tags").doc(tagId).update(updateData);
 
-    logger.info("NFC tag updated:", {nfcId, updateData});
+    logger.info("dahiOS tag updated:", {dahiosId: tagId, updateData});
 
     // Güncellenmiş veriyi getir
-    const updatedDoc = await db.collection("nfc_tags").doc(nfcId).get();
+    const updatedDoc = await db.collection("dahios_tags").doc(tagId).get();
     const updatedData = updatedDoc.data();
 
     return res.json({
       status: "success",
-      message: "NFC tag updated successfully",
+      message: "dahiOS tag updated successfully",
       data: {
-        nfcId: updatedData.nfcId,
+        dahiosId: updatedData.dahiosId ||
+          updatedData.nfcId, // Backward compatibility
         characterId: updatedData.characterId,
         redirectType: updatedData.redirectType,
         isActive: updatedData.isActive,
@@ -398,7 +431,7 @@ exports.nfcUpdate = onRequest({cors: true}, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error("NFC update error:", error);
+    logger.error("dahiOS update error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",
