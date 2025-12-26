@@ -78,7 +78,9 @@ document.getElementById('createForm').addEventListener('submit', async (e) => {
                 data.data.redirectType,
                 data.data.customUrl
             );
-            const dahiosRedirectUrl = `${API_BASE}/dahiosRedirect?dahiosId=${encodeURIComponent(data.data.dahiosId || data.data.nfcId)}`;
+            const dahiosId = data.data.dahiosId || data.data.nfcId;
+            const routerUrl = `https://os.dahis.io/${dahiosId}`;
+            const dahiosRedirectUrl = `${API_BASE}/dahiosRedirect?dahiosId=${encodeURIComponent(dahiosId)}`;
             
             resultDiv.className = 'result success';
             resultDiv.innerHTML = `
@@ -86,8 +88,16 @@ document.getElementById('createForm').addEventListener('submit', async (e) => {
                 <div style="margin-top: 15px;">
                     <div style="margin-bottom: 15px;">
                         <strong>dahiOS ID (UUID):</strong><br>
-                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.9rem; word-break: break-all;">${data.data.dahiosId || data.data.nfcId}</code>
-                        <button onclick="copyToClipboard('${data.data.dahiosId || data.data.nfcId}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
+                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-size: 0.9rem; word-break: break-all;">${dahiosId}</code>
+                        <button onclick="copyToClipboard('${dahiosId}')" style="margin-left: 10px; padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Kopyala</button>
+                    </div>
+                    <div style="margin-bottom: 15px; padding: 15px; background: #fff3e0; border-radius: 8px; border-left: 4px solid #ff9800;">
+                        <strong>🌐 Router URL (os.dahis.io - NFC Tag'e yazılacak):</strong><br>
+                        <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <code style="background: #fff; padding: 8px; border-radius: 4px; font-size: 0.85rem; word-break: break-all; flex: 1; min-width: 200px;">${routerUrl}</code>
+                            <button onclick="copyToClipboard('${routerUrl}')" style="padding: 6px 12px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;">Kopyala</button>
+                            <a href="${routerUrl}" target="_blank" style="padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; white-space: nowrap;">Test Et</a>
+                        </div>
                     </div>
                     <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
                         <strong>🔗 dahiOS Redirect URL (Backend):</strong><br>
@@ -350,6 +360,7 @@ async function loadTagList() {
                 
                 data.data.forEach(tag => {
                     const dahiosId = tag.dahiosId || tag.nfcId;
+                    const routerUrl = `https://os.dahis.io/${dahiosId}`;
                     const redirectUrl = generateDahiosUrl(
                         tag.characterId,
                         tag.redirectType,
@@ -373,6 +384,21 @@ async function loadTagList() {
                                 <div class="tag-detail-item">
                                     <span class="tag-detail-label">Yönlendirme</span>
                                     <span class="tag-detail-value">${tag.redirectType}</span>
+                                </div>
+                                <div class="tag-detail-item" style="grid-column: 1 / -1;">
+                                    <span class="tag-detail-label">🆔 dahiOS ID (UUID):</span>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
+                                        <code style="background: #f8f9fa; padding: 6px; border-radius: 4px; font-size: 0.8rem; flex: 1; min-width: 200px; word-break: break-all;">${dahiosId}</code>
+                                        <button onclick="copyToClipboard('${dahiosId}')" style="padding: 4px 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">Kopyala</button>
+                                    </div>
+                                </div>
+                                <div class="tag-detail-item" style="grid-column: 1 / -1;">
+                                    <span class="tag-detail-label">🌐 Router URL (os.dahis.io - NFC Tag'e yazılacak):</span>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
+                                        <code style="background: #fff3e0; padding: 6px; border-radius: 4px; font-size: 0.8rem; flex: 1; min-width: 200px; word-break: break-all;">${routerUrl}</code>
+                                        <button onclick="copyToClipboard('${routerUrl}')" style="padding: 4px 8px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; white-space: nowrap;">Kopyala</button>
+                                        <a href="${routerUrl}" target="_blank" style="padding: 4px 8px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.8rem; white-space: nowrap;">Test Et</a>
+                                    </div>
                                 </div>
                                 <div class="tag-detail-item" style="grid-column: 1 / -1;">
                                     <span class="tag-detail-label">🔗 dahiOS Redirect URL (Backend)</span>
@@ -464,7 +490,7 @@ document.getElementById('editTagForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const resultDiv = document.getElementById('editTagResult');
-    const nfcId = document.getElementById('editNfcId').value;
+    const dahiosId = document.getElementById('editNfcId').value; // editNfcId input'u dahiosId'yi tutuyor
     const characterId = document.getElementById('editCharacterId').value;
     const redirectType = document.getElementById('editRedirectType').value;
     const isActive = document.getElementById('editIsActive').checked;

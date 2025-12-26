@@ -3,6 +3,21 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "redirects": [
+      {
+        "source": "/:tagId",
+        "destination": "https://us-central1-dahisio.cloudfunctions.net/dahiosRedirect?dahiosId=:tagId",
+        "type": 302
+      }
+    ]
+  },
   "functions": [
     {
       "source": "dahisio",
