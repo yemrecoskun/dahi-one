@@ -52,8 +52,8 @@ exports.nfcRedirect = onRequest({cors: true}, async (req, res) => {
 
     switch (redirectType) {
       case "character":
-        // Redirect to character detail page
-        redirectUrl = `https://dahis.io/character/${characterId}`;
+        // Redirect to character modal on main page
+        redirectUrl = `https://dahis.io/?character=${characterId}`;
         break;
       case "store":
         redirectUrl = `https://dahis.shop/one-${characterId}`;
@@ -293,6 +293,112 @@ exports.nfcCreate = onRequest({cors: true}, async (req, res) => {
     });
   } catch (error) {
     logger.error("NFC create error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+});
+
+/**
+ * NFC Tag Güncelle (Admin)
+ * PUT /nfcUpdate
+ * Body: { nfcId, characterId?, redirectType?, customUrl?, isActive? }
+ */
+exports.nfcUpdate = onRequest({cors: true}, async (req, res) => {
+  try {
+    // Sadece PUT isteklerini kabul et
+    if (req.method !== "PUT") {
+      return res.status(405).json({
+        status: "error",
+        message: "Method not allowed. Use PUT.",
+      });
+    }
+
+    const {nfcId, characterId, redirectType, customUrl, isActive} = req.body;
+
+    // Validasyon
+    if (!nfcId) {
+      return res.status(400).json({
+        status: "error",
+        message: "nfcId is required",
+      });
+    }
+
+    // Tag'i kontrol et
+    const tagDoc = await db.collection("nfc_tags").doc(nfcId).get();
+
+    if (!tagDoc.exists) {
+      return res.status(404).json({
+        status: "error",
+        message: "NFC tag not found",
+      });
+    }
+
+    const tagData = tagDoc.data();
+    const updateData = {
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Güncellenecek alanları kontrol et
+    if (characterId !== undefined) {
+      updateData.characterId = characterId;
+    }
+
+    if (redirectType !== undefined) {
+      const validRedirectTypes = ["character", "store", "campaign"];
+      if (!validRedirectTypes.includes(redirectType)) {
+        return res.status(400).json({
+          status: "error",
+          message: "redirectType must be 'character', 'store', or 'campaign'",
+        });
+      }
+      updateData.redirectType = redirectType;
+    }
+
+    if (redirectType === "campaign" && customUrl === undefined && !tagData.customUrl) {
+      return res.status(400).json({
+        status: "error",
+        message: "customUrl is required when redirectType is 'campaign'",
+      });
+    }
+
+    if (customUrl !== undefined) {
+      if (customUrl === null || customUrl === "") {
+        // customUrl'i kaldır
+        updateData.customUrl = admin.firestore.FieldValue.delete();
+      } else {
+        updateData.customUrl = customUrl;
+      }
+    }
+
+    if (isActive !== undefined) {
+      updateData.isActive = isActive;
+    }
+
+    // Firestore'da güncelle
+    await db.collection("nfc_tags").doc(nfcId).update(updateData);
+
+    logger.info("NFC tag updated:", {nfcId, updateData});
+
+    // Güncellenmiş veriyi getir
+    const updatedDoc = await db.collection("nfc_tags").doc(nfcId).get();
+    const updatedData = updatedDoc.data();
+
+    return res.json({
+      status: "success",
+      message: "NFC tag updated successfully",
+      data: {
+        nfcId: updatedData.nfcId,
+        characterId: updatedData.characterId,
+        redirectType: updatedData.redirectType,
+        isActive: updatedData.isActive,
+        customUrl: updatedData.customUrl || null,
+        updatedAt: updatedData.updatedAt,
+      },
+    });
+  } catch (error) {
+    logger.error("NFC update error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",

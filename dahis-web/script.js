@@ -11,6 +11,60 @@ document.addEventListener('DOMContentLoaded', () => {
     setupScrollEffects();
 });
 
+// Check URL for character parameter and open modal
+function checkUrlForCharacter() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const characterId = urlParams.get('character') || urlParams.get('id');
+    
+    console.log('Checking URL for character:', characterId);
+    console.log('charactersData available:', typeof charactersData !== 'undefined');
+    
+    if (characterId) {
+        console.log('Character ID found:', characterId);
+        
+        // Check if charactersData is loaded
+        if (typeof charactersData === 'undefined') {
+            console.warn('charactersData not loaded yet, retrying...');
+            setTimeout(() => checkUrlForCharacter(), 200);
+            return;
+        }
+        
+        if (charactersData[characterId]) {
+            console.log('Character found in data, opening modal...');
+            // Scroll to characters section first
+            const charactersSection = document.getElementById('characters');
+            if (charactersSection) {
+                setTimeout(() => {
+                    charactersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    showCharacterModal(characterId);
+                }, 500);
+            }, 100);
+        } else {
+            showCharacterModal(characterId);
+        }
+        } else {
+            console.warn('Character not found in data:', characterId);
+            console.log('Available characters:', Object.keys(charactersData));
+        }
+    }
+}
+
+// Update URL when modal opens
+function updateUrlForCharacter(characterId) {
+    const url = new URL(window.location);
+    url.searchParams.set('character', characterId);
+    window.history.pushState({ character: characterId }, '', url);
+}
+
+// Clean URL when modal closes
+function cleanUrlForCharacter() {
+    const url = new URL(window.location);
+    url.searchParams.delete('character');
+    url.searchParams.delete('id');
+    window.history.replaceState({}, '', url);
+}
+
 // Load Seasons List
 function loadSeasons() {
     const seasonsGrid = document.getElementById('seasonsGrid');
@@ -347,8 +401,12 @@ function setupCharacterInteractions() {
 
 // Show Character Modal
 function showCharacterModal(characterId) {
+    console.log('Opening modal for character:', characterId);
     const character = charactersData[characterId];
-    if (!character) return;
+    if (!character) {
+        console.error('Character not found:', characterId);
+        return;
+    }
 
     const modal = document.getElementById('characterModal');
     const modalContent = document.getElementById('modalCharacterInfo');
@@ -396,13 +454,29 @@ function showCharacterModal(characterId) {
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // Update URL
+    updateUrlForCharacter(characterId);
 }
+
+// Handle browser back button
+window.addEventListener('popstate', (e) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const characterId = urlParams.get('character') || urlParams.get('id');
+    
+    if (!characterId) {
+        closeCharacterModal();
+    }
+});
 
 // Close Character Modal
 function closeCharacterModal() {
     const modal = document.getElementById('characterModal');
     modal.classList.remove('active');
     document.body.style.overflow = '';
+    
+    // Clean URL
+    cleanUrlForCharacter();
 }
 
 // Go to Store
@@ -423,6 +497,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalClose) {
         modalClose.addEventListener('click', closeCharacterModal);
     }
+    
+    // Check URL for character after everything is loaded
+    setTimeout(() => {
+        checkUrlForCharacter();
+    }, 500);
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {

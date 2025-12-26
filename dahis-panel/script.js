@@ -5,13 +5,13 @@ const API_BASE = 'https://us-central1-dahisio.cloudfunctions.net';
 function generateNfcUrl(characterId, redirectType, customUrl) {
     switch (redirectType) {
         case 'character':
-            return `https://dahis.io/character/${characterId}`;
+            return `https://dahis.io/?character=${characterId}`;
         case 'store':
             return `https://dahis.shop/one-${characterId}`;
         case 'campaign':
             return customUrl || 'https://dahis.io';
         default:
-            return `https://dahis.io/character/${characterId}`;
+            return `https://dahis.io/?character=${characterId}`;
     }
 }
 
@@ -349,6 +349,9 @@ async function loadTagList() {
                                         <a href="${redirectUrl}" target="_blank" style="padding: 4px 8px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.8rem; white-space: nowrap;">Aç</a>
                                     </div>
                                 </div>
+                                <div class="tag-detail-item" style="grid-column: 1 / -1; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                                    <button onclick="openEditTagModal('${tag.nfcId}', '${tag.characterId}', '${tag.redirectType}', ${tag.isActive}, '${tag.customUrl || ''}')" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; width: 100%;">✏️ Düzenle</button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -380,6 +383,112 @@ async function loadTagList() {
         `;
     }
 }
+
+// Edit Tag Modal Functions
+function openEditTagModal(nfcId, characterId, redirectType, isActive, customUrl) {
+    document.getElementById('editNfcId').value = nfcId;
+    document.getElementById('editCharacterId').value = characterId;
+    document.getElementById('editRedirectType').value = redirectType;
+    document.getElementById('editIsActive').checked = isActive;
+    document.getElementById('editCustomUrl').value = customUrl || '';
+    
+    // Show/hide custom URL field
+    const customUrlGroup = document.getElementById('editCustomUrlGroup');
+    if (redirectType === 'campaign') {
+        customUrlGroup.style.display = 'block';
+    } else {
+        customUrlGroup.style.display = 'none';
+    }
+    
+    // Redirect type change handler
+    document.getElementById('editRedirectType').onchange = function() {
+        if (this.value === 'campaign') {
+            customUrlGroup.style.display = 'block';
+        } else {
+            customUrlGroup.style.display = 'none';
+        }
+    };
+    
+    document.getElementById('editTagModal').style.display = 'block';
+    document.getElementById('editTagResult').innerHTML = '';
+}
+
+function closeEditTagModal() {
+    document.getElementById('editTagModal').style.display = 'none';
+    document.getElementById('editTagForm').reset();
+}
+
+// Edit Tag Form Submit
+document.getElementById('editTagForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const resultDiv = document.getElementById('editTagResult');
+    const nfcId = document.getElementById('editNfcId').value;
+    const characterId = document.getElementById('editCharacterId').value;
+    const redirectType = document.getElementById('editRedirectType').value;
+    const isActive = document.getElementById('editIsActive').checked;
+    const customUrl = document.getElementById('editCustomUrl').value;
+    
+    resultDiv.className = 'result loading';
+    resultDiv.textContent = 'Güncelleniyor...';
+    resultDiv.style.display = 'block';
+    
+    try {
+        const updateData = {
+            nfcId: nfcId,
+            characterId: characterId,
+            redirectType: redirectType,
+            isActive: isActive
+        };
+        
+        if (redirectType === 'campaign' && customUrl) {
+            updateData.customUrl = customUrl;
+        }
+        
+        const response = await fetch(`${API_BASE}/nfcUpdate`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = `
+                <strong>✅ Tag başarıyla güncellendi!</strong><br>
+                <div style="margin-top: 10px; font-size: 0.9rem;">
+                    <strong>NFC ID:</strong> ${data.data.nfcId}<br>
+                    <strong>Karakter:</strong> ${data.data.characterId}<br>
+                    <strong>Yönlendirme:</strong> ${data.data.redirectType}<br>
+                    <strong>Durum:</strong> ${data.data.isActive ? 'Aktif' : 'Pasif'}
+                </div>
+            `;
+            
+            // Reload tag list after 1 second
+            setTimeout(() => {
+                closeEditTagModal();
+                loadTagList();
+            }, 1500);
+        } else {
+            resultDiv.className = 'result error';
+            resultDiv.textContent = `❌ Hata: ${data.message || 'Bilinmeyen hata'}`;
+        }
+    } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Bağlantı hatası: ${error.message}`;
+    }
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('editTagModal');
+    if (event.target === modal) {
+        closeEditTagModal();
+    }
+};
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
