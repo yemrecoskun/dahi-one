@@ -38,33 +38,135 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
 
     const dahiosData = dahiosDoc.data();
 
-    // Aktif değilse hata döndür
+    // Aktif değilse özel sayfa göster
     if (!dahiosData.isActive) {
-      return res.status(403).json({
-        status: "error",
-        message: "dahiOS tag is not active",
-      });
+      const characterId = dahiosData.characterId || "unknown";
+      const characterName =
+        characterId.charAt(0).toUpperCase() + characterId.slice(1);
+
+      // Pasif tag için özel HTML sayfası
+      const html = `
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dahiOS Cihazı Pasif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+              Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            opacity: 0.9;
+        }
+        .character-name {
+            font-weight: 600;
+            color: #ffd700;
+        }
+        .button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⏸️</div>
+        <h1>Bu dahiOS Cihazı Şu Anda Pasif</h1>
+        <p>
+            <span class="character-name">${characterName}</span> karakterine
+            ait dahiOS cihazı şu anda aktif değil.
+        </p>
+        <p>
+            Cihazı aktif hale getirmek için lütfen cihaz sahibiyle iletişime
+            geçin veya dahi's uygulamasından cihazı yönetin.
+        </p>
+        <a href="https://dahis.io" class="button">dahi's Ana Sayfaya Dön</a>
+        <div class="footer">
+            dahi's One © 2025
+        </div>
+    </div>
+</body>
+</html>
+      `;
+
+      return res.status(200).send(html);
     }
 
-    // Yönlendirme URL'ini oluştur
+    // Yönlendirme URL'ini oluştur (Universal Link formatında)
     let redirectUrl;
     const redirectType = dahiosData.redirectType || "character";
     const characterId = dahiosData.characterId;
 
     switch (redirectType) {
       case "character":
-        // Redirect to character modal on main page
-        redirectUrl = `https://dahis.io/?character=${characterId}`;
+        // Universal link: www.dahis.io/character/{characterId}
+        redirectUrl = `https://www.dahis.io/character/${characterId}`;
         break;
       case "store":
+        // Store için dahis.shop kullan (universal link değil)
         redirectUrl = `https://dahis.shop/one-${characterId}`;
         break;
       case "campaign":
-        redirectUrl = dahiosData.customUrl || "https://dahis.io";
+        // Custom URL varsa onu kullan, yoksa ana sayfa
+        redirectUrl = dahiosData.customUrl || "https://www.dahis.io";
         break;
       default:
         redirectUrl = dahiosData.customUrl ||
-          `https://dahis.io/character/${characterId}`;
+          `https://www.dahis.io/character/${characterId}`;
     }
 
     // İstatistik kaydet
