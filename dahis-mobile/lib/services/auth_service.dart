@@ -1,0 +1,281 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'dart:io' show Platform;
+
+class AuthService {
+  FirebaseAuth? get _auth {
+    if (Firebase.apps.isEmpty) return null;
+    return FirebaseAuth.instance;
+  }
+
+  FirebaseFirestore? get _firestore {
+    if (Firebase.apps.isEmpty) return null;
+    return FirebaseFirestore.instance;
+  }
+
+  // Current user
+  User? get currentUser => _auth?.currentUser;
+
+  // Auth state stream
+  Stream<User?> get authStateChanges => _auth?.authStateChanges() ?? const Stream.empty();
+
+  // Email ile kayıt
+  Future<UserCredential?> signUpWithEmail(String email, String password, String name) async {
+    try {
+      if (_auth == null || _firestore == null) return null;
+
+      final userCredential = await _auth!.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Kullanıcı adını güncelle
+      await userCredential.user?.updateDisplayName(name);
+
+      // Firestore'da kullanıcı bilgilerini kaydet
+      await _firestore!.collection('users').doc(userCredential.user?.uid).set({
+        'email': email,
+        'name': name,
+        'createdAt': FieldValue.serverTimestamp(),
+        'devices': [],
+      });
+
+      return userCredential;
+    } catch (e) {
+      print('Sign up error: $e');
+      return null;
+    }
+  }
+
+  // Email ile giriş
+  Future<UserCredential?> signInWithEmail(String email, String password) async {
+    try {
+      if (_auth == null) return null;
+      return await _auth!.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } catch (e) {
+      print('Sign in error: $e');
+      return null;
+    }
+  }
+
+  // Google ile giriş
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      if (_auth == null || _firestore == null) {
+        print('Google sign in: Firebase not initialized');
+        return null;
+      }
+
+      // Google Sign-In başlat (iOS için scopes belirt)
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile'],
+      );
+      
+      // Önce mevcut oturumu kontrol et
+      await googleSignIn.signOut(); // Önceki oturumu temizle
+      
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // Kullanıcı iptal etti
+        print('Google sign in: User cancelled');
+        return null;
+      }
+
+      // Google'dan authentication bilgilerini al
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      if (googleAuth.idToken == null) {
+        print('Google sign in: ID token is null');
+        return null;
+      }
+
+      // Firebase credential oluştur
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Firebase'e giriş yap
+      final userCredential = await _auth!.signInWithCredential(credential);
+
+      // Firestore'da kullanıcı bilgilerini kaydet/güncelle
+      final user = userCredential.user;
+      if (user != null) {
+        final userDoc = _firestore!.collection('users').doc(user.uid);
+        final userDocSnapshot = await userDoc.get();
+
+        if (!userDocSnapshot.exists) {
+          // Yeni kullanıcı, Firestore'a kaydet
+          await userDoc.set({
+            'email': user.email ?? '',
+            'name': user.displayName ?? user.email?.split('@')[0] ?? 'Kullanıcı',
+            'createdAt': FieldValue.serverTimestamp(),
+            'devices': [],
+            'authProvider': 'google',
+          });
+        } else {
+          // Mevcut kullanıcı, authProvider'ı güncelle
+          await userDoc.update({
+            'authProvider': 'google',
+          });
+        }
+      }
+
+      return userCredential;
+    } catch (e) {
+      print('Google sign in error: $e');
+      return null;
+    }
+  }
+
+  // Apple ile giriş
+  Future<UserCredential?> signInWithApple() async {
+    try {
+      if (_auth == null || _firestore == null) return null;
+      if (!Platform.isIOS) {
+        print('Apple Sign-In sadece iOS\'ta kullanılabilir');
+        return null;
+      }
+
+      // Apple Sign-In başlat
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      // OAuth credential oluştur
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      // Firebase'e giriş yap
+      final userCredential = await _auth!.signInWithCredential(oauthCredential);
+
+      // Firestore'da kullanıcı bilgilerini kaydet/güncelle
+      final user = userCredential.user;
+      if (user != null) {
+        final userDoc = _firestore!.collection('users').doc(user.uid);
+        final userDocSnapshot = await userDoc.get();
+
+        // Kullanıcı adını belirle (Apple'dan gelen veya email'den)
+        String userName = user.displayName ?? 
+            (appleCredential.givenName != null && appleCredential.familyName != null
+                ? '${appleCredential.givenName} ${appleCredential.familyName}'
+                : user.email?.split('@')[0] ?? 'Kullanıcı');
+
+        if (!userDocSnapshot.exists) {
+          // Yeni kullanıcı, Firestore'a kaydet
+          await userDoc.set({
+            'email': user.email ?? appleCredential.email ?? '',
+            'name': userName,
+            'createdAt': FieldValue.serverTimestamp(),
+            'devices': [],
+            'authProvider': 'apple',
+          });
+        } else {
+          // Mevcut kullanıcı, authProvider'ı güncelle
+          await userDoc.update({
+            'authProvider': 'apple',
+            if (userDocSnapshot.data()?['name'] == null) 'name': userName,
+          });
+        }
+      }
+
+      return userCredential;
+    } catch (e) {
+      print('Apple sign in error: $e');
+      return null;
+    }
+  }
+
+  // Çıkış
+  Future<void> signOut() async {
+    if (_auth == null) return;
+    
+    // Google Sign-In'den de çıkış yap
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
+    } catch (e) {
+      print('Google sign out error: $e');
+    }
+    
+    await _auth!.signOut();
+  }
+
+  // Kullanıcı bilgilerini getir
+  Future<Map<String, dynamic>?> getUserData() async {
+    try {
+      if (currentUser == null || _firestore == null) return null;
+      
+      final doc = await _firestore!.collection('users').doc(currentUser!.uid).get();
+      if (doc.exists) {
+        return doc.data();
+      }
+      return null;
+    } catch (e) {
+      print('Get user data error: $e');
+      return null;
+    }
+  }
+
+  // Kullanıcının cihazlarını getir
+  Future<List<Map<String, dynamic>>> getUserDevices() async {
+    try {
+      if (currentUser == null || _firestore == null) return [];
+
+      final userDoc = await _firestore!.collection('users').doc(currentUser!.uid).get();
+      if (!userDoc.exists) return [];
+
+      final userData = userDoc.data();
+      final deviceIds = userData?['devices'] as List<dynamic>? ?? [];
+
+      if (deviceIds.isEmpty) return [];
+
+      // Her device ID için dahiOS tag bilgisini getir
+      final devices = <Map<String, dynamic>>[];
+      for (final deviceId in deviceIds) {
+        final tagDoc = await _firestore!.collection('dahios_tags').doc(deviceId).get();
+        if (tagDoc.exists) {
+          final tagData = tagDoc.data()!;
+          devices.add({
+            'dahiosId': deviceId,
+            'characterId': tagData['characterId'],
+            'redirectType': tagData['redirectType'],
+            'isActive': tagData['isActive'],
+            'createdAt': tagData['createdAt'],
+          });
+        }
+      }
+
+      return devices;
+    } catch (e) {
+      print('Get user devices error: $e');
+      return [];
+    }
+  }
+
+  // Cihaz ekle (satın alma sonrası)
+  Future<void> addDevice(String dahiosId) async {
+    try {
+      if (currentUser == null || _firestore == null) return;
+
+      await _firestore!.collection('users').doc(currentUser!.uid).update({
+        'devices': FieldValue.arrayUnion([dahiosId]),
+      });
+    } catch (e) {
+      print('Add device error: $e');
+    }
+  }
+}
+

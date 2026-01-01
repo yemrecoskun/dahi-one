@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "412418089622",
+    "project_id": "dahisio",
+    "storage_bucket": "dahisio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412418089622:android:aebb3f5bce25fd398458b7",
+        "android_client_info": {
+          "package_name": "com.dahis.io"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "412418089622-dq5r9ntoqjrbgdavl6ikuftra395lu0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyuw-g_fJyyLB8fCsizd3rPXZRizc1HDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "412418089622-dq5r9ntoqjrbgdavl6ikuftra395lu0h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "412418089622-ia1dv46dn4c68h5ak0tlaugpj91e5qm2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dahis.io"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
