@@ -13,6 +13,35 @@ service cloud.firestore {
       allow create: if true; // Herkes scan kaydedebilir
       allow update, delete: if false;
     }
+
+    // App Versions - Public read (herkes okuyabilir)
+    match /app_versions/{platform} {
+      allow read: if true;
+      allow write: if false; // Sadece admin panelinden yazılabilir
+    }
+
+    // Users - Sadece kendi verilerini okuyabilir/yazabilir
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Characters - Public read (herkes okuyabilir)
+    match /characters/{characterId} {
+      allow read: if true;
+      allow write: if false; // Sadece admin scriptinden yazılabilir
+    }
+
+    // Seasons - Public read (herkes okuyabilir)
+    match /seasons/{seasonId} {
+      allow read: if true;
+      allow write: if false; // Sadece admin scriptinden yazılabilir
+      // Episodes subcollection
+      match /episodes/{episodeId} {
+        allow read: if true;
+        allow write: if false; // Sadece admin scriptinden yazılabilir
+      }
+    }
   }
 }
 

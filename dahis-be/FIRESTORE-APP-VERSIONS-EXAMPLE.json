@@ -1,0 +1,22 @@
+{
+  "collection": "app_versions",
+  "documents": {
+    "ios": {
+      "minimumVersion": "1.0.0",
+      "latestVersion": "1.0.1",
+      "forceUpdate": false,
+      "appStoreUrl": "https://apps.apple.com/app/dahis-one/id123456789",
+      "playStoreUrl": null,
+      "updateMessage": "Yeni özellikler eklendi! Güncellemek ister misiniz?"
+    },
+    "android": {
+      "minimumVersion": "1.0.0",
+      "latestVersion": "1.0.1",
+      "forceUpdate": false,
+      "appStoreUrl": null,
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.dahis.mobile",
+      "updateMessage": "Yeni özellikler eklendi! Güncellemek ister misiniz?"
+    }
+  }
+}
+

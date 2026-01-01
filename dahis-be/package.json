@@ -2,6 +2,8 @@
   "name": "dahis-be",
   "version": "1.0.0",
   "description": "dahi's One Backend - Firebase Functions & Firestore",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
+  }
 }
-
