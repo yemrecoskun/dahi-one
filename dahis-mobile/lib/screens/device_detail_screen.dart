@@ -29,7 +29,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   bool _isLoading = true;
   late bool _isActive;
   bool _isUpdating = false;
-  String? _profileLinkType;
+  List<String> _selectedProfileLinks = [];
   Map<String, String> _profileLinks = {};
   bool _isLoadingProfile = true;
 
@@ -71,7 +71,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         });
       }
 
-      // Cihazın profil link tipini yükle
+      // Cihazın profil link tiplerini yükle
       final response = await http.get(
         Uri.parse('https://us-central1-dahisio.cloudfunctions.net/dahiosInfo?dahiosId=${widget.dahiosId}'),
       );
@@ -81,14 +81,21 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         if (responseData['status'] == 'success') {
           final data = responseData['data'];
           setState(() {
-            _profileLinkType = data['profileLinkType'] ?? 'none';
+            // Backward compatibility: Eğer profileLinkType varsa array'e çevir
+            if (data['profileLinkTypes'] != null && data['profileLinkTypes'] is List) {
+              _selectedProfileLinks = List<String>.from(data['profileLinkTypes']);
+            } else if (data['profileLinkType'] != null && data['profileLinkType'] != 'none') {
+              _selectedProfileLinks = [data['profileLinkType']];
+            } else {
+              _selectedProfileLinks = [];
+            }
           });
         }
       }
     } catch (e) {
       print('⚠️  Profil bilgisi yüklenirken hata: $e');
       setState(() {
-        _profileLinkType = 'none';
+        _selectedProfileLinks = [];
       });
     } finally {
       setState(() => _isLoadingProfile = false);
@@ -133,7 +140,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           final label = link['label'] as String;
           final icon = link['icon'] as IconData;
           final value = _profileLinks[key] ?? '';
-          final isSelected = _profileLinkType == key;
+          final isSelected = _selectedProfileLinks.contains(key);
           final hasValue = value.isNotEmpty;
 
           return Container(
@@ -187,14 +194,22 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Switch(
+                Checkbox(
                   value: isSelected,
                   onChanged: hasValue
                       ? (value) {
                           setState(() {
-                            _profileLinkType = value ? key : 'none';
+                            if (value == true) {
+                              // Ekle
+                              if (!_selectedProfileLinks.contains(key)) {
+                                _selectedProfileLinks.add(key);
+                              }
+                            } else {
+                              // Kaldır
+                              _selectedProfileLinks.remove(key);
+                            }
                           });
-                          _updateProfileLinkType(value ? key : 'none');
+                          _updateProfileLinkTypes(_selectedProfileLinks);
                         }
                       : null,
                   activeColor: characterColor,
@@ -207,7 +222,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     );
   }
 
-  Future<void> _updateProfileLinkType(String profileLinkType) async {
+  Future<void> _updateProfileLinkTypes(List<String> profileLinkTypes) async {
     if (_isUpdating) return;
 
     setState(() {
@@ -217,7 +232,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
     try {
       final body = <String, dynamic>{
         'dahiosId': widget.dahiosId,
-        'profileLinkType': profileLinkType == 'none' ? null : profileLinkType,
+        'profileLinkTypes': profileLinkTypes.isEmpty ? null : profileLinkTypes,
       };
 
       final response = await http.put(
@@ -230,16 +245,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         final responseData = json.decode(response.body);
         if (responseData['status'] == 'success') {
           setState(() {
-            _profileLinkType = profileLinkType == 'none' ? null : profileLinkType;
             _isUpdating = false;
           });
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Profil link yönlendirmesi güncellendi'),
+              SnackBar(
+                content: Text(profileLinkTypes.isEmpty 
+                  ? 'Profil link yönlendirmesi kaldırıldı'
+                  : '${profileLinkTypes.length} profil link yönlendirmesi güncellendi'),
                 backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
+                duration: const Duration(seconds: 2),
               ),
             );
           }

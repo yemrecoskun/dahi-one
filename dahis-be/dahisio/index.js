@@ -148,13 +148,15 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
 
     // Yönlendirme URL'ini oluştur
     let redirectUrl;
-    const profileLinkType = dahiosData.profileLinkType;
+    // Backward compatibility: profileLinkType varsa array'e çevir
+    const profileLinkTypes = dahiosData.profileLinkTypes || 
+      (dahiosData.profileLinkType ? [dahiosData.profileLinkType] : []);
     const redirectType = dahiosData.redirectType || "character";
     const characterId = dahiosData.characterId;
     const customUrl = dahiosData.customUrl || "";
 
-    // Önce profil link tipini kontrol et
-    if (profileLinkType) {
+    // Önce profil link tiplerini kontrol et
+    if (profileLinkTypes && profileLinkTypes.length > 0) {
       // Kullanıcının profil bilgilerini al
       const usersSnapshot = await db
         .collection("users")
@@ -164,6 +166,172 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
 
       if (!usersSnapshot.empty) {
         const userData = usersSnapshot.docs[0].data();
+        
+        // Birden fazla link varsa profil ekranı döndür
+        if (profileLinkTypes.length > 1) {
+          // Karakter renk kodlarını al
+          const characterColors = {
+            'puls': { primary: '#ff4444', secondary: '#cc3333' },
+            'zest': { primary: '#ff8844', secondary: '#cc6633' },
+            'lumo': { primary: '#ffdd44', secondary: '#ccaa33' },
+            'vigo': { primary: '#44dd88', secondary: '#33aa66' },
+            'aura': { primary: '#4488ff', secondary: '#3366cc' },
+          };
+          
+          const characterId = dahiosData.characterId || 'puls';
+          const charColor = characterColors[characterId] || characterColors['puls'];
+          
+          // Profil ekranı HTML'i oluştur
+          const profileLinks = profileLinkTypes.map(linkType => {
+            const profileValue = userData[linkType] || "";
+            if (!profileValue) return null;
+            
+            let url = "";
+            let label = "";
+            let icon = "";
+            
+            switch (linkType) {
+              case "instagram":
+                const instagramHandle = profileValue.replace(/^@?/, "");
+                url = `https://www.instagram.com/${instagramHandle}/`;
+                label = "Instagram";
+                icon = "📷";
+                break;
+              case "whatsapp":
+                const whatsappNumber = profileValue.replace(/\D/g, "");
+                url = `https://wa.me/${whatsappNumber}`;
+                label = "WhatsApp";
+                icon = "💬";
+                break;
+              case "phone":
+                const phoneNumber = profileValue.replace(/\D/g, "");
+                url = `tel:${phoneNumber}`;
+                label = "Telefon";
+                icon = "📞";
+                break;
+              case "email":
+                url = `mailto:${profileValue}`;
+                label = "E-posta";
+                icon = "✉️";
+                break;
+            }
+            
+            return { url, label, icon, value: profileValue };
+          }).filter(link => link !== null);
+          
+          const html = `
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İletişim Bilgileri</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, ${charColor.primary} 0%, ${charColor.secondary} 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .link-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        .link-icon {
+            font-size: 32px;
+        }
+        .link-content {
+            flex: 1;
+            text-align: left;
+        }
+        .link-label {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .link-value {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .arrow {
+            font-size: 20px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>İletişim Bilgileri</h1>
+        <p>İletişime geçmek için bir seçenek seçin</p>
+        <div class="links">
+            ${profileLinks.map(link => `
+                <a href="${link.url}" class="link-item">
+                    <span class="link-icon">${link.icon}</span>
+                    <div class="link-content">
+                        <div class="link-label">${link.label}</div>
+                        <div class="link-value">${link.value}</div>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            `).join('')}
+        </div>
+    </div>
+</body>
+</html>`;
+          
+          return res.status(200).send(html);
+        }
+        
+        // Tek link varsa direkt yönlendir
+        const profileLinkType = profileLinkTypes[0];
         const profileValue = userData[profileLinkType] || "";
 
         if (profileValue) {
@@ -285,6 +453,8 @@ exports.dahiosInfo = onRequest({cors: true}, async (req, res) => {
         redirectType: dahiosData.redirectType,
         isActive: dahiosData.isActive,
         customUrl: dahiosData.customUrl || null,
+        profileLinkType: dahiosData.profileLinkType || null,
+        profileLinkTypes: dahiosData.profileLinkTypes || null,
       },
     });
   } catch (error) {
@@ -602,12 +772,32 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
       }
     }
 
-    if (req.body.profileLinkType !== undefined) {
+    // profileLinkTypes array desteği
+    if (req.body.profileLinkTypes !== undefined) {
+      if (req.body.profileLinkTypes === null || 
+          (Array.isArray(req.body.profileLinkTypes) && req.body.profileLinkTypes.length === 0)) {
+        // profileLinkTypes'i kaldır
+        updateData.profileLinkTypes = admin.firestore.FieldValue.delete();
+        // Backward compatibility: profileLinkType'i de kaldır
+        updateData.profileLinkType = admin.firestore.FieldValue.delete();
+      } else if (Array.isArray(req.body.profileLinkTypes)) {
+        updateData.profileLinkTypes = req.body.profileLinkTypes;
+        // Backward compatibility: İlk link'i profileLinkType olarak da kaydet
+        if (req.body.profileLinkTypes.length > 0) {
+          updateData.profileLinkType = req.body.profileLinkTypes[0];
+        }
+      }
+    }
+    
+    // Backward compatibility: profileLinkType tek başına gönderilirse
+    if (req.body.profileLinkType !== undefined && req.body.profileLinkTypes === undefined) {
       if (req.body.profileLinkType === null || req.body.profileLinkType === "") {
         // profileLinkType'i kaldır
         updateData.profileLinkType = admin.firestore.FieldValue.delete();
+        updateData.profileLinkTypes = admin.firestore.FieldValue.delete();
       } else {
         updateData.profileLinkType = req.body.profileLinkType;
+        updateData.profileLinkTypes = [req.body.profileLinkType];
       }
     }
 
@@ -634,6 +824,8 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
         redirectType: updatedData.redirectType,
         isActive: updatedData.isActive,
         customUrl: updatedData.customUrl || null,
+        profileLinkType: updatedData.profileLinkType || null,
+        profileLinkTypes: updatedData.profileLinkTypes || null,
         updatedAt: updatedData.updatedAt,
       },
     });
