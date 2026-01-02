@@ -13,6 +13,7 @@ import 'screens/profile_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/devices_screen.dart';
 import 'screens/device_detail_screen.dart';
+import 'screens/contact_info_screen.dart';
 import 'widgets/update_dialog.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -194,6 +195,10 @@ final GoRouter _router = GoRouter(
           isActive: isActive,
         );
       },
+    ),
+    GoRoute(
+      path: '/contact-info',
+      builder: (context, state) => const ContactInfoScreen(),
     ),
   ],
 );

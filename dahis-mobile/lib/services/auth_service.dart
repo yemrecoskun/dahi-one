@@ -318,5 +318,44 @@ class AuthService {
       rethrow; // Hata mesajını yukarı fırlat
     }
   }
+
+  // Profil linklerini güncelle
+  Future<void> updateProfileLinks(Map<String, String> profileLinks) async {
+    try {
+      if (currentUser == null || _firestore == null) return;
+
+      final updateData = <String, dynamic>{};
+      
+      // Sadece boş olmayan değerleri ekle, boş olanları kaldır
+      if (profileLinks['instagram'] != null && profileLinks['instagram']!.isNotEmpty) {
+        updateData['instagram'] = profileLinks['instagram']!;
+      } else {
+        updateData['instagram'] = FieldValue.delete();
+      }
+      
+      if (profileLinks['whatsapp'] != null && profileLinks['whatsapp']!.isNotEmpty) {
+        updateData['whatsapp'] = profileLinks['whatsapp']!;
+      } else {
+        updateData['whatsapp'] = FieldValue.delete();
+      }
+      
+      if (profileLinks['phone'] != null && profileLinks['phone']!.isNotEmpty) {
+        updateData['phone'] = profileLinks['phone']!;
+      } else {
+        updateData['phone'] = FieldValue.delete();
+      }
+      
+      if (profileLinks['email'] != null && profileLinks['email']!.isNotEmpty) {
+        updateData['email'] = profileLinks['email']!;
+      } else {
+        updateData['email'] = FieldValue.delete();
+      }
+
+      await _firestore!.collection('users').doc(currentUser!.uid).update(updateData);
+    } catch (e) {
+      print('Update profile links error: $e');
+      rethrow;
+    }
+  }
 }
 

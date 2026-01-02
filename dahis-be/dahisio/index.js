@@ -146,47 +146,85 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
       return res.status(200).send(html);
     }
 
-    // Yönlendirme URL'ini oluştur (Universal Link formatında)
+    // Yönlendirme URL'ini oluştur
     let redirectUrl;
+    const profileLinkType = dahiosData.profileLinkType;
     const redirectType = dahiosData.redirectType || "character";
     const characterId = dahiosData.characterId;
     const customUrl = dahiosData.customUrl || "";
 
-    switch (redirectType) {
-      case "character":
-        // Universal link: www.dahis.io/character/{characterId}
+    // Önce profil link tipini kontrol et
+    if (profileLinkType) {
+      // Kullanıcının profil bilgilerini al
+      const usersSnapshot = await db
+        .collection("users")
+        .where("devices", "array-contains", dahiosId)
+        .limit(1)
+        .get();
+
+      if (!usersSnapshot.empty) {
+        const userData = usersSnapshot.docs[0].data();
+        const profileValue = userData[profileLinkType] || "";
+
+        if (profileValue) {
+          switch (profileLinkType) {
+            case "instagram":
+              const instagramHandle = profileValue.replace(/^@?/, "");
+              redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
+              break;
+            case "whatsapp":
+              const whatsappNumber = profileValue.replace(/\D/g, "");
+              redirectUrl = `https://wa.me/${whatsappNumber}`;
+              break;
+            case "phone":
+              const phoneNumber = profileValue.replace(/\D/g, "");
+              redirectUrl = `tel:${phoneNumber}`;
+              break;
+            case "email":
+              redirectUrl = `mailto:${profileValue}`;
+              break;
+            default:
+              redirectUrl = `https://www.dahis.io/character/${characterId}`;
+          }
+        } else {
+          // Profil değeri yoksa karakter sayfasına yönlendir
+          redirectUrl = `https://www.dahis.io/character/${characterId}`;
+        }
+      } else {
+        // Kullanıcı bulunamadıysa karakter sayfasına yönlendir
         redirectUrl = `https://www.dahis.io/character/${characterId}`;
-        break;
-      case "store":
-        // Store için dahis.shop kullan (universal link değil)
-        redirectUrl = `https://dahis.shop/one-${characterId}`;
-        break;
-      case "campaign":
-        // Custom URL varsa onu kullan, yoksa ana sayfa
-        redirectUrl = customUrl || "https://www.dahis.io";
-        break;
-      case "instagram":
-        // Instagram profil linki
-        const instagramHandle = customUrl.replace(/^@?/, ""); // @ işaretini kaldır
-        redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
-        break;
-      case "whatsapp":
-        // WhatsApp mesaj linki (numara sadece rakamlar olmalı)
-        const whatsappNumber = customUrl.replace(/\D/g, ""); // Sadece rakamlar
-        redirectUrl = `https://wa.me/${whatsappNumber}`;
-        break;
-      case "phone":
-        // Telefon arama linki
-        const phoneNumber = customUrl.replace(/\D/g, ""); // Sadece rakamlar
-        redirectUrl = `tel:${phoneNumber}`;
-        break;
-      case "email":
-        // E-posta linki
-        redirectUrl = `mailto:${customUrl}`;
-        break;
-      default:
-        redirectUrl = customUrl ||
-          `https://www.dahis.io/character/${characterId}`;
+      }
+    } else {
+      // Eski redirectType mantığı (geriye dönük uyumluluk)
+      switch (redirectType) {
+        case "character":
+          redirectUrl = `https://www.dahis.io/character/${characterId}`;
+          break;
+        case "store":
+          redirectUrl = `https://dahis.shop/one-${characterId}`;
+          break;
+        case "campaign":
+          redirectUrl = customUrl || "https://www.dahis.io";
+          break;
+        case "instagram":
+          const instagramHandle = customUrl.replace(/^@?/, "");
+          redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
+          break;
+        case "whatsapp":
+          const whatsappNumber = customUrl.replace(/\D/g, "");
+          redirectUrl = `https://wa.me/${whatsappNumber}`;
+          break;
+        case "phone":
+          const phoneNumber = customUrl.replace(/\D/g, "");
+          redirectUrl = `tel:${phoneNumber}`;
+          break;
+        case "email":
+          redirectUrl = `mailto:${customUrl}`;
+          break;
+        default:
+          redirectUrl = customUrl ||
+            `https://www.dahis.io/character/${characterId}`;
+      }
     }
 
     // İstatistik kaydet
@@ -561,6 +599,15 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
         updateData.customUrl = admin.firestore.FieldValue.delete();
       } else {
         updateData.customUrl = customUrl;
+      }
+    }
+
+    if (req.body.profileLinkType !== undefined) {
+      if (req.body.profileLinkType === null || req.body.profileLinkType === "") {
+        // profileLinkType'i kaldır
+        updateData.profileLinkType = admin.firestore.FieldValue.delete();
+      } else {
+        updateData.profileLinkType = req.body.profileLinkType;
       }
     }
 

@@ -5,12 +5,36 @@ import 'package:firebase_core/firebase_core.dart';
 import '../services/auth_service.dart';
 import 'devices_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _authService = AuthService();
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    setState(() => _isLoading = true);
+    try {
+      await _authService.getUserData();
+    } catch (e) {
+      print('Profil yükleme hatası: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authService = AuthService();
     
     // Firebase başlatılmamışsa bilgilendirme mesajı göster
     if (Firebase.apps.isEmpty) {
@@ -95,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
       );
     }
 
-    final user = authService.currentUser;
+    final user = _authService.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -106,7 +130,7 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<User?>(
-        stream: authService.authStateChanges,
+        stream: _authService.authStateChanges,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -174,10 +198,14 @@ class ProfileScreen extends StatelessWidget {
 
           // Kullanıcı giriş yapmış
           return FutureBuilder<Map<String, dynamic>?>(
-            future: authService.getUserData(),
+            future: _authService.getUserData(),
             builder: (context, userDataSnapshot) {
               final userData = userDataSnapshot.data ?? {};
               final userName = userData['name'] as String? ?? user?.displayName ?? user?.email?.split('@')[0] ?? 'Kullanıcı';
+
+              if (_isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -282,6 +310,41 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
+                    // İletişim Bilgileri Menü Öğesi
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1a1a2e),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.contact_mail,
+                          color: Color(0xFF667eea),
+                          size: 32,
+                        ),
+                        title: const Text(
+                          'İletişim Bilgileri',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Color(0xFFb0b0b8),
+                        ),
+                        onTap: () {
+                          context.push('/contact-info');
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
                     // Çıkış Butonu
                     Container(
                       decoration: BoxDecoration(
@@ -306,7 +369,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                         onTap: () async {
-                          await authService.signOut();
+                          await _authService.signOut();
                           if (context.mounted) {
                             context.pop();
                           }
