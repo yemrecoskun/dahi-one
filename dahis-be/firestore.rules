@@ -21,8 +21,11 @@ service cloud.firestore {
     }
 
     // Users - Sadece kendi verilerini okuyabilir/yazabilir
+    // Ancak authenticated kullanıcılar diğer kullanıcıların document'lerini
+    // sadece device kontrolü için okuyabilir (güvenlik: sadece devices field'ı kullanılacak)
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Device kontrolü için tüm authenticated kullanıcılar okuyabilir
+      allow write: if request.auth != null && request.auth.uid == userId; // Sadece kendi verilerini yazabilir
       allow create: if request.auth != null && request.auth.uid == userId;
     }
 
