@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.dahis.io"
+    namespace = "com.dahis.app"
     compileSdk = flutter.compileSdkVersion
     // NDK versiyonu belirtilmedi - gerekirse otomatik olarak kullanılacak
 
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.dahis.io"
+        applicationId = "com.dahis.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // flutter_nfc_kit requires minimum SDK 24

@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.dahis.io</string>
+	<string>com.dahis.app</string>
 	<key>PROJECT_ID</key>
 	<string>dahisio</string>
 	<key>STORAGE_BUCKET</key>

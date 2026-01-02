@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:412418089622:android:aebb3f5bce25fd398458b7",
         "android_client_info": {
-          "package_name": "com.dahis.io"
+          "package_name": "com.dahis.app"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "412418089622-ia1dv46dn4c68h5ak0tlaugpj91e5qm2.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.dahis.io"
+                "bundle_id": "com.dahis.app"
               }
             }
           ]

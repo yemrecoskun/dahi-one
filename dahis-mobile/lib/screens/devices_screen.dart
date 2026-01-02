@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'dart:typed_data';
 import '../services/auth_service.dart';
 import '../models/character.dart';
 import '../ios_nfc_service.dart';
@@ -37,19 +38,9 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Uygulama arka plana gittiğinde NFC okumayı durdur
     if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
-      if (_isNfcScanning) {
-        print('⚠️ Uygulama arka plana gitti, NFC durduruluyor...');
-        NfcManager.instance.stopSession().catchError((e) {
-          print('⚠️ NFC stop hatası: $e');
-        });
-        setState(() {
-          _isNfcScanning = false;
-        });
-        if (mounted) {
-          Navigator.of(context).pop(); // Dialog'u kapat
-        }
+      if (_isNfcScanning && !Platform.isIOS) {
+        _stopNfcSession();
       }
     }
   }
@@ -57,10 +48,12 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
   Future<void> _loadDevices() async {
     setState(() => _isLoading = true);
     final devices = await _authService.getUserDevices();
-    setState(() {
-      _devices = devices;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _devices = devices;
+        _isLoading = false;
+      });
+    }
   }
 
   Color _parseColor(String colorCode) {
@@ -78,119 +71,129 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
   }
 
   Future<void> _handleNfcScan() async {
-    // iOS'ta isAvailable() bazen yanlış sonuç verebilir
-    // Bu yüzden kontrolü atlayıp direkt okumayı deniyoruz
-    // Dialog göster - iOS'ta NFC session'ın çalışması için dialog gerekli
     if (!mounted) return;
     
-    setState(() {
-      _isNfcScanning = true;
-    });
+    setState(() => _isNfcScanning = true);
     
-    // Dialog'u göster ve session'ı dialog içinde başlat
-    if (mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => _NfcScanDialog(
-          onCancel: () async {
-            print('🛑 İptal butonuna basıldı, session durduruluyor...');
-            try {
-              await NfcManager.instance.stopSession();
-            } catch (e) {
-              print('⚠️ NFC stop hatası: $e');
-            }
-            setState(() {
-              _isNfcScanning = false;
-            });
-            if (mounted) {
-              Navigator.of(context).pop();
-            }
-          },
-          onTagDiscovered: (String nfcId) async {
-            // Tag bulundu, dialog'u kapat ve işlemi tamamla
-            if (mounted) {
-              setState(() {
-                _isNfcScanning = false;
-              });
-              Navigator.of(context).pop();
-            }
-            
-            // Tag ID'yi küçük harfe çevir (Firestore document ID'leri case-sensitive)
-            final normalizedNfcId = nfcId.toLowerCase();
-            print('🌐 Backend\'e istek gönderiliyor: $normalizedNfcId (orijinal: $nfcId)');
-            
-            try {
-              final response = await http.get(
-                Uri.parse('https://us-central1-dahisio.cloudfunctions.net/dahiosInfo?dahiosId=$normalizedNfcId'),
-              );
-
-              print('📡 Backend yanıtı: ${response.statusCode}');
-              print('📡 Backend body: ${response.body}');
-              
-              if (response.statusCode == 200) {
-                final responseData = json.decode(response.body);
-                print('✅ Backend data: $responseData');
-                
-                // Backend response formatı: {status: "success", data: {...}}
-                final data = responseData['data'];
-                final characterId = data?['characterId'] ?? normalizedNfcId;
-                
-                // Cihazın zaten ekli olup olmadığını kontrol et
-                final isAlreadyAdded = _devices.any(
-                  (device) => (device['dahiosId'] as String? ?? '').toLowerCase() == normalizedNfcId,
-                );
-                
-                if (isAlreadyAdded) {
-                  // Cihaz zaten ekli
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Bu cihaz zaten ekli: $characterId'),
-                        backgroundColor: Colors.orange,
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                  return;
-                }
-                
-                // Kullanıcının cihazlarına ekle (normalized ID ile)
-                await _authService.addDevice(normalizedNfcId);
-                
-                // Cihaz listesini yenile
-                await _loadDevices();
-                
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Cihaz başarıyla tanımlandı: $characterId'),
-                      backgroundColor: Colors.green,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-              } else {
-                final errorBody = response.body;
-                print('❌ Backend hatası: $errorBody');
-                throw Exception('dahiOS tag bulunamadı (ID: $normalizedNfcId)');
-              }
-            } catch (e) {
-              print('❌ Backend istek hatası: $e');
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Hata: ${e.toString()}'),
-                    backgroundColor: Colors.red,
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              }
-            }
-          },
-        ),
-      );
+    if (Platform.isIOS) {
+      await _handleIosNfcScan();
+    } else {
+      await _handleAndroidNfcScan();
     }
+  }
+
+  Future<void> _handleIosNfcScan() async {
+    try {
+      print('🚀 iOS Native NFC başlatılıyor...');
+      final nfcId = await IosNfc.startSession();
+      print('✅ NFC ID okundu: $nfcId');
+      await _processNfcId(nfcId);
+    } catch (e) {
+      print('❌ iOS NFC hatası: $e');
+      if (mounted) {
+        _showError('NFC okuma hatası: ${e.toString()}');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isNfcScanning = false);
+      }
+    }
+  }
+
+  Future<void> _handleAndroidNfcScan() async {
+    if (!mounted) return;
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _NfcScanDialog(
+        onCancel: () {
+          _stopNfcSession();
+          setState(() => _isNfcScanning = false);
+          Navigator.of(context).pop();
+        },
+        onTagDiscovered: (nfcId) async {
+          Navigator.of(context).pop();
+          await _processNfcId(nfcId);
+        },
+      ),
+    );
+  }
+
+  Future<void> _stopNfcSession() async {
+    try {
+      await NfcManager.instance.stopSession();
+    } catch (e) {
+      print('⚠️ NFC stop hatası: $e');
+    }
+  }
+
+  Future<void> _processNfcId(String nfcId) async {
+    if (!mounted) return;
+    
+    setState(() => _isNfcScanning = false);
+    
+    final normalizedNfcId = nfcId.toLowerCase();
+    print('🌐 Backend\'e istek gönderiliyor: $normalizedNfcId');
+
+    try {
+      final response = await http.get(
+        Uri.parse('https://us-central1-dahisio.cloudfunctions.net/dahiosInfo?dahiosId=$normalizedNfcId'),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final data = responseData['data'];
+        final characterId = data?['characterId'] ?? normalizedNfcId;
+
+        // Duplicate kontrolü - güncel listeyi kullan
+        final currentDevices = await _authService.getUserDevices();
+        final isAlreadyAdded = currentDevices.any(
+          (device) => (device['dahiosId'] as String? ?? '').toLowerCase() == normalizedNfcId,
+        );
+
+        if (isAlreadyAdded) {
+          if (mounted) {
+            setState(() => _isNfcScanning = false);
+            _showMessage('Bu cihaz zaten ekli: $characterId', Colors.orange);
+          }
+          return;
+        }
+
+        // Cihazı ekle
+        await _authService.addDevice(normalizedNfcId);
+        
+        // Cihaz listesini yenile ve state'i güncelle
+        await _loadDevices();
+
+        if (mounted) {
+          setState(() => _isNfcScanning = false);
+          _showMessage('Cihaz başarıyla tanımlandı: $characterId', Colors.green);
+        }
+      } else {
+        throw Exception('dahiOS tag bulunamadı (ID: $normalizedNfcId)');
+      }
+    } catch (e) {
+      print('❌ Backend istek hatası: $e');
+      if (mounted) {
+        _showError('Hata: ${e.toString()}');
+      }
+    }
+  }
+
+  void _showMessage(String message, Color color) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showError(String message) {
+    _showMessage(message, Colors.red);
   }
 
   @override
@@ -206,308 +209,327 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _devices.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.watch_off,
-                        size: 80,
-                        color: Color(0xFFb0b0b8),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Henüz cihazınız yok',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Color(0xFFb0b0b8),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Mağazadan cihazı satın alarak veya cihazınızı okutarak \ncihazlarınızı burada görebilirsiniz',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFFb0b0b8),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF667eea),
-                              Color(0xFF764ba2),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.push('/store');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
-                          child: const Text(
-                            'Mağazaya Git',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1a1a2e),
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(
-                            color: const Color(0xFF667eea).withValues(alpha: 0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: _handleNfcScan,
-                          icon: const Icon(Icons.nfc, color: Color(0xFF667eea)),
-                          label: const Text(
-                            'Cihaz Tanımla',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF667eea),
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 16,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadDevices,
-                  child: CustomScrollView(
-                    slivers: [
-                      // Butonlar
-                      SliverToBoxAdapter(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF667eea),
-                                        Color(0xFF764ba2),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      context.push('/store');
-                                    },
-                                    icon: const Icon(Icons.shopping_bag, color: Colors.white),
-                                    label: const Text(
-                                      'Mağazaya Git',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF1a1a2e),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: const Color(0xFF667eea).withValues(alpha: 0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: ElevatedButton.icon(
-                                    onPressed: _handleNfcScan,
-                                    icon: const Icon(Icons.nfc, color: Color(0xFF667eea)),
-                                    label: const Text(
-                                      'Cihaz Tanımla',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF667eea),
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Cihaz Listesi
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                      final device = _devices[index];
-                      final characterId = device['characterId'] as String? ?? '';
-                      final dahiosId = device['dahiosId'] as String? ?? '';
-                      final characterName = _getCharacterName(characterId);
-                      final characterColor = _getCharacterColor(characterId);
-                      final isActive = device['isActive'] as bool? ?? false;
+              ? _buildEmptyState()
+              : _buildDevicesList(),
+    );
+  }
 
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              characterColor.withValues(alpha: 0.2),
-                              characterColor.withValues(alpha: 0.1),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: characterColor.withValues(alpha: 0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          leading: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: characterColor.withValues(alpha: 0.2),
-                            ),
-                            child: Center(
-                              child: Text(
-                                characterName[0],
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: characterColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            characterName,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                'dahiOS ID: ${dahiosId.substring(0, 8)}...',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFFb0b0b8),
-                                  fontFamily: 'monospace',
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isActive
-                                          ? Colors.green.withValues(alpha: 0.2)
-                                          : Colors.grey.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      isActive ? 'Aktif' : 'Pasif',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                        color: isActive ? Colors.green : Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: characterColor,
-                          ),
-                          onTap: () {
-                            context.push(
-                              '/device/${dahiosId}?characterId=$characterId&isActive=$isActive',
-                            );
-                          },
-                        ),
-                      );
-                            },
-                            childCount: _devices.length,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.watch_off,
+            size: 80,
+            color: Color(0xFFb0b0b8),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Henüz cihazınız yok',
+            style: TextStyle(
+              fontSize: 18,
+              color: Color(0xFFb0b0b8),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Mağazadan cihazı satın alarak veya cihazınızı okutarak \ncihazlarınızı burada görebilirsiniz',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFFb0b0b8),
+            ),
+          ),
+          const SizedBox(height: 32),
+          _buildEmptyStateStoreButton(),
+          const SizedBox(height: 16),
+          _buildEmptyStateNfcButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDevicesList() {
+    return RefreshIndicator(
+      onRefresh: _loadDevices,
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(child: _buildStoreButton()),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildNfcButton()),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => _buildDeviceCard(_devices[index]),
+                childCount: _devices.length,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyStateStoreButton() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF667eea),
+            Color(0xFF764ba2),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: ElevatedButton(
+        onPressed: () {
+          context.push('/store');
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 32,
+            vertical: 16,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        child: const Text(
+          'Mağazaya Git',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyStateNfcButton() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1a1a2e),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(
+          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: ElevatedButton.icon(
+        onPressed: _isNfcScanning ? null : _handleNfcScan,
+        icon: const Icon(Icons.nfc, color: Color(0xFF667eea)),
+        label: const Text(
+          'Cihaz Tanımla',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF667eea),
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 32,
+            vertical: 16,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoreButton() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ElevatedButton.icon(
+        onPressed: () => context.push('/store'),
+        icon: const Icon(Icons.shopping_bag, color: Colors.white),
+        label: const Text(
+          'Mağazaya Git',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNfcButton() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1a1a2e),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: ElevatedButton.icon(
+        onPressed: _isNfcScanning ? null : _handleNfcScan,
+        icon: const Icon(Icons.nfc, color: Color(0xFF667eea)),
+        label: const Text(
+          'Cihaz Tanımla',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF667eea),
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeviceCard(Map<String, dynamic> device) {
+    final characterId = device['characterId'] as String? ?? '';
+    final dahiosId = device['dahiosId'] as String? ?? '';
+    final characterName = _getCharacterName(characterId);
+    final characterColor = _getCharacterColor(characterId);
+    final isActive = device['isActive'] as bool? ?? false;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            characterColor.withValues(alpha: 0.2),
+            characterColor.withValues(alpha: 0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: characterColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: _buildCharacterAvatar(characterName, characterColor),
+        title: Text(
+          characterName,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        subtitle: _buildDeviceSubtitle(dahiosId, isActive),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: characterColor,
+        ),
+        onTap: () {
+          context.push(
+            '/device/${dahiosId}?characterId=$characterId&isActive=$isActive',
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCharacterAvatar(String characterName, Color color) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: 0.2),
+      ),
+      child: Center(
+        child: Text(
+          characterName[0],
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeviceSubtitle(String dahiosId, bool isActive) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 4),
+        Text(
+          'dahiOS ID: ${dahiosId.length > 8 ? '${dahiosId.substring(0, 8)}...' : dahiosId}',
+          style: const TextStyle(
+            fontSize: 12,
+            color: Color(0xFFb0b0b8),
+            fontFamily: 'monospace',
+          ),
+        ),
+        const SizedBox(height: 4),
+        _buildStatusBadge(isActive),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(bool isActive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isActive
+            ? Colors.green.withValues(alpha: 0.2)
+            : Colors.grey.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        isActive ? 'Aktif' : 'Pasif',
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: isActive ? Colors.green : Colors.grey,
+        ),
+      ),
     );
   }
 }
 
-// NFC Scan Dialog Widget - Session'ı dialog içinde başlat
+// NFC Scan Dialog Widget
 class _NfcScanDialog extends StatefulWidget {
   final VoidCallback onCancel;
   final Function(String) onTagDiscovered;
@@ -520,6 +542,7 @@ class _NfcScanDialog extends StatefulWidget {
   @override
   State<_NfcScanDialog> createState() => _NfcScanDialogState();
 }
+
 class _NfcScanDialogState extends State<_NfcScanDialog> {
   bool _scanning = false;
   String? _error;
@@ -530,39 +553,13 @@ class _NfcScanDialogState extends State<_NfcScanDialog> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 300));
       if (mounted) {
-        _startNfcNative();
+        _startNfc();
       }
     });
-  }
-
-  Future<void> _startNfcNative() async {
-    setState(() {
-      _scanning = true;
-      _error = null;
-    });
-
-    try {
-      print('🚀 Native iOS NFC session başlatılıyor...');
-      final nfcId = await IosNfc.startSession();
-      print('✅ NFC ID okundu: $nfcId');
-
-      if (mounted) {
-        // Native iOS NFC session otomatik olarak kapanır
-        widget.onTagDiscovered(nfcId);
-      }
-    } catch (e) {
-      print('❌ Native NFC hatası: $e');
-      if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _scanning = false;
-        });
-      }
-    }
   }
 
   Future<void> _startNfc() async {
-    print('🚀 NFC session başlatılıyor (nfc_manager)');
+    if (!mounted) return;
     
     setState(() {
       _scanning = true;
@@ -570,118 +567,18 @@ class _NfcScanDialogState extends State<_NfcScanDialog> {
     });
 
     try {
-      // iOS'ta NFC kullanılabilirliğini kontrol et
-      final isAvailable = await NfcManager.instance.isAvailable();
-      if (!isAvailable) {
-        throw Exception('NFC özelliği bu cihazda desteklenmiyor veya kapalı');
-      }
-
-      print('✅ NFC kullanılabilir, tag okuma başlatılıyor...');
-      
-      // NFC session başlat
+      // In nfc_manager 3.x, we start the session directly
+      // Availability errors will be caught in the catch block
       await NfcManager.instance.startSession(
         onDiscovered: (NfcTag tag) async {
-          print('🔥🔥🔥 TAG ALGILANDI 🔥🔥🔥');
-          print('📱 Tag handle: ${tag.handle}');
-          
           try {
-            String? nfcId;
-            
-            // ÖNCE NDEF mesajını oku (tag'lere yazılan URL'den UID almak için)
-            final ndef = Ndef.from(tag);
-            if (ndef != null) {
-              print('📄 NDEF formatı bulundu, mesaj okunuyor...');
-              try {
-                final ndefMessage = await ndef.read();
-                print('📄 NDEF Message records: ${ndefMessage.records.length}');
-                
-                if (ndefMessage.records.isNotEmpty) {
-                  final firstRecord = ndefMessage.records.first;
-                  print('📄 First record type: ${firstRecord.type}');
-                  print('📄 First record payload: ${firstRecord.payload}');
-                  
-                  // Payload'dan string oluştur
-                  if (firstRecord.payload != null && firstRecord.payload!.isNotEmpty) {
-                    final payload = firstRecord.payload!;
-                    // İlk byte language code length olabilir (Text Record için)
-                    final langLen = payload.isNotEmpty ? (payload[0] & 0x3F) : 0;
-                    if (langLen > 0 && payload.length > langLen) {
-                      nfcId = String.fromCharCodes(payload.sublist(langLen + 1)).trim();
-                    } else {
-                      nfcId = String.fromCharCodes(payload).trim();
-                    }
-                    print('✅ NDEF Payload string: $nfcId');
-                    
-                    // URL formatından UID'yi çıkar
-                    if (nfcId != null && nfcId.isNotEmpty) {
-                      if (nfcId.startsWith('http://') || nfcId.startsWith('https://')) {
-                        final uri = Uri.tryParse(nfcId);
-                        if (uri != null && uri.pathSegments.isNotEmpty) {
-                          nfcId = uri.pathSegments.last;
-                          print('✅ URL\'den UID çıkarıldı: $nfcId');
-                        }
-                      } else if (nfcId.contains('/')) {
-                        nfcId = nfcId.split('/').last;
-                        print('✅ Path\'den UID çıkarıldı: $nfcId');
-                      }
-                    }
-                  }
-                }
-              } catch (e) {
-                print('⚠️ NDEF okuma hatası: $e');
-              }
-            }
-            
-            // Eğer NDEF'ten UID alınamadıysa, tag ID'yi kullan (fallback)
-            if (nfcId == null || nfcId.isEmpty) {
-              print('📱 NDEF\'ten UID alınamadı, tag ID kullanılıyor...');
-              print('📱 Tag data: ${tag.data}');
-              
-              // iOS/Android'de tag ID genellikle data içinde identifier olarak gelir
-              final nfca = tag.data['nfca'];
-              final nfcb = tag.data['nfcb'];
-              final nfcf = tag.data['nfcf'];
-              final nfcv = tag.data['nfcv'];
-              
-              dynamic identifier;
-              if (nfca != null && nfca['identifier'] != null) {
-                identifier = nfca['identifier'];
-              } else if (nfcb != null && nfcb['identifier'] != null) {
-                identifier = nfcb['identifier'];
-              } else if (nfcf != null && nfcf['identifier'] != null) {
-                identifier = nfcf['identifier'];
-              } else if (nfcv != null && nfcv['identifier'] != null) {
-                identifier = nfcv['identifier'];
-              }
-              
-              if (identifier != null) {
-                if (identifier is List) {
-                  nfcId = (identifier as List<int>)
-                      .map((e) => e.toRadixString(16).padLeft(2, '0'))
-                      .join();
-                  print('✅ Tag ID kullanıldı (List): $nfcId');
-                } else if (identifier is String) {
-                  nfcId = identifier;
-                  print('✅ Tag ID kullanıldı (String): $nfcId');
-                }
-              }
-            }
-            
-            if (nfcId == null || nfcId.isEmpty) {
-              throw Exception('NFC ID okunamadı');
-            }
-            
-            print('✅ NFC ID okundu: $nfcId');
-            
-            // Session'ı durdur
+            final nfcId = await _extractNfcId(tag);
             await NfcManager.instance.stopSession();
             
-            // Callback'i çağır
             if (mounted) {
               widget.onTagDiscovered(nfcId);
             }
           } catch (e) {
-            print('❌ Tag işleme hatası: $e');
             await NfcManager.instance.stopSession();
             if (mounted) {
               setState(() {
@@ -698,16 +595,60 @@ class _NfcScanDialogState extends State<_NfcScanDialog> {
         },
       );
     } catch (e) {
-      print('❌ NFC session hatası: $e');
-      setState(() {
-        _error = e.toString();
-        _scanning = false;
-      });
-      try {
-        await NfcManager.instance.stopSession();
-      } catch (_) {}
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _scanning = false;
+        });
+      }
     }
   }
+  
+Future<String> _extractNfcId(NfcTag tag) async {
+  String? nfcId;
+
+  try {
+    print(tag);
+    final ndef = Ndef.from(tag);
+    if (ndef == null) {
+      throw Exception('NDEF desteklenmiyor');
+    }
+
+    final message = await ndef.read();
+    if (message.records.isEmpty) {
+      throw Exception('NDEF boş');
+    }
+
+    for (final record in message.records) {
+      // URI / URL record
+      if (record.typeNameFormat == NdefTypeNameFormat.nfcWellknown &&
+          String.fromCharCodes(record.type) == 'U') {
+        final payload = record.payload;
+
+        if (payload.isEmpty) continue;
+
+        // URI prefix byte’ını atla
+        final uriString = String.fromCharCodes(payload.skip(1)).trim();
+        print('🔗 NDEF URL: $uriString');
+
+        final uri = Uri.tryParse(uriString);
+        if (uri != null && uri.pathSegments.isNotEmpty) {
+          nfcId = uri.pathSegments.last.toLowerCase();
+          print('✅ UID bulundu: $nfcId');
+          break;
+        }
+      }
+    }
+  } catch (e) {
+    print('❌ NDEF okuma hatası: $e');
+  }
+
+  if (nfcId == null || nfcId.isEmpty) {
+    throw Exception('NFC ID okunamadı');
+  }
+
+  return nfcId;
+}
 
   @override
   void dispose() {
