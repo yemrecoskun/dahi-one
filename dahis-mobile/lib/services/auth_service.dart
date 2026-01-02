@@ -302,5 +302,21 @@ class AuthService {
       rethrow; // Hata mesajını yukarı fırlat
     }
   }
+
+  // Cihaz sil
+  Future<void> removeDevice(String dahiosId) async {
+    try {
+      if (currentUser == null || _firestore == null) return;
+
+      final normalizedDahiosId = dahiosId.toLowerCase();
+      
+      await _firestore!.collection('users').doc(currentUser!.uid).update({
+        'devices': FieldValue.arrayRemove([normalizedDahiosId]),
+      });
+    } catch (e) {
+      print('Remove device error: $e');
+      rethrow; // Hata mesajını yukarı fırlat
+    }
+  }
 }
 

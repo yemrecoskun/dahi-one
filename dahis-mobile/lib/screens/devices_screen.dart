@@ -209,6 +209,53 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
     _showMessage(message, Colors.red);
   }
 
+  Future<void> _showDeleteConfirmation(String dahiosId, String characterName) async {
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cihazı Sil'),
+        content: Text('$characterName cihazını silmek istediğinizden emin misiniz?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('İptal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Sil'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _deleteDevice(dahiosId, characterName);
+    }
+  }
+
+  Future<void> _deleteDevice(String dahiosId, String characterName) async {
+    if (!mounted) return;
+
+    try {
+      await _authService.removeDevice(dahiosId);
+      await _loadDevices();
+
+      if (mounted) {
+        _showMessage('$characterName cihazı başarıyla silindi', Colors.green);
+      }
+    } catch (e) {
+      print('❌ Cihaz silme hatası: $e');
+      if (mounted) {
+        _showError('Cihaz silinirken bir hata oluştu: ${e.toString()}');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -456,27 +503,39 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
           width: 1,
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: _buildCharacterAvatar(characterName, characterColor),
-        title: Text(
-          characterName,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
+      child: Row(
+        children: [
+          Expanded(
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16),
+              leading: _buildCharacterAvatar(characterName, characterColor),
+              title: Text(
+                characterName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              subtitle: _buildDeviceSubtitle(dahiosId, isActive),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: characterColor,
+              ),
+              onTap: () {
+                context.push(
+                  '/device/${dahiosId}?characterId=$characterId&isActive=$isActive',
+                );
+              },
+            ),
           ),
-        ),
-        subtitle: _buildDeviceSubtitle(dahiosId, isActive),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: characterColor,
-        ),
-        onTap: () {
-          context.push(
-            '/device/${dahiosId}?characterId=$characterId&isActive=$isActive',
-          );
-        },
+          // Silme butonu
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.red),
+            onPressed: () => _showDeleteConfirmation(dahiosId, characterName),
+            tooltip: 'Cihazı sil',
+          ),
+        ],
       ),
     );
   }
