@@ -266,15 +266,40 @@ class AuthService {
   }
 
   // Cihaz ekle (satın alma sonrası)
+  // Bir etiket sadece bir kullanıcıya tanımlanabilir
   Future<void> addDevice(String dahiosId) async {
     try {
       if (currentUser == null || _firestore == null) return;
 
+      // Önce bu etiketin başka bir kullanıcıya ait olup olmadığını kontrol et
+      final normalizedDahiosId = dahiosId.toLowerCase();
+      final usersSnapshot = await _firestore!.collection('users').get();
+      
+      for (final userDoc in usersSnapshot.docs) {
+        // Mevcut kullanıcıyı atla
+        if (userDoc.id == currentUser!.uid) continue;
+        
+        final userData = userDoc.data();
+        // Sadece devices field'ını kullan (güvenlik için)
+        final deviceIds = userData['devices'] as List<dynamic>? ?? [];
+        
+        // Bu etiket başka bir kullanıcıya ait mi?
+        final isOwnedByOtherUser = deviceIds.any(
+          (deviceId) => (deviceId as String).toLowerCase() == normalizedDahiosId,
+        );
+        
+        if (isOwnedByOtherUser) {
+          throw Exception('Bu etiket başka bir kullanıcıya tanımlı. Bir etiket sadece bir kullanıcıya tanımlanabilir.');
+        }
+      }
+
+      // Etiket başka bir kullanıcıya ait değilse, ekle
       await _firestore!.collection('users').doc(currentUser!.uid).update({
-        'devices': FieldValue.arrayUnion([dahiosId]),
+        'devices': FieldValue.arrayUnion([normalizedDahiosId]),
       });
     } catch (e) {
       print('Add device error: $e');
+      rethrow; // Hata mesajını yukarı fırlat
     }
   }
 }

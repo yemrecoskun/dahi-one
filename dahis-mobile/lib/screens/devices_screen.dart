@@ -161,14 +161,26 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
         }
 
         // Cihazı ekle
-        await _authService.addDevice(normalizedNfcId);
-        
-        // Cihaz listesini yenile ve state'i güncelle
-        await _loadDevices();
+        try {
+          await _authService.addDevice(normalizedNfcId);
+          
+          // Cihaz listesini yenile ve state'i güncelle
+          await _loadDevices();
 
-        if (mounted) {
-          setState(() => _isNfcScanning = false);
-          _showMessage('Cihaz başarıyla tanımlandı: $characterId', Colors.green);
+          if (mounted) {
+            setState(() => _isNfcScanning = false);
+            _showMessage('Cihaz başarıyla tanımlandı: $characterId', Colors.green);
+          }
+        } catch (e) {
+          // addDevice hatası (örneğin etiket başka kullanıcıya ait)
+          if (mounted) {
+            setState(() => _isNfcScanning = false);
+            final errorMessage = e.toString().contains('başka bir kullanıcıya tanımlı')
+                ? 'Bu etiket başka bir kullanıcıya tanımlı. Bir etiket sadece bir kullanıcıya tanımlanabilir.'
+                : 'Cihaz eklenirken bir hata oluştu: ${e.toString()}';
+            _showError(errorMessage);
+          }
+          return;
         }
       } else {
         throw Exception('dahiOS tag bulunamadı (ID: $normalizedNfcId)');
@@ -176,6 +188,7 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
     } catch (e) {
       print('❌ Backend istek hatası: $e');
       if (mounted) {
+        setState(() => _isNfcScanning = false);
         _showError('Hata: ${e.toString()}');
       }
     }
@@ -659,7 +672,7 @@ Future<String> _extractNfcId(NfcTag tag) async {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('NFC Okutun'),
+      title: const Text('dahiOS etiketini Okutun'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
