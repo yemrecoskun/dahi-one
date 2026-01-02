@@ -150,6 +150,7 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
     let redirectUrl;
     const redirectType = dahiosData.redirectType || "character";
     const characterId = dahiosData.characterId;
+    const customUrl = dahiosData.customUrl || "";
 
     switch (redirectType) {
       case "character":
@@ -162,10 +163,29 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
         break;
       case "campaign":
         // Custom URL varsa onu kullan, yoksa ana sayfa
-        redirectUrl = dahiosData.customUrl || "https://www.dahis.io";
+        redirectUrl = customUrl || "https://www.dahis.io";
+        break;
+      case "instagram":
+        // Instagram profil linki
+        const instagramHandle = customUrl.replace(/^@?/, ""); // @ işaretini kaldır
+        redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
+        break;
+      case "whatsapp":
+        // WhatsApp mesaj linki (numara sadece rakamlar olmalı)
+        const whatsappNumber = customUrl.replace(/\D/g, ""); // Sadece rakamlar
+        redirectUrl = `https://wa.me/${whatsappNumber}`;
+        break;
+      case "phone":
+        // Telefon arama linki
+        const phoneNumber = customUrl.replace(/\D/g, ""); // Sadece rakamlar
+        redirectUrl = `tel:${phoneNumber}`;
+        break;
+      case "email":
+        // E-posta linki
+        redirectUrl = `mailto:${customUrl}`;
         break;
       default:
-        redirectUrl = dahiosData.customUrl ||
+        redirectUrl = customUrl ||
           `https://www.dahis.io/character/${characterId}`;
     }
 
@@ -372,18 +392,34 @@ exports.dahiosCreate = onRequest({cors: true}, async (req, res) => {
       });
     }
 
-    const validRedirectTypes = ["character", "store", "campaign"];
+    const validRedirectTypes = [
+      "character",
+      "store",
+      "campaign",
+      "instagram",
+      "whatsapp",
+      "phone",
+      "email",
+    ];
     if (!redirectType || !validRedirectTypes.includes(redirectType)) {
       return res.status(400).json({
         status: "error",
-        message: "redirectType must be 'character', 'store', or 'campaign'",
+        message:
+          "redirectType must be one of: character, store, campaign, instagram, whatsapp, phone, email",
       });
     }
 
-    if (redirectType === "campaign" && !customUrl) {
+    const requiresCustomUrl = [
+      "campaign",
+      "instagram",
+      "whatsapp",
+      "phone",
+      "email",
+    ];
+    if (requiresCustomUrl.includes(redirectType) && !customUrl) {
       return res.status(400).json({
         status: "error",
-        message: "customUrl is required when redirectType is 'campaign'",
+        message: `customUrl is required when redirectType is '${redirectType}'`,
       });
     }
 
@@ -479,21 +515,43 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
     }
 
     if (redirectType !== undefined) {
-      const validRedirectTypes = ["character", "store", "campaign"];
+      const validRedirectTypes = [
+        "character",
+        "store",
+        "campaign",
+        "instagram",
+        "whatsapp",
+        "phone",
+        "email",
+      ];
       if (!validRedirectTypes.includes(redirectType)) {
         return res.status(400).json({
           status: "error",
-          message: "redirectType must be 'character', 'store', or 'campaign'",
+          message:
+            "redirectType must be one of: character, store, campaign, instagram, whatsapp, phone, email",
         });
       }
       updateData.redirectType = redirectType;
     }
 
-    if (redirectType === "campaign" && customUrl === undefined &&
-        !tagData.customUrl) {
+    // Custom URL gerektiren redirect type'ları kontrol et
+    const requiresCustomUrl = [
+      "campaign",
+      "instagram",
+      "whatsapp",
+      "phone",
+      "email",
+    ];
+    if (
+      redirectType &&
+      requiresCustomUrl.includes(redirectType) &&
+      customUrl === undefined &&
+      !tagData.customUrl
+    ) {
       return res.status(400).json({
         status: "error",
-        message: "customUrl is required when redirectType is 'campaign'",
+        message:
+          `customUrl is required when redirectType is '${redirectType}'`,
       });
     }
 
