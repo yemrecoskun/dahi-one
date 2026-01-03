@@ -16,24 +16,28 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  bool _isInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // URL'den index'i al
-    try {
-      final uri = GoRouterState.of(context).uri;
-      if (uri.path == '/characters') {
-        _currentIndex = 1;
-      } else if (uri.path == '/seasons') {
-        _currentIndex = 2;
-      } else if (uri.path == '/store') {
-        _currentIndex = 3;
-      } else {
-        _currentIndex = 0;
+    // Sadece ilk yüklemede URL'den index'i al
+    if (!_isInitialized) {
+      try {
+        final uri = GoRouterState.of(context).uri;
+        if (uri.path == '/characters') {
+          _currentIndex = 1;
+        } else if (uri.path == '/seasons') {
+          _currentIndex = 2;
+        } else if (uri.path == '/store') {
+          _currentIndex = 3;
+        } else {
+          _currentIndex = 0;
+        }
+        _isInitialized = true;
+      } catch (e) {
+        _isInitialized = true;
       }
-    } catch (e) {
-      // Hata durumunda 0'da kal
     }
   }
 
@@ -45,41 +49,20 @@ class _MainScreenState extends State<MainScreen> {
   ];
 
   PreferredSizeWidget _buildAppBar(int index) {
-    final titles = [
-      null, // Ana sayfa için DahisLogo
-      'Onelarımız',
-      'Sezonlar',
-      'Mağaza',
-    ];
-
     return AppBar(
-      title: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              if (index != 0) {
-                setState(() {
-                  _currentIndex = 0;
-                });
-              }
-            },
-            child: const DahisLogo(
-              fontSize: 24,
-              showShadow: true,
-              animated: false,
-            ),
-          ),
-          if (index != 0) ...[
-            const SizedBox(width: 16),
-            Text(
-              titles[index]!,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ],
+      title: GestureDetector(
+        onTap: () {
+          if (index != 0) {
+            setState(() {
+              _currentIndex = 0;
+            });
+          }
+        },
+        child: const DahisLogo(
+          fontSize: 24,
+          showShadow: true,
+          animated: false,
+        ),
       ),
       centerTitle: false,
       backgroundColor: const Color(0xFF0a0a0f),
