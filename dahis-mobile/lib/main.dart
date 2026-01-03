@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'screens/main_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/characters_screen.dart';
+import 'screens/seasons_screen.dart';
 import 'screens/character_detail_screen.dart';
 import 'screens/season_detail_screen.dart';
 import 'screens/episode_detail_screen.dart';
@@ -14,6 +17,8 @@ import 'screens/login_screen.dart';
 import 'screens/devices_screen.dart';
 import 'screens/device_detail_screen.dart';
 import 'screens/contact_info_screen.dart';
+import 'widgets/bottom_nav_bar.dart';
+import 'widgets/logo.dart';
 import 'widgets/update_dialog.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -140,7 +145,15 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const MainScreen(),
+    ),
+    GoRoute(
+      path: '/characters',
+      builder: (context, state) => const MainScreen(),
+    ),
+    GoRoute(
+      path: '/seasons',
+      builder: (context, state) => const MainScreen(),
     ),
     GoRoute(
       path: '/character/:id',
@@ -169,7 +182,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/store',
-      builder: (context, state) => const StoreScreen(),
+      builder: (context, state) => const MainScreen(),
     ),
     GoRoute(
       path: '/profile',

@@ -37,25 +37,16 @@ class _StoreScreenState extends State<StoreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mağaza'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF667eea),
-              ),
+    return Stack(
+      children: [
+        WebViewWidget(controller: _controller),
+        if (_isLoading)
+          const Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFF667eea),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
