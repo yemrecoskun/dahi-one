@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/character.dart';
 import '../services/data_service.dart';
-import '../services/purchase_service.dart';
 
 class CharacterDetailScreen extends StatefulWidget {
   final String characterId;
@@ -19,34 +18,13 @@ class CharacterDetailScreen extends StatefulWidget {
 
 class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   final DataService _dataService = DataService();
-  final PurchaseService _purchaseService = PurchaseService();
   Character? _character;
   bool _isLoading = true;
-  bool _isPurchasing = false;
 
   @override
   void initState() {
     super.initState();
     _loadCharacter();
-    _initializePurchase();
-  }
-
-  Future<void> _initializePurchase() async {
-    await _purchaseService.initialize();
-    await _purchaseService.loadProducts();
-    
-    // Satın alma başarılı olduğunda callback
-    _purchaseService.onPurchaseSuccess = (productId) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Satın alma başarılı! Teşekkürler.'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    };
   }
 
   Future<void> _loadCharacter() async {
@@ -74,44 +52,6 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     final url = Uri.parse('https://dahis.shop/one-$characterId');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _handlePurchase() async {
-    if (_character == null) return;
-
-    setState(() {
-      _isPurchasing = true;
-    });
-
-    try {
-      final success = await _purchaseService.purchaseCharacter(_character!.id);
-      if (!success) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Satın alma başlatılamadı. Lütfen tekrar deneyin.'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      print('⚠️  Satın alma hatası: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Satın alma sırasında bir hata oluştu: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isPurchasing = false;
-        });
-      }
     }
   }
 
@@ -263,60 +203,25 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   _buildStatBar('Hız', 0.80, color),
                   const SizedBox(height: 32),
 
-                  // Price Display
-                  Center(
-                    child: Text(
-                      PurchaseService.formatPrice(PurchaseService.price),
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: color,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
                   // Buy Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _isPurchasing ? null : _handlePurchase,
+                      onPressed: () => _goToStore(character.id),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: color,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        disabledBackgroundColor: color.withValues(alpha: 0.5),
                       ),
-                      child: _isPurchasing
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Text(
-                              'SATIN AL',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Alternative: Web Store Link
-                  TextButton(
-                    onPressed: () => _goToStore(character.id),
-                    child: const Text(
-                      'Web mağazadan satın al',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFFb0b0b8),
+                      child: const Text(
+                        'SATIN AL',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
