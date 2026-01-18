@@ -35,7 +35,6 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('⚠️  Karakter yüklenirken hata: $e');
       // Hata durumunda local data kullan
       setState(() {
         _character = Character.getCharacters()[widget.characterId];

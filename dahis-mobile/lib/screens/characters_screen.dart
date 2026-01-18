@@ -37,7 +37,6 @@ class _CharactersScreenState extends State<CharactersScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('⚠️  Veri yüklenirken hata: $e');
       setState(() {
         _characters = Character.getCharacters();
         _isLoading = false;

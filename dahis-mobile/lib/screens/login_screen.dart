@@ -84,7 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } on PlatformException catch (e) {
       // Platform exception - native tarafından gelen hata
-      print('Google sign in PlatformException in UI: ${e.code} - ${e.message}');
       if (mounted) {
         String errorMessage = 'Google ile giriş hatası oluştu.';
         if (e.code == 'sign_in_failed' || 
@@ -100,24 +99,22 @@ class _LoginScreenState extends State<LoginScreen> {
         CustomToast.showError(context, errorMessage);
       }
     } catch (e, stackTrace) {
-      // Tüm hataları yakala ve logla
-      print('Google sign in error in UI: $e');
-      print('Stack trace: $stackTrace');
       if (mounted) {
-        String errorMessage = 'Google ile giriş hatası oluştu.';
-        if (e.toString().contains('network') || e.toString().contains('connection')) {
+        String errorMessage = 'Google ile giriş yapılamadı.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
           errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+        } else if (errorStr.contains('cancelled') || errorStr.contains('canceled')) {
           // Kullanıcı iptal etti, mesaj gösterme
           return;
-        } else if (e.toString().contains('yapılandırma') || 
-                   e.toString().contains('GoogleService-Info.plist') ||
-                   e.toString().contains('configuration') ||
-                   e.toString().contains('clientID') ||
-                   e.toString().contains('GIDClientID')) {
-          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
-        } else if (e.toString().contains('Firebase başlatılamadı')) {
-          errorMessage = 'Firebase başlatılamadı. Lütfen uygulamayı yeniden başlatın.';
+        } else if (errorStr.contains('yapılandırma') || 
+                   errorStr.contains('googleservice-info.plist') ||
+                   errorStr.contains('configuration') ||
+                   errorStr.contains('clientid') ||
+                   errorStr.contains('gidclientid')) {
+          errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+        } else if (errorStr.contains('firebase başlatılamadı')) {
+          errorMessage = 'Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.';
         }
         CustomToast.showError(context, errorMessage);
       }
@@ -148,20 +145,21 @@ class _LoginScreenState extends State<LoginScreen> {
         // Kullanıcı iptal ettiyse sessizce devam et
       }
     } catch (e) {
-      print('Apple sign in error in UI: $e');
       if (mounted) {
-        String errorMessage = 'Apple ile giriş hatası oluştu.';
-        if (e.toString().contains('network')) {
+        String errorMessage = 'Apple ile giriş yapılamadı.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
           errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
-          errorMessage = 'Giriş iptal edildi.';
-        } else if (e.toString().contains('1000') || 
-                   e.toString().contains('unknown') ||
-                   e.toString().contains('AuthorizationError') ||
-                   e.toString().contains('yapılandırması eksik')) {
-          errorMessage = 'Apple Sign-In yapılandırması eksik. Lütfen Xcode\'da "Sign in with Apple" capability\'sini aktifleştirin.';
-        } else if (e.toString().contains('not_handled') || e.toString().contains('invalid_request')) {
-          errorMessage = 'Apple Sign-In yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+        } else if (errorStr.contains('cancelled') || errorStr.contains('canceled')) {
+          // Kullanıcı iptal etti, mesaj gösterme
+          return;
+        } else if (errorStr.contains('1000') || 
+                   errorStr.contains('unknown') ||
+                   errorStr.contains('authorizationerror') ||
+                   errorStr.contains('yapılandırması eksik')) {
+          errorMessage = 'Apple giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+        } else if (errorStr.contains('not_handled') || errorStr.contains('invalid_request')) {
+          errorMessage = 'Apple giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
         }
         CustomToast.showError(context, errorMessage);
       }

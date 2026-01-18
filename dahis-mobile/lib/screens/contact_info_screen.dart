@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/auth_service.dart';
+import '../widgets/custom_toast.dart';
 
 class ContactInfoScreen extends StatefulWidget {
   const ContactInfoScreen({super.key});
@@ -62,7 +63,6 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
         });
       }
     } catch (e) {
-      print('Profil yükleme hatası: $e');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -80,24 +80,18 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
     try {
       await _authService.updateProfileLinks(_profileLinks);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profil bilgileri güncellendi'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
+        CustomToast.showSuccess(context, 'Profil bilgileri başarıyla güncellendi');
       }
     } catch (e) {
-      print('Profil kaydetme hatası: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Hata: ${e.toString()}'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        String errorMessage = 'Profil bilgileri güncellenirken bir sorun oluştu.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (errorStr.contains('permission') || errorStr.contains('unauthorized')) {
+          errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+        }
+        CustomToast.showError(context, errorMessage);
       }
     } finally {
       setState(() => _isSaving = false);
@@ -119,13 +113,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
 
     if (availableContacts.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tüm iletişim bilgileri zaten eklenmiş'),
-            backgroundColor: Colors.orange,
-            duration: Duration(seconds: 2),
-          ),
-        );
+        CustomToast.showWarning(context, 'Tüm iletişim bilgileri zaten eklenmiş');
       }
       return;
     }

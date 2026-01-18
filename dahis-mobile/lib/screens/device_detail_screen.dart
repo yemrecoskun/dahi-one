@@ -5,6 +5,7 @@ import 'dart:convert';
 import '../models/character.dart';
 import '../services/data_service.dart';
 import '../services/auth_service.dart';
+import '../widgets/custom_toast.dart';
 
 class DeviceDetailScreen extends StatefulWidget {
   final String dahiosId;
@@ -49,7 +50,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('⚠️  Karakter yüklenirken hata: $e');
       // Hata durumunda local data kullan
       setState(() {
         _character = Character.getCharacters()[widget.characterId];
@@ -93,7 +93,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         }
       }
     } catch (e) {
-      print('⚠️  Profil bilgisi yüklenirken hata: $e');
       setState(() {
         _selectedProfileLinks = [];
       });
@@ -249,14 +248,11 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           });
 
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(profileLinkTypes.isEmpty 
-                  ? 'Profil link yönlendirmesi kaldırıldı'
-                  : '${profileLinkTypes.length} profil link yönlendirmesi güncellendi'),
-                backgroundColor: Colors.green,
-                duration: const Duration(seconds: 2),
-              ),
+            CustomToast.showSuccess(
+              context,
+              profileLinkTypes.isEmpty 
+                ? 'Profil link yönlendirmesi kaldırıldı'
+                : '${profileLinkTypes.length} profil link yönlendirmesi güncellendi',
             );
           }
         } else {
@@ -267,19 +263,21 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         throw Exception(errorBody['message'] ?? 'Güncelleme başarısız');
       }
     } catch (e) {
-      print('❌ Profil link güncellenirken hata: $e');
       setState(() {
         _isUpdating = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Hata: ${e.toString()}'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        String errorMessage = 'Profil link yönlendirmesi güncellenirken bir sorun oluştu.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (errorStr.contains('permission') || errorStr.contains('unauthorized')) {
+          errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+        } else if (errorStr.contains('not found') || errorStr.contains('bulunamadı')) {
+          errorMessage = 'Cihaz bulunamadı.';
+        }
+        CustomToast.showError(context, errorMessage);
       }
     }
   }
@@ -310,14 +308,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           });
 
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  _isActive ? 'Cihaz aktif edildi' : 'Cihaz pasif edildi',
-                ),
-                backgroundColor: Colors.green,
-                duration: const Duration(seconds: 2),
-              ),
+            CustomToast.showSuccess(
+              context,
+              _isActive ? 'Cihaz aktif edildi' : 'Cihaz pasif edildi',
             );
           }
         } else {
@@ -328,19 +321,21 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         throw Exception(errorBody['message'] ?? 'Güncelleme başarısız');
       }
     } catch (e) {
-      print('❌ Cihaz durumu güncellenirken hata: $e');
       setState(() {
         _isUpdating = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Hata: ${e.toString()}'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        String errorMessage = 'Cihaz durumu güncellenirken bir sorun oluştu.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (errorStr.contains('permission') || errorStr.contains('unauthorized')) {
+          errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+        } else if (errorStr.contains('not found') || errorStr.contains('bulunamadı')) {
+          errorMessage = 'Cihaz bulunamadı.';
+        }
+        CustomToast.showError(context, errorMessage);
       }
     }
   }

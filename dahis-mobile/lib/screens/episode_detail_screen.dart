@@ -36,7 +36,6 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('⚠️  Sezon yüklenirken hata: $e');
       // Hata durumunda local data kullan
       setState(() {
         _season = Season.getSeasons()[widget.seasonId];

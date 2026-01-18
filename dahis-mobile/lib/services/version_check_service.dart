@@ -46,7 +46,6 @@ class VersionCheckService {
       }
     } catch (e) {
       // Hata durumunda sessizce devam et (uygulama çalışmaya devam eder)
-      print('Version check error: $e');
     }
   }
 

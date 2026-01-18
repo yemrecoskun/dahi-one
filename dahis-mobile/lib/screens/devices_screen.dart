@@ -85,14 +85,17 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
 
   Future<void> _handleIosNfcScan() async {
     try {
-      print('🚀 iOS Native NFC başlatılıyor...');
       final nfcId = await IosNfc.startSession();
-      print('✅ NFC ID okundu: $nfcId');
       await _processNfcId(nfcId);
     } catch (e) {
-      print('❌ iOS NFC hatası: $e');
       if (mounted) {
-        _showError('NFC okuma hatası: ${e.toString()}');
+        String errorMessage = 'NFC okunurken bir sorun oluştu.';
+        if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+          errorMessage = 'NFC okuma iptal edildi.';
+        } else if (e.toString().contains('not supported') || e.toString().contains('desteklenmiyor')) {
+          errorMessage = 'Bu cihaz NFC\'yi desteklemiyor.';
+        }
+        _showError(errorMessage);
       }
     } finally {
       if (mounted) {
@@ -125,7 +128,6 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
     try {
       await NfcManager.instance.stopSession();
     } catch (e) {
-      print('⚠️ NFC stop hatası: $e');
     }
   }
 
@@ -135,7 +137,6 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
     setState(() => _isNfcScanning = false);
     
     final normalizedNfcId = nfcId.toLowerCase();
-    print('🌐 Backend\'e istek gönderiliyor: $normalizedNfcId');
 
     try {
       final response = await http.get(
@@ -176,21 +177,41 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
           // addDevice hatası (örneğin etiket başka kullanıcıya ait)
           if (mounted) {
             setState(() => _isNfcScanning = false);
-            final errorMessage = e.toString().contains('başka bir kullanıcıya tanımlı')
-                ? 'Bu etiket başka bir kullanıcıya tanımlı. Bir etiket sadece bir kullanıcıya tanımlanabilir.'
-                : 'Cihaz eklenirken bir hata oluştu: ${e.toString()}';
+            String errorMessage = 'Cihaz eklenirken bir sorun oluştu.';
+            final errorStr = e.toString().toLowerCase();
+            if (errorStr.contains('başka bir kullanıcıya tanımlı')) {
+              errorMessage = 'Bu etiket başka bir kullanıcıya tanımlı. Bir etiket sadece bir kullanıcıya tanımlanabilir.';
+            } else if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
+              errorMessage = 'İnternet bağlantınızı kontrol edin.';
+            } else if (errorStr.contains('permission') || errorStr.contains('unauthorized')) {
+              errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+            } else if (errorStr.contains('already') || errorStr.contains('zaten')) {
+              errorMessage = 'Bu cihaz zaten eklenmiş.';
+            }
             _showError(errorMessage);
           }
           return;
         }
       } else {
-        throw Exception('dahiOS tag bulunamadı (ID: $normalizedNfcId)');
+        if (mounted) {
+          setState(() => _isNfcScanning = false);
+          _showError('dahiOS etiketi bulunamadı. Lütfen etiketi tekrar okutun.');
+        }
+        return;
       }
     } catch (e) {
-      print('❌ Backend istek hatası: $e');
       if (mounted) {
         setState(() => _isNfcScanning = false);
-        _showError('Hata: ${e.toString()}');
+        String errorMessage = 'Cihaz eklenirken bir sorun oluştu.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (errorStr.contains('timeout')) {
+          errorMessage = 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.';
+        } else if (errorStr.contains('not found') || errorStr.contains('bulunamadı')) {
+          errorMessage = 'dahiOS etiketi bulunamadı. Lütfen etiketi tekrar okutun.';
+        }
+        _showError(errorMessage);
       }
     }
   }
@@ -253,9 +274,17 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
         _showMessage('$characterName cihazı başarıyla silindi', Colors.green);
       }
     } catch (e) {
-      print('❌ Cihaz silme hatası: $e');
       if (mounted) {
-        _showError('Cihaz silinirken bir hata oluştu: ${e.toString()}');
+        String errorMessage = 'Cihaz silinirken bir sorun oluştu.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (errorStr.contains('permission') || errorStr.contains('unauthorized')) {
+          errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+        } else if (errorStr.contains('not found') || errorStr.contains('bulunamadı')) {
+          errorMessage = 'Cihaz bulunamadı.';
+        }
+        _showError(errorMessage);
       }
     }
   }
@@ -658,7 +687,7 @@ class _NfcScanDialogState extends State<_NfcScanDialog> {
             await NfcManager.instance.stopSession();
             if (mounted) {
               setState(() {
-                _error = e.toString();
+                _error = 'NFC okunurken bir sorun oluştu.';
                 _scanning = false;
               });
             }
@@ -673,7 +702,7 @@ class _NfcScanDialogState extends State<_NfcScanDialog> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = 'NFC okunurken bir sorun oluştu.';
           _scanning = false;
         });
       }
@@ -684,7 +713,6 @@ Future<String> _extractNfcId(NfcTag tag) async {
   String? nfcId;
 
   try {
-    print(tag);
     final ndef = Ndef.from(tag);
     if (ndef == null) {
       throw Exception('NDEF desteklenmiyor');
@@ -716,7 +744,6 @@ Future<String> _extractNfcId(NfcTag tag) async {
       }
     }
   } catch (e) {
-    print('❌ NDEF okuma hatası: $e');
   }
 
   if (nfcId == null || nfcId.isEmpty) {

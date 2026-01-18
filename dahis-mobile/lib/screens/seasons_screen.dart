@@ -30,7 +30,6 @@ class _SeasonsScreenState extends State<SeasonsScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('⚠️  Veri yüklenirken hata: $e');
       setState(() {
         _seasons = Season.getSeasons();
         _isLoading = false;

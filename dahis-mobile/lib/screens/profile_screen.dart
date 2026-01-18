@@ -27,7 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await _authService.getUserData();
     } catch (e) {
-      print('Profil yükleme hatası: $e');
     } finally {
       setState(() => _isLoading = false);
     }

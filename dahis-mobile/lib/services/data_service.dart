@@ -36,7 +36,6 @@ class DataService {
 
       return characters;
     } catch (e) {
-      print('⚠️  Firestore\'dan karakterler çekilemedi: $e');
       // Hata durumunda local data döndür
       return Character.getCharacters();
     }
@@ -85,7 +84,6 @@ class DataService {
 
       return seasons;
     } catch (e) {
-      print('⚠️  Firestore\'dan sezonlar çekilemedi: $e');
       // Hata durumunda local data döndür
       return Season.getSeasons();
     }
@@ -113,7 +111,6 @@ class DataService {
         fullDescription: data['fullDescription'] ?? '',
       );
     } catch (e) {
-      print('⚠️  Firestore\'dan karakter çekilemedi: $e');
       return Character.getCharacters()[characterId];
     }
   }
@@ -156,7 +153,6 @@ class DataService {
         episodes: episodes,
       );
     } catch (e) {
-      print('⚠️  Firestore\'dan sezon çekilemedi: $e');
       return Season.getSeasons()[seasonId];
     }
   }

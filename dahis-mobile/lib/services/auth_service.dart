@@ -46,7 +46,6 @@ class AuthService {
 
       return userCredential;
     } catch (e) {
-      print('Sign up error: $e');
       return null;
     }
   }
@@ -60,7 +59,6 @@ class AuthService {
         password: password,
       );
     } catch (e) {
-      print('Sign in error: $e');
       return null;
     }
   }
@@ -69,8 +67,7 @@ class AuthService {
   Future<UserCredential?> signInWithGoogle() async {
     try {
       if (_auth == null || _firestore == null) {
-        print('Google sign in: Firebase not initialized');
-        throw Exception('Firebase başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
+        throw Exception('Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
       }
 
       // Google Sign-In başlat (iOS için scopes belirt)
@@ -84,17 +81,16 @@ class AuthService {
         googleUser = await googleSignIn.signIn();
       } on PlatformException catch (e) {
         // Platform exception - native tarafından gelen hata
-        print('Google Sign-In PlatformException: ${e.code} - ${e.message}');
-        String errorMessage = 'Google Sign-In yapılandırma hatası.';
+        String errorMessage = 'Google ile giriş yapılamadı.';
         if (e.code == 'sign_in_failed' || 
-            e.message?.contains('configuration') == true ||
-            e.message?.contains('GoogleService-Info.plist') == true ||
-            e.message?.contains('clientID') == true ||
-            e.message?.contains('GIDClientID') == true) {
-          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
+            e.message?.toLowerCase().contains('configuration') == true ||
+            e.message?.toLowerCase().contains('googleservice-info.plist') == true ||
+            e.message?.toLowerCase().contains('clientid') == true ||
+            e.message?.toLowerCase().contains('gidclientid') == true) {
+          errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
         } else if (e.code == 'network_error' || 
-                   e.message?.contains('network') == true ||
-                   e.message?.contains('connection') == true) {
+                   e.message?.toLowerCase().contains('network') == true ||
+                   e.message?.toLowerCase().contains('connection') == true) {
           errorMessage = 'İnternet bağlantınızı kontrol edin.';
         } else if (e.code == 'sign_in_canceled') {
           // Kullanıcı iptal etti
@@ -103,16 +99,16 @@ class AuthService {
         throw Exception(errorMessage);
       } catch (e) {
         // Diğer exception'lar
-        print('Google Sign-In error: $e');
-        String errorMessage = 'Google Sign-In yapılandırma hatası.';
-        if (e.toString().contains('configuration') || 
-            e.toString().contains('GoogleService-Info.plist') ||
-            e.toString().contains('clientID') ||
-            e.toString().contains('GIDClientID')) {
-          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
-        } else if (e.toString().contains('network') || e.toString().contains('connection')) {
+        String errorMessage = 'Google ile giriş yapılamadı.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('configuration') || 
+            errorStr.contains('googleservice-info.plist') ||
+            errorStr.contains('clientid') ||
+            errorStr.contains('gidclientid')) {
+          errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+        } else if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
           errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+        } else if (errorStr.contains('cancelled') || errorStr.contains('canceled')) {
           return null;
         }
         throw Exception(errorMessage);
@@ -120,7 +116,6 @@ class AuthService {
 
       if (googleUser == null) {
         // Kullanıcı iptal etti
-        print('Google sign in: User cancelled');
         return null;
       }
 
@@ -129,13 +124,11 @@ class AuthService {
       try {
         googleAuth = await googleUser.authentication;
       } catch (e) {
-        print('Google authentication error: $e');
-        throw Exception('Google kimlik doğrulama hatası. Lütfen tekrar deneyin.');
+        throw Exception('Google kimlik doğrulama başarısız. Lütfen tekrar deneyin.');
       }
 
       if (googleAuth.idToken == null) {
-        print('Google sign in: ID token is null');
-        throw Exception('Google kimlik doğrulama hatası. Lütfen tekrar deneyin.');
+        throw Exception('Google kimlik doğrulama başarısız. Lütfen tekrar deneyin.');
       }
 
       // Firebase credential oluştur
@@ -177,9 +170,9 @@ class AuthService {
 
       return userCredential;
     } catch (e) {
-      print('Google sign in error: $e');
       // Kullanıcı iptal ettiyse null döndür
-      if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('cancelled') || errorStr.contains('canceled')) {
         return null;
       }
       rethrow; // Diğer hataları yukarı fırlat
@@ -190,12 +183,10 @@ class AuthService {
   Future<UserCredential?> signInWithApple() async {
     try {
       if (_auth == null || _firestore == null) {
-        print('Apple sign in: Firebase not initialized');
-        throw Exception('Firebase başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
+        throw Exception('Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
       }
       if (!Platform.isIOS) {
-        print('Apple Sign-In sadece iOS\'ta kullanılabilir');
-        throw Exception('Apple Sign-In sadece iOS\'ta kullanılabilir.');
+        throw Exception('Apple ile giriş sadece iOS\'ta kullanılabilir.');
       }
 
       // Apple Sign-In başlat
@@ -207,8 +198,7 @@ class AuthService {
       );
 
       if (appleCredential.identityToken == null) {
-        print('Apple sign in: Identity token is null');
-        throw Exception('Apple kimlik doğrulama hatası. Lütfen tekrar deneyin.');
+        throw Exception('Apple kimlik doğrulama başarısız. Lütfen tekrar deneyin.');
       }
 
       // OAuth credential oluştur
@@ -257,20 +247,19 @@ class AuthService {
 
       return userCredential;
     } catch (e) {
-      print('Apple sign in error: $e');
-      
       // Kullanıcı iptal ettiyse null döndür
-      if (e.toString().contains('cancelled') || 
-          e.toString().contains('canceled') ||
-          e.toString().contains('1001')) { // ASAuthorizationErrorCanceled
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('cancelled') || 
+          errorStr.contains('canceled') ||
+          errorStr.contains('1001')) {
         return null;
       }
       
       // Error 1000 (unknown) genellikle yapılandırma hatası
-      if (e.toString().contains('1000') || 
-          e.toString().contains('unknown') ||
-          e.toString().contains('AuthorizationError')) {
-        throw Exception('Apple Sign-In yapılandırması eksik. Lütfen Xcode\'da "Sign in with Apple" capability\'sini aktifleştirin.');
+      if (errorStr.contains('1000') || 
+          errorStr.contains('unknown') ||
+          errorStr.contains('authorizationerror')) {
+        throw Exception('Apple giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.');
       }
       
       rethrow; // Diğer hataları yukarı fırlat
@@ -286,7 +275,7 @@ class AuthService {
       final GoogleSignIn googleSignIn = GoogleSignIn();
       await googleSignIn.signOut();
     } catch (e) {
-      print('Google sign out error: $e');
+      // Google sign out hatası önemli değil
     }
     
     await _auth!.signOut();
@@ -303,7 +292,6 @@ class AuthService {
       }
       return null;
     } catch (e) {
-      print('Get user data error: $e');
       return null;
     }
   }
@@ -339,7 +327,6 @@ class AuthService {
 
       return devices;
     } catch (e) {
-      print('Get user devices error: $e');
       return [];
     }
   }
@@ -377,7 +364,6 @@ class AuthService {
         'devices': FieldValue.arrayUnion([normalizedDahiosId]),
       });
     } catch (e) {
-      print('Add device error: $e');
       rethrow; // Hata mesajını yukarı fırlat
     }
   }
@@ -393,7 +379,6 @@ class AuthService {
         'devices': FieldValue.arrayRemove([normalizedDahiosId]),
       });
     } catch (e) {
-      print('Remove device error: $e');
       rethrow; // Hata mesajını yukarı fırlat
     }
   }
@@ -432,7 +417,6 @@ class AuthService {
 
       await _firestore!.collection('users').doc(currentUser!.uid).update(updateData);
     } catch (e) {
-      print('Update profile links error: $e');
       rethrow;
     }
   }

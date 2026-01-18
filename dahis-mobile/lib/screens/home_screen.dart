@@ -33,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('⚠️  Veri yüklenirken hata: $e');
       setState(() {
         _characters = Character.getCharacters();
         _isLoading = false;
