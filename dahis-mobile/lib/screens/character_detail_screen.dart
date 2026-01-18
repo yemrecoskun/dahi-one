@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../models/character.dart';
 import '../services/data_service.dart';
 
@@ -48,11 +48,15 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     return Color(int.parse(colorCode.replaceFirst('#', '0xFF')));
   }
 
-  void _goToStore(String characterId) async {
-    final url = Uri.parse('https://dahis.shop/one-$characterId');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
+  void _showStoreModal(String characterId) {
+    final url = 'https://dahis.shop/one-$characterId';
+    
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => StoreModalWebView(url: url),
+        fullscreenDialog: true,
+      ),
+    );
   }
 
   @override
@@ -207,7 +211,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => _goToStore(character.id),
+                      onPressed: () => _showStoreModal(character.id),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: color,
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -273,3 +277,79 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   }
 }
 
+// Panmodal WebView Widget
+class StoreModalWebView extends StatefulWidget {
+  final String url;
+
+  const StoreModalWebView({
+    super.key,
+    required this.url,
+  });
+
+  @override
+  State<StoreModalWebView> createState() => _StoreModalWebViewState();
+}
+
+class _StoreModalWebViewState extends State<StoreModalWebView> {
+  late final WebViewController _controller;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            setState(() {
+              _isLoading = true;
+            });
+          },
+          onPageFinished: (String url) {
+            setState(() {
+              _isLoading = false;
+            });
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF1a1a2e),
+      appBar: AppBar(
+        title: const Text(
+          'Mağaza',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF1a1a2e),
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF667eea),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import '../services/auth_service.dart';
 import '../models/character.dart';
 import '../ios_nfc_service.dart';
+import '../widgets/custom_toast.dart';
 
 class DevicesScreen extends StatefulWidget {
   const DevicesScreen({super.key});
@@ -196,17 +197,20 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
 
   void _showMessage(String message, Color color) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    if (color == Colors.green) {
+      CustomToast.showSuccess(context, message);
+    } else if (color == Colors.red) {
+      CustomToast.showError(context, message);
+    } else if (color == Colors.orange) {
+      CustomToast.showWarning(context, message);
+    } else {
+      CustomToast.showInfo(context, message);
+    }
   }
 
   void _showError(String message) {
-    _showMessage(message, Colors.red);
+    if (!mounted) return;
+    CustomToast.showError(context, message);
   }
 
   Future<void> _showDeleteConfirmation(String dahiosId, String characterName) async {

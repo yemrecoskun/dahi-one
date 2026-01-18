@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
 
 class AuthService {
@@ -69,7 +70,7 @@ class AuthService {
     try {
       if (_auth == null || _firestore == null) {
         print('Google sign in: Firebase not initialized');
-        return null;
+        throw Exception('Firebase başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
       }
 
       // Google Sign-In başlat (iOS için scopes belirt)
@@ -77,10 +78,45 @@ class AuthService {
         scopes: ['email', 'profile'],
       );
       
-      // Önce mevcut oturumu kontrol et
-      await googleSignIn.signOut(); // Önceki oturumu temizle
-      
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      GoogleSignInAccount? googleUser;
+      try {
+        // signIn() çağrısını doğrudan yap - signOut() crash'e neden olabilir
+        googleUser = await googleSignIn.signIn();
+      } on PlatformException catch (e) {
+        // Platform exception - native tarafından gelen hata
+        print('Google Sign-In PlatformException: ${e.code} - ${e.message}');
+        String errorMessage = 'Google Sign-In yapılandırma hatası.';
+        if (e.code == 'sign_in_failed' || 
+            e.message?.contains('configuration') == true ||
+            e.message?.contains('GoogleService-Info.plist') == true ||
+            e.message?.contains('clientID') == true ||
+            e.message?.contains('GIDClientID') == true) {
+          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
+        } else if (e.code == 'network_error' || 
+                   e.message?.contains('network') == true ||
+                   e.message?.contains('connection') == true) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (e.code == 'sign_in_canceled') {
+          // Kullanıcı iptal etti
+          return null;
+        }
+        throw Exception(errorMessage);
+      } catch (e) {
+        // Diğer exception'lar
+        print('Google Sign-In error: $e');
+        String errorMessage = 'Google Sign-In yapılandırma hatası.';
+        if (e.toString().contains('configuration') || 
+            e.toString().contains('GoogleService-Info.plist') ||
+            e.toString().contains('clientID') ||
+            e.toString().contains('GIDClientID')) {
+          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
+        } else if (e.toString().contains('network') || e.toString().contains('connection')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+          return null;
+        }
+        throw Exception(errorMessage);
+      }
 
       if (googleUser == null) {
         // Kullanıcı iptal etti
@@ -89,11 +125,17 @@ class AuthService {
       }
 
       // Google'dan authentication bilgilerini al
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      GoogleSignInAuthentication googleAuth;
+      try {
+        googleAuth = await googleUser.authentication;
+      } catch (e) {
+        print('Google authentication error: $e');
+        throw Exception('Google kimlik doğrulama hatası. Lütfen tekrar deneyin.');
+      }
 
       if (googleAuth.idToken == null) {
         print('Google sign in: ID token is null');
-        return null;
+        throw Exception('Google kimlik doğrulama hatası. Lütfen tekrar deneyin.');
       }
 
       // Firebase credential oluştur
@@ -108,40 +150,52 @@ class AuthService {
       // Firestore'da kullanıcı bilgilerini kaydet/güncelle
       final user = userCredential.user;
       if (user != null) {
-        final userDoc = _firestore!.collection('users').doc(user.uid);
-        final userDocSnapshot = await userDoc.get();
+        try {
+          final userDoc = _firestore!.collection('users').doc(user.uid);
+          final userDocSnapshot = await userDoc.get();
 
-        if (!userDocSnapshot.exists) {
-          // Yeni kullanıcı, Firestore'a kaydet
-          await userDoc.set({
-            'email': user.email ?? '',
-            'name': user.displayName ?? user.email?.split('@')[0] ?? 'Kullanıcı',
-            'createdAt': FieldValue.serverTimestamp(),
-            'devices': [],
-            'authProvider': 'google',
-          });
-        } else {
-          // Mevcut kullanıcı, authProvider'ı güncelle
-          await userDoc.update({
-            'authProvider': 'google',
-          });
+          if (!userDocSnapshot.exists) {
+            // Yeni kullanıcı, Firestore'a kaydet
+            await userDoc.set({
+              'email': user.email ?? '',
+              'name': user.displayName ?? user.email?.split('@')[0] ?? 'Kullanıcı',
+              'createdAt': FieldValue.serverTimestamp(),
+              'devices': [],
+              'authProvider': 'google',
+            });
+          } else {
+            // Mevcut kullanıcı, authProvider'ı güncelle
+            await userDoc.update({
+              'authProvider': 'google',
+            });
+          }
+        } catch (e) {
+          // Firestore hatası kritik değil, giriş başarılı
+          print('Firestore update error (non-critical): $e');
         }
       }
 
       return userCredential;
     } catch (e) {
       print('Google sign in error: $e');
-      return null;
+      // Kullanıcı iptal ettiyse null döndür
+      if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+        return null;
+      }
+      rethrow; // Diğer hataları yukarı fırlat
     }
   }
 
   // Apple ile giriş
   Future<UserCredential?> signInWithApple() async {
     try {
-      if (_auth == null || _firestore == null) return null;
+      if (_auth == null || _firestore == null) {
+        print('Apple sign in: Firebase not initialized');
+        throw Exception('Firebase başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
+      }
       if (!Platform.isIOS) {
         print('Apple Sign-In sadece iOS\'ta kullanılabilir');
-        return null;
+        throw Exception('Apple Sign-In sadece iOS\'ta kullanılabilir.');
       }
 
       // Apple Sign-In başlat
@@ -151,6 +205,11 @@ class AuthService {
           AppleIDAuthorizationScopes.fullName,
         ],
       );
+
+      if (appleCredential.identityToken == null) {
+        print('Apple sign in: Identity token is null');
+        throw Exception('Apple kimlik doğrulama hatası. Lütfen tekrar deneyin.');
+      }
 
       // OAuth credential oluştur
       final oauthCredential = OAuthProvider("apple.com").credential(
@@ -164,37 +223,57 @@ class AuthService {
       // Firestore'da kullanıcı bilgilerini kaydet/güncelle
       final user = userCredential.user;
       if (user != null) {
-        final userDoc = _firestore!.collection('users').doc(user.uid);
-        final userDocSnapshot = await userDoc.get();
+        try {
+          final userDoc = _firestore!.collection('users').doc(user.uid);
+          final userDocSnapshot = await userDoc.get();
 
-        // Kullanıcı adını belirle (Apple'dan gelen veya email'den)
-        String userName = user.displayName ?? 
-            (appleCredential.givenName != null && appleCredential.familyName != null
-                ? '${appleCredential.givenName} ${appleCredential.familyName}'
-                : user.email?.split('@')[0] ?? 'Kullanıcı');
+          // Kullanıcı adını belirle (Apple'dan gelen veya email'den)
+          String userName = user.displayName ?? 
+              (appleCredential.givenName != null && appleCredential.familyName != null
+                  ? '${appleCredential.givenName} ${appleCredential.familyName}'
+                  : user.email?.split('@')[0] ?? 'Kullanıcı');
 
-        if (!userDocSnapshot.exists) {
-          // Yeni kullanıcı, Firestore'a kaydet
-          await userDoc.set({
-            'email': user.email ?? appleCredential.email ?? '',
-            'name': userName,
-            'createdAt': FieldValue.serverTimestamp(),
-            'devices': [],
-            'authProvider': 'apple',
-          });
-        } else {
-          // Mevcut kullanıcı, authProvider'ı güncelle
-          await userDoc.update({
-            'authProvider': 'apple',
-            if (userDocSnapshot.data()?['name'] == null) 'name': userName,
-          });
+          if (!userDocSnapshot.exists) {
+            // Yeni kullanıcı, Firestore'a kaydet
+            await userDoc.set({
+              'email': user.email ?? appleCredential.email ?? '',
+              'name': userName,
+              'createdAt': FieldValue.serverTimestamp(),
+              'devices': [],
+              'authProvider': 'apple',
+            });
+          } else {
+            // Mevcut kullanıcı, authProvider'ı güncelle
+            await userDoc.update({
+              'authProvider': 'apple',
+              if (userDocSnapshot.data()?['name'] == null) 'name': userName,
+            });
+          }
+        } catch (e) {
+          // Firestore hatası kritik değil, giriş başarılı
+          print('Firestore update error (non-critical): $e');
         }
       }
 
       return userCredential;
     } catch (e) {
       print('Apple sign in error: $e');
-      return null;
+      
+      // Kullanıcı iptal ettiyse null döndür
+      if (e.toString().contains('cancelled') || 
+          e.toString().contains('canceled') ||
+          e.toString().contains('1001')) { // ASAuthorizationErrorCanceled
+        return null;
+      }
+      
+      // Error 1000 (unknown) genellikle yapılandırma hatası
+      if (e.toString().contains('1000') || 
+          e.toString().contains('unknown') ||
+          e.toString().contains('AuthorizationError')) {
+        throw Exception('Apple Sign-In yapılandırması eksik. Lütfen Xcode\'da "Sign in with Apple" capability\'sini aktifleştirin.');
+      }
+      
+      rethrow; // Diğer hataları yukarı fırlat
     }
   }
 

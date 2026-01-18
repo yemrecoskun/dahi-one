@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:io' show Platform;
 import '../services/auth_service.dart';
+import '../widgets/custom_toast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,11 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (result != null && mounted) {
+        CustomToast.showSuccess(context, 'Giriş başarılı!');
         context.pop();
       } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Giriş başarısız. Lütfen tekrar deneyin.')),
-        );
+        CustomToast.showError(context, 'Giriş başarısız. Lütfen tekrar deneyin.');
       }
     } else {
       // Kayıt
@@ -55,11 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (result != null && mounted) {
+        CustomToast.showSuccess(context, 'Kayıt başarılı!');
         context.pop();
       } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kayıt başarısız. Lütfen tekrar deneyin.')),
-        );
+        CustomToast.showError(context, 'Kayıt başarısız. Lütfen tekrar deneyin.');
       }
     }
 
@@ -69,6 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleGoogleSignIn() async {
+    if (_isLoading) return;
+    
     setState(() => _isLoading = true);
 
     try {
@@ -77,24 +79,50 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result != null && mounted) {
         context.pop();
       } else if (mounted) {
-        // Kullanıcı iptal ettiyse veya hata varsa
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Google ile giriş iptal edildi veya başarısız oldu.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-        setState(() => _isLoading = false);
+        // Kullanıcı iptal ettiyse sessizce devam et
+        // Hata mesajı gösterme
       }
-    } catch (e) {
-      print('Google sign in error in UI: $e');
+    } on PlatformException catch (e) {
+      // Platform exception - native tarafından gelen hata
+      print('Google sign in PlatformException in UI: ${e.code} - ${e.message}');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google ile giriş hatası: ${e.toString()}'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        String errorMessage = 'Google ile giriş hatası oluştu.';
+        if (e.code == 'sign_in_failed' || 
+            e.message?.contains('configuration') == true ||
+            e.message?.contains('GoogleService-Info.plist') == true) {
+          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
+        } else if (e.code == 'network_error') {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (e.code == 'sign_in_canceled') {
+          // Kullanıcı iptal etti, mesaj gösterme
+          return;
+        }
+        CustomToast.showError(context, errorMessage);
+      }
+    } catch (e, stackTrace) {
+      // Tüm hataları yakala ve logla
+      print('Google sign in error in UI: $e');
+      print('Stack trace: $stackTrace');
+      if (mounted) {
+        String errorMessage = 'Google ile giriş hatası oluştu.';
+        if (e.toString().contains('network') || e.toString().contains('connection')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+          // Kullanıcı iptal etti, mesaj gösterme
+          return;
+        } else if (e.toString().contains('yapılandırma') || 
+                   e.toString().contains('GoogleService-Info.plist') ||
+                   e.toString().contains('configuration') ||
+                   e.toString().contains('clientID') ||
+                   e.toString().contains('GIDClientID')) {
+          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
+        } else if (e.toString().contains('Firebase başlatılamadı')) {
+          errorMessage = 'Firebase başlatılamadı. Lütfen uygulamayı yeniden başlatın.';
+        }
+        CustomToast.showError(context, errorMessage);
+      }
+    } finally {
+      if (mounted) {
         setState(() => _isLoading = false);
       }
     }
@@ -102,23 +130,45 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleAppleSignIn() async {
     if (!Platform.isIOS) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Apple Sign-In sadece iOS\'ta kullanılabilir.')),
-      );
+      CustomToast.showWarning(context, 'Apple Sign-In sadece iOS\'ta kullanılabilir.');
       return;
     }
 
+    if (_isLoading) return;
+
     setState(() => _isLoading = true);
 
-    final result = await _authService.signInWithApple();
+    try {
+      final result = await _authService.signInWithApple();
 
-    if (result != null && mounted) {
-      context.pop();
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Apple ile giriş başarısız. Lütfen tekrar deneyin.')),
-      );
-      setState(() => _isLoading = false);
+      if (result != null && mounted) {
+        CustomToast.showSuccess(context, 'Giriş başarılı!');
+        context.pop();
+      } else if (mounted) {
+        // Kullanıcı iptal ettiyse sessizce devam et
+      }
+    } catch (e) {
+      print('Apple sign in error in UI: $e');
+      if (mounted) {
+        String errorMessage = 'Apple ile giriş hatası oluştu.';
+        if (e.toString().contains('network')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (e.toString().contains('cancelled') || e.toString().contains('canceled')) {
+          errorMessage = 'Giriş iptal edildi.';
+        } else if (e.toString().contains('1000') || 
+                   e.toString().contains('unknown') ||
+                   e.toString().contains('AuthorizationError') ||
+                   e.toString().contains('yapılandırması eksik')) {
+          errorMessage = 'Apple Sign-In yapılandırması eksik. Lütfen Xcode\'da "Sign in with Apple" capability\'sini aktifleştirin.';
+        } else if (e.toString().contains('not_handled') || e.toString().contains('invalid_request')) {
+          errorMessage = 'Apple Sign-In yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+        }
+        CustomToast.showError(context, errorMessage);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
