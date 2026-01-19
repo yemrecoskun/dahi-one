@@ -55,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Container(
-      height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
         gradient: RadialGradient(
           center: Alignment.center,
@@ -66,10 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 48.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             // Title
             ShaderMask(
               shaderCallback: (bounds) => const LinearGradient(
@@ -121,50 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                // Sağ tarafta fade effect ve scroll hint
-                if (_characters.length > 3)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: IgnorePointer(
-                      child: Container(
-                        width: 100,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.transparent,
-                              const Color(0xFF050508).withValues(alpha: 0.9),
-                            ],
-                          ),
-                        ),
-                        child: Center(
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 16),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF667eea).withValues(alpha: 0.6),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
             const SizedBox(height: 48),
@@ -233,7 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
