@@ -71,7 +71,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
         children: [
           const SizedBox(height: 16),
           SizedBox(
-            height: 450,
+            height: 360,
             child: PageView.builder(
               controller: _charactersPageController,
               scrollDirection: Axis.horizontal,

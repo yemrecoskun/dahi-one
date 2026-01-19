@@ -180,57 +180,55 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
                 children: [
                   // Previous Episode
                   if (prevEpisode != null)
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          context.pushReplacement(
-                            '/season/${widget.seasonId}/episode/${prevEpisode.id}',
-                          );
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                        label: const Text('Önceki'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                          foregroundColor: Colors.white,
-                        ),
+                    IconButton(
+                      onPressed: () {
+                        context.pushReplacement(
+                          '/season/${widget.seasonId}/episode/${prevEpisode.id}',
+                        );
+                      },
+                      icon: const Icon(Icons.arrow_back),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(16),
                       ),
                     )
                   else
-                    const Expanded(child: SizedBox()),
-                  const SizedBox(width: 16),
+                    const SizedBox(width: 48),
                   // Back to Season
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.pushReplacement('/season/${widget.seasonId}');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('Sezona Dön'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Next Episode
-                  if (nextEpisode != null)
-                    Expanded(
-                      child: ElevatedButton.icon(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ElevatedButton(
                         onPressed: () {
-                          context.pushReplacement(
-                            '/season/${widget.seasonId}/episode/${nextEpisode.id}',
-                          );
+                          context.pop();
                         },
-                        icon: const Icon(Icons.arrow_forward),
-                        label: const Text('Sonraki'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: color,
                           foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
+                        child: const Text('Sezona Dön'),
+                      ),
+                    ),
+                  ),
+                  // Next Episode
+                  if (nextEpisode != null)
+                    IconButton(
+                      onPressed: () {
+                        context.pushReplacement(
+                          '/season/${widget.seasonId}/episode/${nextEpisode.id}',
+                        );
+                      },
+                      icon: const Icon(Icons.arrow_forward),
+                      style: IconButton.styleFrom(
+                        backgroundColor: color.withValues(alpha: 0.8),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(16),
                       ),
                     )
                   else
-                    const Expanded(child: SizedBox()),
+                    const SizedBox(width: 48),
                 ],
               ),
             ),

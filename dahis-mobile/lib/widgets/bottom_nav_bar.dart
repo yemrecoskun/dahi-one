@@ -53,7 +53,7 @@ class BottomNavBar extends StatelessWidget {
               ),
               _buildNavItem(
                 context,
-                label: 'Mağaza',
+                label: '',
                 icon: Icons.shopping_bag,
                 index: 3,
                 route: '/store',

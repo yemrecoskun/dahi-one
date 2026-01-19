@@ -40,49 +40,49 @@ class CharacterCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             // Character Image
             Container(
-              width: 100,
-              height: 100,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.2),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Image.asset(
                   character.image,
                   fit: BoxFit.contain,
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             // Character Name
             Text(
               character.name,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             // Description
             Flexible(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Text(
                   character.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 10,
                     color: Colors.white.withValues(alpha: 0.9),
                   ),
                   maxLines: 2,
@@ -90,7 +90,7 @@ class CharacterCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             // Traits
             Flexible(
               child: Wrap(
