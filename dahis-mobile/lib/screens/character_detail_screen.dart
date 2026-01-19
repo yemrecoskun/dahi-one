@@ -47,6 +47,16 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     return Color(int.parse(colorCode.replaceFirst('#', '0xFF')));
   }
 
+  void _handleBack() {
+    // Eğer navigation stack'te başka bir sayfa varsa geri dön
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      // Deeplink ile açıldıysa ana sayfaya yönlendir
+      context.go('/');
+    }
+  }
+
   void _showStoreModal(String characterId) {
     final url = 'https://dahis.shop/one-$characterId';
     
@@ -61,18 +71,26 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Karakter Detayı'),
-          leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => context.pop(),
+      return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (!didPop) {
+            _handleBack();
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Karakter Detayı'),
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _handleBack,
+            ),
           ),
-        ),
         body: const Center(
           child: CircularProgressIndicator(
             color: Color(0xFF667eea),
           ),
+        ),
         ),
       );
     }
@@ -80,22 +98,43 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
     final character = _character;
 
     if (character == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Karakter Bulunamadı')),
-        body: const Center(child: Text('Karakter bulunamadı')),
+      return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (!didPop) {
+            _handleBack();
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Karakter Bulunamadı'),
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _handleBack,
+            ),
+          ),
+          body: const Center(child: Text('Karakter bulunamadı')),
+        ),
       );
     }
 
     final color = _parseColor(character.colorCode);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Karakter Detayı'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => context.pop(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          _handleBack();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Karakter Detayı'),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: _handleBack,
+          ),
         ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -233,6 +272,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }
