@@ -149,7 +149,7 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
     // Yönlendirme URL'ini oluştur
     let redirectUrl;
     // Backward compatibility: profileLinkType varsa array'e çevir
-    const profileLinkTypes = dahiosData.profileLinkTypes || 
+    const profileLinkTypes = dahiosData.profileLinkTypes ||
       (dahiosData.profileLinkType ? [dahiosData.profileLinkType] : []);
     const redirectType = dahiosData.redirectType || "character";
     const characterId = dahiosData.characterId;
@@ -159,66 +159,70 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
     if (profileLinkTypes && profileLinkTypes.length > 0) {
       // Kullanıcının profil bilgilerini al
       const usersSnapshot = await db
-        .collection("users")
-        .where("devices", "array-contains", dahiosId)
-        .limit(1)
-        .get();
+          .collection("users")
+          .where("devices", "array-contains", dahiosId)
+          .limit(1)
+          .get();
 
       if (!usersSnapshot.empty) {
         const userData = usersSnapshot.docs[0].data();
-        
+
         // Birden fazla link varsa profil ekranı döndür
         if (profileLinkTypes.length > 1) {
           // Karakter renk kodlarını al
           const characterColors = {
-            'puls': { primary: '#ff4444', secondary: '#cc3333' },
-            'zest': { primary: '#ff8844', secondary: '#cc6633' },
-            'lumo': { primary: '#ffdd44', secondary: '#ccaa33' },
-            'vigo': { primary: '#44dd88', secondary: '#33aa66' },
-            'aura': { primary: '#4488ff', secondary: '#3366cc' },
+            "puls": {primary: "#ff4444", secondary: "#cc3333"},
+            "zest": {primary: "#ff8844", secondary: "#cc6633"},
+            "lumo": {primary: "#ffdd44", secondary: "#ccaa33"},
+            "vigo": {primary: "#44dd88", secondary: "#33aa66"},
+            "aura": {primary: "#4488ff", secondary: "#3366cc"},
           };
-          
-          const characterId = dahiosData.characterId || 'puls';
-          const charColor = characterColors[characterId] || characterColors['puls'];
-          
+
+          const characterId = dahiosData.characterId || "puls";
+          const charColor =
+              characterColors[characterId] || characterColors["puls"];
+
           // Profil ekranı HTML'i oluştur
-          const profileLinks = profileLinkTypes.map(linkType => {
+          const profileLinks = profileLinkTypes.map((linkType) => {
             const profileValue = userData[linkType] || "";
             if (!profileValue) return null;
-            
+
             let url = "";
             let label = "";
             let icon = "";
-            
+
             switch (linkType) {
-              case "instagram":
+              case "instagram": {
                 const instagramHandle = profileValue.replace(/^@?/, "");
                 url = `https://www.instagram.com/${instagramHandle}/`;
                 label = "Instagram";
                 icon = "📷";
                 break;
-              case "whatsapp":
+              }
+              case "whatsapp": {
                 const whatsappNumber = profileValue.replace(/\D/g, "");
                 url = `https://wa.me/${whatsappNumber}`;
                 label = "WhatsApp";
                 icon = "💬";
                 break;
-              case "phone":
+              }
+              case "phone": {
                 const phoneNumber = profileValue.replace(/\D/g, "");
                 url = `tel:${phoneNumber}`;
                 label = "Telefon";
                 icon = "📞";
                 break;
+              }
               case "email":
                 url = `mailto:${profileValue}`;
                 label = "E-posta";
                 icon = "✉️";
                 break;
             }
-            
-            return { url, label, icon, value: profileValue };
-          }).filter(link => link !== null);
-          
+
+            return {url, label, icon, value: profileValue};
+          }).filter((link) => link !== null);
+
           const html = `
 <!DOCTYPE html>
 <html lang="tr">
@@ -233,8 +237,10 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, ${charColor.primary} 0%, ${charColor.secondary} 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, ${charColor.primary} 0%,
+                ${charColor.secondary} 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -312,7 +318,7 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
         <h1>İletişim Bilgileri</h1>
         <p>İletişime geçmek için bir seçenek seçin</p>
         <div class="links">
-            ${profileLinks.map(link => `
+            ${profileLinks.map((link) => `
                 <a href="${link.url}" class="link-item">
                     <span class="link-icon">${link.icon}</span>
                     <div class="link-content">
@@ -321,33 +327,36 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
                     </div>
                     <span class="arrow">→</span>
                 </a>
-            `).join('')}
+            `).join("")}
         </div>
     </div>
 </body>
 </html>`;
-          
+
           return res.status(200).send(html);
         }
-        
+
         // Tek link varsa direkt yönlendir
         const profileLinkType = profileLinkTypes[0];
         const profileValue = userData[profileLinkType] || "";
 
         if (profileValue) {
           switch (profileLinkType) {
-            case "instagram":
+            case "instagram": {
               const instagramHandle = profileValue.replace(/^@?/, "");
               redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
               break;
-            case "whatsapp":
+            }
+            case "whatsapp": {
               const whatsappNumber = profileValue.replace(/\D/g, "");
               redirectUrl = `https://wa.me/${whatsappNumber}`;
               break;
-            case "phone":
+            }
+            case "phone": {
               const phoneNumber = profileValue.replace(/\D/g, "");
               redirectUrl = `tel:${phoneNumber}`;
               break;
+            }
             case "email":
               redirectUrl = `mailto:${profileValue}`;
               break;
@@ -364,34 +373,37 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
       }
     } else {
       // Eski redirectType mantığı (geriye dönük uyumluluk)
-      switch (redirectType) {
-        case "character":
-          redirectUrl = `https://www.dahis.io/character/${characterId}`;
-          break;
-        case "store":
-          redirectUrl = `https://dahis.shop/one-${characterId}`;
-          break;
-        case "campaign":
+    switch (redirectType) {
+      case "character":
+        redirectUrl = `https://www.dahis.io/character/${characterId}`;
+        break;
+      case "store":
+        redirectUrl = `https://dahis.shop/one-${characterId}`;
+        break;
+      case "campaign":
           redirectUrl = customUrl || "https://www.dahis.io";
           break;
-        case "instagram":
+        case "instagram": {
           const instagramHandle = customUrl.replace(/^@?/, "");
           redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
           break;
-        case "whatsapp":
+        }
+        case "whatsapp": {
           const whatsappNumber = customUrl.replace(/\D/g, "");
           redirectUrl = `https://wa.me/${whatsappNumber}`;
           break;
-        case "phone":
+        }
+        case "phone": {
           const phoneNumber = customUrl.replace(/\D/g, "");
           redirectUrl = `tel:${phoneNumber}`;
           break;
+        }
         case "email":
           redirectUrl = `mailto:${customUrl}`;
-          break;
-        default:
+        break;
+      default:
           redirectUrl = customUrl ||
-            `https://www.dahis.io/character/${characterId}`;
+          `https://www.dahis.io/character/${characterId}`;
       }
     }
 
@@ -455,6 +467,14 @@ exports.dahiosInfo = onRequest({cors: true}, async (req, res) => {
         customUrl: dahiosData.customUrl || null,
         profileLinkType: dahiosData.profileLinkType || null,
         profileLinkTypes: dahiosData.profileLinkTypes || null,
+        warrantyStartDate:
+            dahiosData.warrantyStartDate ?
+                dahiosData.warrantyStartDate.toDate().toISOString() :
+                null,
+        warrantyEndDate:
+            dahiosData.warrantyEndDate ?
+                dahiosData.warrantyEndDate.toDate().toISOString() :
+                null,
       },
     });
   } catch (error) {
@@ -558,6 +578,14 @@ exports.dahiosList = onRequest({cors: true}, async (req, res) => {
         isActive: tagData.isActive,
         customUrl: tagData.customUrl || null,
         createdAt: tagData.createdAt,
+        warrantyStartDate:
+            tagData.warrantyStartDate ?
+                tagData.warrantyStartDate.toDate().toISOString() :
+                null,
+        warrantyEndDate:
+            tagData.warrantyEndDate ?
+                tagData.warrantyEndDate.toDate().toISOString() :
+                null,
       });
     });
 
@@ -613,7 +641,8 @@ exports.dahiosCreate = onRequest({cors: true}, async (req, res) => {
       return res.status(400).json({
         status: "error",
         message:
-          "redirectType must be one of: character, store, campaign, instagram, whatsapp, phone, email",
+          "redirectType must be one of: character, store, campaign, " +
+          "instagram, whatsapp, phone, email",
       });
     }
 
@@ -634,6 +663,14 @@ exports.dahiosCreate = onRequest({cors: true}, async (req, res) => {
     // UUID oluştur
     const dahiosId = uuidv4();
 
+    // Garanti süresi: 2 yıl (730 gün)
+    const now = admin.firestore.Timestamp.now();
+    const warrantyStartDate = now;
+    const warrantyEndDate = new admin.firestore.Timestamp(
+        now.seconds + (2 * 365 * 24 * 60 * 60), // 2 yıl = 730 gün
+        now.nanoseconds,
+    );
+
     // dahiOS tag verisi
     const dahiosData = {
       dahiosId: dahiosId,
@@ -642,6 +679,8 @@ exports.dahiosCreate = onRequest({cors: true}, async (req, res) => {
       isActive: isActive,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      warrantyStartDate: warrantyStartDate,
+      warrantyEndDate: warrantyEndDate,
     };
 
     // customUrl varsa ekle
@@ -663,6 +702,8 @@ exports.dahiosCreate = onRequest({cors: true}, async (req, res) => {
         redirectType: redirectType,
         isActive: isActive,
         customUrl: customUrl || null,
+        warrantyStartDate: warrantyStartDate.toDate().toISOString(),
+        warrantyEndDate: warrantyEndDate.toDate().toISOString(),
       },
     });
   } catch (error) {
@@ -736,7 +777,8 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
         return res.status(400).json({
           status: "error",
           message:
-            "redirectType must be one of: character, store, campaign, instagram, whatsapp, phone, email",
+            "redirectType must be one of: character, store, campaign, " +
+            "instagram, whatsapp, phone, email",
         });
       }
       updateData.redirectType = redirectType;
@@ -774,8 +816,9 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
 
     // profileLinkTypes array desteği
     if (req.body.profileLinkTypes !== undefined) {
-      if (req.body.profileLinkTypes === null || 
-          (Array.isArray(req.body.profileLinkTypes) && req.body.profileLinkTypes.length === 0)) {
+      if (req.body.profileLinkTypes === null ||
+          (Array.isArray(req.body.profileLinkTypes) &&
+           req.body.profileLinkTypes.length === 0)) {
         // profileLinkTypes'i kaldır
         updateData.profileLinkTypes = admin.firestore.FieldValue.delete();
         // Backward compatibility: profileLinkType'i de kaldır
@@ -788,10 +831,12 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
         }
       }
     }
-    
+
     // Backward compatibility: profileLinkType tek başına gönderilirse
-    if (req.body.profileLinkType !== undefined && req.body.profileLinkTypes === undefined) {
-      if (req.body.profileLinkType === null || req.body.profileLinkType === "") {
+    if (req.body.profileLinkType !== undefined &&
+       req.body.profileLinkTypes === undefined) {
+      if (req.body.profileLinkType === null ||
+         req.body.profileLinkType === "") {
         // profileLinkType'i kaldır
         updateData.profileLinkType = admin.firestore.FieldValue.delete();
         updateData.profileLinkTypes = admin.firestore.FieldValue.delete();

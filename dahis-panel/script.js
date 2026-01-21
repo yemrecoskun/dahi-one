@@ -15,6 +15,39 @@ function generateDahiosUrl(characterId, redirectType, customUrl) {
     }
 }
 
+// Format Firestore Timestamp to Date String
+function formatDate(timestamp) {
+    if (!timestamp) return 'Belirtilmemiş';
+    let date;
+    if (timestamp.toDate) {
+        // Firestore Timestamp (client SDK)
+        date = timestamp.toDate();
+    } else if (timestamp.seconds) {
+        // Firestore Timestamp object from server
+        date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
+    } else if (timestamp._seconds) {
+        // Firestore Timestamp object (alternative format)
+        date = new Date(timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000);
+    } else if (typeof timestamp === 'string') {
+        // ISO string
+        date = new Date(timestamp);
+    } else if (timestamp instanceof Date) {
+        date = timestamp;
+    } else {
+        date = new Date(timestamp);
+    }
+    
+    if (isNaN(date.getTime())) {
+        return 'Geçersiz tarih';
+    }
+    
+    return date.toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
 // Tab Navigation
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -385,6 +418,16 @@ async function loadTagList() {
                                     <span class="tag-detail-label">Yönlendirme</span>
                                     <span class="tag-detail-value">${tag.redirectType}</span>
                                 </div>
+                                ${tag.warrantyStartDate && tag.warrantyEndDate ? `
+                                <div class="tag-detail-item">
+                                    <span class="tag-detail-label">🛡️ Garanti Başlangıç</span>
+                                    <span class="tag-detail-value">${formatDate(tag.warrantyStartDate)}</span>
+                                </div>
+                                <div class="tag-detail-item">
+                                    <span class="tag-detail-label">🛡️ Garanti Bitiş</span>
+                                    <span class="tag-detail-value">${formatDate(tag.warrantyEndDate)}</span>
+                                </div>
+                                ` : ''}
                                 <div class="tag-detail-item" style="grid-column: 1 / -1;">
                                     <span class="tag-detail-label">🆔 dahiOS ID (UUID):</span>
                                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
