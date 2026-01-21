@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../services/auth_service.dart';
+import '../widgets/custom_toast.dart';
 import 'devices_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _authService = AuthService();
   bool _isLoading = true;
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -344,6 +346,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 24),
 
+                    // Hesabı Sil Butonu
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.delete_forever,
+                          color: Colors.orange,
+                        ),
+                        title: const Text(
+                          'Hesabı Sil',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.orange,
+                          ),
+                        ),
+                        onTap: () => _showDeleteAccountDialog(context),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     // Çıkış Butonu
                     Container(
                       decoration: BoxDecoration(
@@ -383,6 +413,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
     );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1a1a2e),
+          title: const Text(
+            'Hesabı Sil',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          content: const Text(
+            'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz. Tüm cihazlarınız ve verileriniz kalıcı olarak silinecektir.',
+            style: TextStyle(
+              color: Color(0xFFb0b0b8),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: _isDeleting ? null : () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text(
+                'İptal',
+                style: TextStyle(
+                  color: Color(0xFFb0b0b8),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: _isDeleting ? null : () async {
+                Navigator.of(dialogContext).pop();
+                await _deleteAccount(context);
+              },
+              child: _isDeleting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.orange,
+                      ),
+                    )
+                  : const Text(
+                      'Sil',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAccount(BuildContext context) async {
+    setState(() {
+      _isDeleting = true;
+    });
+
+    try {
+      await _authService.deleteAccount();
+
+      if (context.mounted) {
+        CustomToast.showSuccess(
+          context,
+          'Hesabınız başarıyla silindi',
+        );
+
+        // Ana ekrana yönlendir
+        await Future.delayed(const Duration(seconds: 1));
+        if (context.mounted) {
+          context.go('/');
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isDeleting = false;
+      });
+
+      if (context.mounted) {
+        String errorMessage = 'Hesap silinirken bir sorun oluştu.';
+        final errorStr = e.toString().toLowerCase();
+        if (errorStr.contains('requires-recent-login') ||
+            errorStr.contains('son zamanlarda giriş')) {
+          errorMessage = 'Hesap silmek için son zamanlarda giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.';
+        } else if (errorStr.contains('network') ||
+            errorStr.contains('connection') ||
+            errorStr.contains('internet')) {
+          errorMessage = 'İnternet bağlantınızı kontrol edin.';
+        } else if (errorStr.contains('permission') ||
+            errorStr.contains('unauthorized')) {
+          errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+        }
+        CustomToast.showError(context, errorMessage);
+      }
+    }
   }
 }
 

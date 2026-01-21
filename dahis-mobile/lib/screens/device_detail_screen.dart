@@ -95,38 +95,52 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             // Garanti tarihlerini yükle
             if (data['warrantyStartDate'] != null) {
               final startTimestamp = data['warrantyStartDate'];
-              if (startTimestamp is Map) {
-                if (startTimestamp['_seconds'] != null) {
-                  _warrantyStartDate = DateTime.fromMillisecondsSinceEpoch(
-                    (startTimestamp['_seconds'] as int) * 1000,
-                  );
-                } else if (startTimestamp['seconds'] != null) {
-                  _warrantyStartDate = DateTime.fromMillisecondsSinceEpoch(
-                    (startTimestamp['seconds'] as int) * 1000,
-                  );
+              try {
+                if (startTimestamp is String) {
+                  // ISO string formatından parse et
+                  _warrantyStartDate = DateTime.parse(startTimestamp);
+                } else if (startTimestamp is Map) {
+                  // Firestore Timestamp formatı (backward compatibility)
+                  if (startTimestamp['_seconds'] != null) {
+                    _warrantyStartDate = DateTime.fromMillisecondsSinceEpoch(
+                      (startTimestamp['_seconds'] as int) * 1000,
+                    );
+                  } else if (startTimestamp['seconds'] != null) {
+                    _warrantyStartDate = DateTime.fromMillisecondsSinceEpoch(
+                      (startTimestamp['seconds'] as int) * 1000,
+                    );
+                  }
+                } else if (startTimestamp is int) {
+                  _warrantyStartDate = DateTime.fromMillisecondsSinceEpoch(startTimestamp);
                 }
-              } else if (startTimestamp is String) {
-                _warrantyStartDate = DateTime.parse(startTimestamp);
-              } else if (startTimestamp is int) {
-                _warrantyStartDate = DateTime.fromMillisecondsSinceEpoch(startTimestamp);
+              } catch (e) {
+                // Parse hatası durumunda null bırak
+                _warrantyStartDate = null;
               }
             }
             if (data['warrantyEndDate'] != null) {
               final endTimestamp = data['warrantyEndDate'];
-              if (endTimestamp is Map) {
-                if (endTimestamp['_seconds'] != null) {
-                  _warrantyEndDate = DateTime.fromMillisecondsSinceEpoch(
-                    (endTimestamp['_seconds'] as int) * 1000,
-                  );
-                } else if (endTimestamp['seconds'] != null) {
-                  _warrantyEndDate = DateTime.fromMillisecondsSinceEpoch(
-                    (endTimestamp['seconds'] as int) * 1000,
-                  );
+              try {
+                if (endTimestamp is String) {
+                  // ISO string formatından parse et
+                  _warrantyEndDate = DateTime.parse(endTimestamp);
+                } else if (endTimestamp is Map) {
+                  // Firestore Timestamp formatı (backward compatibility)
+                  if (endTimestamp['_seconds'] != null) {
+                    _warrantyEndDate = DateTime.fromMillisecondsSinceEpoch(
+                      (endTimestamp['_seconds'] as int) * 1000,
+                    );
+                  } else if (endTimestamp['seconds'] != null) {
+                    _warrantyEndDate = DateTime.fromMillisecondsSinceEpoch(
+                      (endTimestamp['seconds'] as int) * 1000,
+                    );
+                  }
+                } else if (endTimestamp is int) {
+                  _warrantyEndDate = DateTime.fromMillisecondsSinceEpoch(endTimestamp);
                 }
-              } else if (endTimestamp is String) {
-                _warrantyEndDate = DateTime.parse(endTimestamp);
-              } else if (endTimestamp is int) {
-                _warrantyEndDate = DateTime.fromMillisecondsSinceEpoch(endTimestamp);
+              } catch (e) {
+                // Parse hatası durumunda null bırak
+                _warrantyEndDate = null;
               }
             }
           });
@@ -153,6 +167,42 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   Color _getCharacterColor(String characterId) {
     final characters = Character.getCharacters();
     return _parseColor(characters[characterId]?.colorCode ?? '#667eea');
+  }
+
+  String _getRemainingWarrantyTime(DateTime endDate) {
+    final now = DateTime.now();
+    if (endDate.isBefore(now)) {
+      return 'Süresi dolmuş';
+    }
+
+    final difference = endDate.difference(now);
+    final days = difference.inDays;
+    final months = days ~/ 30;
+    final years = months ~/ 12;
+
+    if (years > 0) {
+      final remainingMonths = months % 12;
+      if (remainingMonths > 0) {
+        return '$years yıl ${remainingMonths > 1 ? "$remainingMonths ay" : "1 ay"} kaldı';
+      }
+      return '$years yıl ${years > 1 ? "kaldı" : "kaldı"}';
+    } else if (months > 0) {
+      final remainingDays = days % 30;
+      if (remainingDays > 0) {
+        return '$months ay ${remainingDays > 1 ? "$remainingDays gün" : "1 gün"} kaldı';
+      }
+      return '$months ay ${months > 1 ? "kaldı" : "kaldı"}';
+    } else if (days > 0) {
+      return '$days gün ${days > 1 ? "kaldı" : "kaldı"}';
+    } else {
+      final hours = difference.inHours;
+      if (hours > 0) {
+        return '$hours saat ${hours > 1 ? "kaldı" : "kaldı"}';
+      } else {
+        final minutes = difference.inMinutes;
+        return '$minutes dakika ${minutes > 1 ? "kaldı" : "kaldı"}';
+      }
+    }
   }
 
   Widget _buildProfileLinkSelector(Color characterColor) {
@@ -542,7 +592,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   ),
                   const SizedBox(height: 24),
                   // Garanti Bilgileri
-                  if (_warrantyStartDate != null && _warrantyEndDate != null)
+                  if (_warrantyEndDate != null)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -562,77 +612,94 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                             color: const Color(0xFF1a1a2e),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFF667eea).withValues(alpha: 0.2),
+                              color: _warrantyEndDate!.isAfter(DateTime.now())
+                                  ? Colors.green.withValues(alpha: 0.3)
+                                  : Colors.red.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Garanti Başlangıç:',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xFFb0b0b8),
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_warrantyStartDate!.day}/${_warrantyStartDate!.month}/${_warrantyStartDate!.year}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Garanti Bitiş:',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xFFb0b0b8),
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_warrantyEndDate!.day}/${_warrantyEndDate!.month}/${_warrantyEndDate!.year}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: _warrantyEndDate!.isAfter(DateTime.now())
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
                               if (_warrantyEndDate!.isAfter(DateTime.now()))
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Garanti süresi devam ediyor',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.green.withValues(alpha: 0.8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.verified,
+                                          color: Colors.green,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Garanti Süresi',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xFFb0b0b8),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _getRemainingWarrantyTime(_warrantyEndDate!),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Bitiş: ${_warrantyEndDate!.day}/${_warrantyEndDate!.month}/${_warrantyEndDate!.year}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.green.withValues(alpha: 0.7),
+                                      ),
+                                    ),
+                                  ],
                                 )
                               else
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Garanti süresi dolmuş',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.red.withValues(alpha: 0.8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Garanti Süresi',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xFFb0b0b8),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'Garanti süresi dolmuş',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Bitiş: ${_warrantyEndDate!.day}/${_warrantyEndDate!.month}/${_warrantyEndDate!.year}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.red.withValues(alpha: 0.7),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                             ],
                           ),

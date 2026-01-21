@@ -281,6 +281,75 @@ class AuthService {
     await _auth!.signOut();
   }
 
+  // Hesabı sil
+  Future<void> deleteAccount() async {
+    if (_auth == null || _firestore == null || currentUser == null) {
+      throw Exception('Kullanıcı bilgisi bulunamadı');
+    }
+
+    final userId = currentUser!.uid;
+
+    try {
+      // 1. Kullanıcının tüm cihazlarını dahios_tags'den temizle
+      final userDoc = await _firestore!.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        final userData = userDoc.data();
+        final deviceIds = userData?['devices'] as List<dynamic>? ?? [];
+
+        // Her cihaz için dahios_tags'den user ve yönlendirme alanlarını sil
+        for (final deviceId in deviceIds) {
+          try {
+            final tagRef = _firestore!.collection('dahios_tags').doc(deviceId.toString().toLowerCase());
+            final tagDoc = await tagRef.get();
+
+            if (tagDoc.exists) {
+              final updateData = <String, dynamic>{};
+              final tagData = tagDoc.data()!;
+
+              // user alanı varsa sil
+              if (tagData.containsKey('user')) {
+                updateData['user'] = FieldValue.delete();
+              }
+
+              // yönlendirme alanı varsa sil
+              if (tagData.containsKey('yönlendirme')) {
+                updateData['yönlendirme'] = FieldValue.delete();
+              }
+
+              // Varsa güncelle
+              if (updateData.isNotEmpty) {
+                await tagRef.update(updateData);
+              }
+            }
+          } catch (e) {
+            // Tek bir cihaz için hata olsa bile devam et
+          }
+        }
+      }
+
+      // 2. Firestore'daki users dokümanını sil
+      await _firestore!.collection('users').doc(userId).delete();
+
+      // 3. Google Sign-In'den çıkış yap
+      try {
+        final GoogleSignIn googleSignIn = GoogleSignIn();
+        await googleSignIn.signOut();
+      } catch (e) {
+        // Google sign out hatası önemli değil
+      }
+
+      // 4. Firebase Auth'dan kullanıcıyı sil
+      await currentUser!.delete();
+    } catch (e) {
+      // Hata durumunda kullanıcıya bilgi ver
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('requires-recent-login')) {
+        throw Exception('Hesap silmek için son zamanlarda giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.');
+      }
+      rethrow;
+    }
+  }
+
   // Kullanıcı bilgilerini getir
   Future<Map<String, dynamic>?> getUserData() async {
     try {
