@@ -618,5 +618,180 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('list').classList.contains('active')) {
         setTimeout(() => loadTagList(), 200);
     }
+
+    // Push notification form handler
+    const pushForm = document.getElementById('pushForm');
+    if (pushForm) {
+        pushForm.addEventListener('submit', handlePushNotification);
+    }
 });
+
+// Toggle user IDs input
+function toggleUserIdsInput() {
+    const userIdsGroup = document.getElementById('userIdsGroup');
+    const pushTarget = document.querySelector('input[name="pushTarget"]:checked');
+    if (pushTarget && pushTarget.value === 'specific') {
+        userIdsGroup.style.display = 'block';
+    } else {
+        userIdsGroup.style.display = 'none';
+    }
+}
+
+// Handle push notification form submission
+async function handlePushNotification(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('pushTitle').value.trim();
+    const body = document.getElementById('pushBody').value.trim();
+    const pushTarget = document.querySelector('input[name="pushTarget"]:checked').value;
+    const userIdsInput = document.getElementById('pushUserIds').value.trim();
+    const dataInput = document.getElementById('pushData').value.trim();
+    const resultDiv = document.getElementById('pushResult');
+    const submitBtn = document.getElementById('pushSubmitBtn');
+    
+    if (!title || !body) {
+        resultDiv.innerHTML = '<div class="error">Başlık ve mesaj gereklidir.</div>';
+        return;
+    }
+    
+    // Parse data JSON
+    let data = {};
+    if (dataInput) {
+        try {
+            data = JSON.parse(dataInput);
+        } catch (e) {
+            resultDiv.innerHTML = '<div class="error">Ek veri geçerli bir JSON formatında olmalıdır.</div>';
+            return;
+        }
+    }
+    
+    // Prepare request body
+    const requestBody = {
+        title: title,
+        body: body,
+        data: data
+    };
+    
+    if (pushTarget === 'all') {
+        requestBody.allUsers = true;
+        const useTopic = document.getElementById('useTopic').checked;
+        requestBody.useTopic = useTopic;
+    } else {
+        if (!userIdsInput) {
+            resultDiv.innerHTML = '<div class="error">Belirli kullanıcılara göndermek için kullanıcı ID\'leri gereklidir.</div>';
+            return;
+        }
+        requestBody.userIds = userIdsInput.split(',').map(id => id.trim()).filter(id => id.length > 0);
+    }
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Gönderiliyor...';
+    resultDiv.innerHTML = '<div class="info">Bildirim gönderiliyor, lütfen bekleyin...</div>';
+    
+    try {
+        console.log('Push notification gönderiliyor...', requestBody);
+        
+        const response = await fetch(`${API_BASE}/sendPushNotification`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            // HTTP hata durumu
+            let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                // JSON parse edilemezse text olarak oku
+                const errorText = await response.text();
+                if (errorText) {
+                    errorMessage = errorText;
+                }
+            }
+            throw new Error(errorMessage);
+        }
+        
+        const result = await response.json();
+        console.log('Response result:', result);
+        
+        if (result.status === 'success') {
+            if (result.results.totalTokens === 0) {
+                resultDiv.innerHTML = `
+                    <div class="info">
+                        <strong>Bildirim gönderildi</strong><br>
+                        Token'ı olan kullanıcı bulunamadı. Token'ı olan kullanıcılar otomatik olarak bildirim alacak.
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>Bildirim başarıyla gönderildi!</strong><br>
+                        Toplam Token: ${result.results.totalTokens}<br>
+                        Başarılı: ${result.results.success}<br>
+                        Başarısız: ${result.results.failed}
+                        ${result.results.errors && result.results.errors.length > 0 ? '<br><br><strong>Hatalar:</strong><br>' + result.results.errors.map(e => `- ${e.error || e}`).join('<br>') : ''}
+                    </div>
+                `;
+            }
+            // Reset form
+            document.getElementById('pushForm').reset();
+            document.getElementById('userIdsGroup').style.display = 'none';
+        } else {
+            let errorMessage = result.message || 'Bilinmeyen hata';
+            
+            // FCM token bulunamadı hatası için özel mesaj
+            if (errorMessage.includes('FCM token') || errorMessage.includes('No FCM tokens')) {
+                let statsInfo = '';
+                if (result.stats) {
+                    statsInfo = `<br><br><strong>İstatistikler:</strong><br>
+                        Toplam Kullanıcı: ${result.stats.totalUsers}<br>
+                        Token'ı Olan Kullanıcı: ${result.stats.usersWithToken}`;
+                }
+                
+                errorMessage = `
+                    <strong>FCM Token Bulunamadı</strong>${statsInfo}<br><br>
+                    <strong>Bu hatanın nedenleri:</strong><br>
+                    1. Kullanıcıların uygulamada giriş yapmış olması gerekiyor<br>
+                    2. Push notification izni verilmiş olması gerekiyor<br>
+                    3. Google Play Services'in yüklü ve güncel olması gerekiyor (Android)<br>
+                    4. iOS'ta APNs yapılandırmasının tamamlanmış olması gerekiyor<br><br>
+                    <strong>Çözüm:</strong><br>
+                    - Kullanıcıların uygulamayı açıp giriş yapmasını sağlayın<br>
+                    - Push notification izni verildiğinden emin olun<br>
+                    - Android'de Google Play Services'in güncel olduğundan emin olun<br>
+                    - Firestore'da users koleksiyonunda fcmToken alanını kontrol edin<br><br>
+                    <strong>Test için:</strong><br>
+                    - Uygulamayı açın ve giriş yapın<br>
+                    - Push notification izni verin<br>
+                    - Birkaç dakika bekleyin (token kaydedilmesi için)<br>
+                    - Tekrar deneyin
+                `;
+            }
+            
+            resultDiv.innerHTML = `<div class="error">${errorMessage}</div>`;
+        }
+    } catch (error) {
+        console.error('Push notification error:', error);
+        let errorMessage = error.message || 'Bilinmeyen hata';
+        
+        // Network hataları için özel mesaj
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            errorMessage = 'Ağ hatası: Backend\'e bağlanılamadı. Lütfen internet bağlantınızı kontrol edin veya backend\'in çalıştığından emin olun.';
+        } else if (error.message.includes('CORS')) {
+            errorMessage = 'CORS hatası: Backend CORS ayarlarını kontrol edin.';
+        }
+        
+        resultDiv.innerHTML = `<div class="error">Bildirim gönderilirken bir hata oluştu: ${errorMessage}</div>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Bildirim Gönder';
+    }
+}
 

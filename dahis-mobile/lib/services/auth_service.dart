@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
+import 'push_notification_service.dart';
 
 class AuthService {
   FirebaseAuth? get _auth {
@@ -275,6 +276,13 @@ class AuthService {
   // Çıkış
   Future<void> signOut() async {
     if (_auth == null) return;
+    
+    // Push notification token'ı temizle
+    try {
+      await PushNotificationService().clearToken();
+    } catch (e) {
+      // Token temizleme hatası önemli değil
+    }
     
     // Google Sign-In'den de çıkış yap
     try {

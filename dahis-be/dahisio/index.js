@@ -6,6 +6,7 @@ const {v4: uuidv4} = require("uuid");
 
 admin.initializeApp();
 const db = admin.firestore();
+const messaging = admin.messaging();
 
 setGlobalOptions({maxInstances: 10});
 
@@ -373,14 +374,14 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
       }
     } else {
       // Eski redirectType mantığı (geriye dönük uyumluluk)
-    switch (redirectType) {
-      case "character":
-        redirectUrl = `https://www.dahis.io/character/${characterId}`;
-        break;
-      case "store":
-        redirectUrl = `https://dahis.shop/one-${characterId}`;
-        break;
-      case "campaign":
+      switch (redirectType) {
+        case "character":
+          redirectUrl = `https://www.dahis.io/character/${characterId}`;
+          break;
+        case "store":
+          redirectUrl = `https://dahis.shop/one-${characterId}`;
+          break;
+        case "campaign":
           redirectUrl = customUrl || "https://www.dahis.io";
           break;
         case "instagram": {
@@ -400,8 +401,8 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
         }
         case "email":
           redirectUrl = `mailto:${customUrl}`;
-        break;
-      default:
+          break;
+        default:
           redirectUrl = customUrl ||
           `https://www.dahis.io/character/${characterId}`;
       }
@@ -876,6 +877,203 @@ exports.dahiosUpdate = onRequest({cors: true}, async (req, res) => {
     });
   } catch (error) {
     logger.error("dahiOS update error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+});
+
+/**
+ * Push Notification Gönderme
+ * POST /sendPushNotification
+ * Body: { title, body, userIds?, allUsers?, data?, useTopic? }
+ */
+exports.sendPushNotification = onRequest({cors: true}, async (req, res) => {
+  try {
+    if (req.method !== "POST") {
+      return res.status(405).json({
+        status: "error",
+        message: "Method not allowed",
+      });
+    }
+
+    const {title, body, userIds, allUsers, data, useTopic} = req.body;
+
+    if (!title || !body) {
+      return res.status(400).json({
+        status: "error",
+        message: "title and body are required",
+      });
+    }
+
+    // Topic kullanarak gönder (tüm kullanıcılara)
+    if (useTopic === true && allUsers === true) {
+      const message = {
+        notification: {
+          title: title,
+          body: body,
+        },
+        data: data || {},
+        android: {
+          priority: "high",
+        },
+        apns: {
+          payload: {
+            aps: {
+              "alert": {"title": title, "body": body},
+              "sound": "default",
+              "badge": 1,
+              "content-available": 1,
+            },
+          },
+          headers: {
+            "apns-priority": "10",
+          },
+        },
+        topic: "all_users",
+      };
+
+      try {
+        const response = await messaging.send(message);
+        logger.info("FCM topic send success:", response);
+        return res.status(200).json({
+          status: "success",
+          message: "Push notification sent via topic",
+          results: {
+            totalTokens: "topic:all_users",
+            success: 1,
+            failed: 0,
+            errors: [],
+            messageId: response,
+          },
+        });
+      } catch (error) {
+        logger.error("FCM topic send error:", error);
+        return res.status(500).json({
+          status: "error",
+          message: error.message || "Failed to send via topic",
+          error: error.toString(),
+        });
+      }
+    }
+
+    // Token bazlı gönderim
+    const fcmTokens = [];
+
+    if (allUsers === true) {
+      // Tüm kullanıcılara gönder - token'ı olan herkese
+      const usersSnapshot = await db.collection("users").get();
+      usersSnapshot.forEach((doc) => {
+        const userData = doc.data();
+        const token = userData.fcmToken;
+        if (token && typeof token === "string" && token.trim().length > 0) {
+          fcmTokens.push(token);
+        }
+      });
+    } else if (userIds && Array.isArray(userIds) && userIds.length > 0) {
+      // Belirli kullanıcılara gönder - token'ı olanlara
+      for (const userId of userIds) {
+        const userDoc = await db.collection("users").doc(userId).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const token = userData.fcmToken;
+          if (token && typeof token === "string" && token.trim().length > 0) {
+            fcmTokens.push(token);
+          }
+        }
+      }
+    } else {
+      return res.status(400).json({
+        status: "error",
+        message: "Either allUsers or userIds array is required",
+      });
+    }
+
+    // Token yoksa boş sonuç döndür
+    if (fcmTokens.length === 0) {
+      return res.status(200).json({
+        status: "success",
+        message: "Push notification gönderildi",
+        results: {
+          totalTokens: 0,
+          success: 0,
+          failed: 0,
+          errors: [],
+        },
+      });
+    }
+
+    // FCM mesajı oluştur
+    const message = {
+      notification: {
+        title: title,
+        body: body,
+      },
+      data: data || {},
+      android: {
+        priority: "high",
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: "default",
+            badge: 1,
+          },
+        },
+      },
+    };
+
+    // Toplu gönderim (500 token'a kadar)
+    const batchSize = 500;
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: [],
+    };
+
+    for (let i = 0; i < fcmTokens.length; i += batchSize) {
+      const batch = fcmTokens.slice(i, i + batchSize);
+      try {
+        const response = await messaging.sendEachForMulticast({
+          ...message,
+          tokens: batch,
+        });
+        results.success += response.successCount;
+        results.failed += response.failureCount;
+        if (response.failureCount > 0) {
+          response.responses.forEach((resp, idx) => {
+            if (!resp.success) {
+              results.errors.push({
+                token: batch[idx].substring(0, 20) + "...",
+                error: resp.error.message || resp.error.code || "Unknown error",
+              });
+            }
+          });
+        }
+      } catch (error) {
+        logger.error("FCM send error:", error);
+        results.failed += batch.length;
+        const errorMessage = error.message || error.code || "Unknown error";
+        results.errors.push({
+          batch: `Batch ${Math.floor(i / batchSize) + 1}`,
+          error: errorMessage,
+        });
+      }
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Push notifications sent",
+      results: {
+        totalTokens: fcmTokens.length,
+        success: results.success,
+        failed: results.failed,
+        errors: results.errors.slice(0, 10), // İlk 10 hatayı göster
+      },
+    });
+  } catch (error) {
+    logger.error("Push notification error:", error);
     return res.status(500).json({
       status: "error",
       message: "Internal server error",

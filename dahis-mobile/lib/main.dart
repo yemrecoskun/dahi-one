@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'screens/main_screen.dart';
@@ -20,6 +21,7 @@ import 'screens/contact_info_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'widgets/logo.dart';
 import 'widgets/update_dialog.dart';
+import 'services/push_notification_service.dart' show PushNotificationService, firebaseMessagingBackgroundHandler;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -30,6 +32,22 @@ void main() async {
   try {
     await Firebase.initializeApp();
     print('✅ Firebase başarıyla başlatıldı');
+    
+    // Background message handler'ı kaydet
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    
+    // Push notification servisini başlat
+    // Hata durumunda uygulama çalışmaya devam eder
+    try {
+      await PushNotificationService().initialize();
+    } catch (e) {
+      // Hata mesajı zaten PushNotificationService içinde loglanıyor
+      // Burada sadece genel bir mesaj yazdırıyoruz
+      final errorStr = e.toString().toLowerCase();
+      if (!errorStr.contains("service_not_available")) {
+        print('⚠️  Push notification servisi başlatılamadı: $e');
+      }
+    }
   } catch (e) {
     // Firebase yapılandırma dosyaları eksikse uygulama yine de çalışır
     // Detaylar için: dahis-mobile/FIREBASE-SETUP.md ve FIREBASE-FIX.md dosyalarına bakın

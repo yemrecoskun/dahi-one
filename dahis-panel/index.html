@@ -18,6 +18,7 @@
             <button class="tab-btn" data-tab="list">Tag Listesi</button>
             <button class="tab-btn" data-tab="info">Tag Bilgisi</button>
             <button class="tab-btn" data-tab="stats">İstatistikler</button>
+            <button class="tab-btn" data-tab="push">Push Bildirim</button>
         </nav>
 
         <!-- NFC Tag Oluştur -->
@@ -121,6 +122,58 @@
                     <button type="submit" class="btn btn-primary">İstatistikleri Getir</button>
                 </form>
                 <div id="statsResult" class="result"></div>
+            </div>
+        </section>
+
+        <!-- Push Bildirim -->
+        <section id="push" class="tab-content">
+            <div class="card">
+                <h2>Push Bildirim Gönder</h2>
+                <form id="pushForm">
+                    <div class="form-group">
+                        <label for="pushTitle">Başlık *</label>
+                        <input type="text" id="pushTitle" placeholder="Bildirim başlığı" required maxlength="100">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pushBody">Mesaj *</label>
+                        <textarea id="pushBody" placeholder="Bildirim mesajı" required maxlength="500" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="radio" name="pushTarget" value="all" checked onchange="toggleUserIdsInput()">
+                            Tüm Kullanıcılara Gönder
+                        </label>
+                        <label style="margin-top: 10px; display: block;">
+                            <input type="checkbox" id="useTopic" checked>
+                            Topic kullan (Daha hızlı - tüm kullanıcılara)
+                        </label>
+                        <label style="margin-top: 10px; display: block;">
+                            <input type="radio" name="pushTarget" value="specific" onchange="toggleUserIdsInput()">
+                            Belirli Kullanıcılara Gönder
+                        </label>
+                    </div>
+
+                    <div class="form-group" id="userIdsGroup" style="display: none;">
+                        <label for="pushUserIds">Kullanıcı ID'leri (Virgülle Ayırın)</label>
+                        <input type="text" id="pushUserIds" placeholder="userId1, userId2, userId3">
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            Birden fazla kullanıcı ID'sini virgülle ayırarak girin
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pushData">Ek Veri (JSON - Opsiyonel)</label>
+                        <textarea id="pushData" placeholder='{"route": "/character/puls", "key": "value"}' rows="3"></textarea>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            Deep link veya ek veri için JSON formatında girin
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="pushSubmitBtn">Bildirim Gönder</button>
+                </form>
+                <div id="pushResult" class="result"></div>
             </div>
         </section>
     </div>
