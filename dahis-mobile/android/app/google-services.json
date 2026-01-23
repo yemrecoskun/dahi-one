@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:412418089622:android:aebb3f5bce25fd398458b7",
+        "mobilesdk_app_id": "1:412418089622:android:088365199c3e91418458b7",
         "android_client_info": {
           "package_name": "com.dahis.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "412418089622-22com086bdtc7s7kid87dcokhfo3nuj8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dahis.app",
+            "certificate_hash": "b264e7bc784a7d39848d2561dcc7d244e468006a"
+          }
+        },
         {
           "client_id": "412418089622-dq5r9ntoqjrbgdavl6ikuftra395lu0h.apps.googleusercontent.com",
           "client_type": 3
@@ -34,7 +42,7 @@
               "client_id": "412418089622-ia1dv46dn4c68h5ak0tlaugpj91e5qm2.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.dahis.app"
+                "bundle_id": "com.dahis.io"
               }
             }
           ]

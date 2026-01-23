@@ -70,9 +70,15 @@ class AuthService {
         throw Exception('Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.');
       }
 
-      // Google Sign-In başlat (iOS için scopes belirt)
+      // Google Sign-In başlat
+      // Android için serverClientId gerekli (web client ID)
+      // iOS için scopes belirt
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile'],
+        // Android için web client ID (google-services.json'dan alınan)
+        serverClientId: Platform.isAndroid
+            ? '412418089622-dq5r9ntoqjrbgdavl6ikuftra395lu0h.apps.googleusercontent.com'
+            : null,
       );
       
       GoogleSignInAccount? googleUser;
