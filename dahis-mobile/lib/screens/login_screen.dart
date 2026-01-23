@@ -86,15 +86,38 @@ class _LoginScreenState extends State<LoginScreen> {
       // Platform exception - native tarafından gelen hata
       if (mounted) {
         String errorMessage = 'Google ile giriş hatası oluştu.';
-        if (e.code == 'sign_in_failed' || 
-            e.message?.contains('configuration') == true ||
-            e.message?.contains('GoogleService-Info.plist') == true) {
-          errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
-        } else if (e.code == 'network_error') {
-          errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (e.code == 'sign_in_canceled') {
-          // Kullanıcı iptal etti, mesaj gösterme
-          return;
+        final errorCode = e.code.toLowerCase();
+        final errorMsg = e.message?.toLowerCase() ?? '';
+        
+        if (Platform.isAndroid) {
+          // Android için özel hata mesajları
+          if (errorCode == 'sign_in_failed' || 
+              errorMsg.contains('configuration') ||
+              errorMsg.contains('clientid') ||
+              errorMsg.contains('google-services.json') ||
+              errorMsg.contains('sha') ||
+              errorMsg.contains('fingerprint')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Firebase Console\'da SHA parmak izlerini ekleyip google-services.json dosyasını yeniden indirin.';
+          } else if (errorCode == 'network_error') {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorCode == 'sign_in_canceled') {
+            // Kullanıcı iptal etti, mesaj gösterme
+            return;
+          } else if (errorMsg.contains('developer_error') ||
+                     errorMsg.contains('invalid_client')) {
+            errorMessage = 'Google Sign-In yapılandırma hatası. Firebase Console ayarlarını kontrol edin.';
+          }
+        } else {
+          // iOS için hata mesajları
+          if (errorCode == 'sign_in_failed' || 
+              errorMsg.contains('configuration') ||
+              errorMsg.contains('googleservice-info.plist')) {
+            errorMessage = 'Google Sign-In yapılandırması eksik. Lütfen GoogleService-Info.plist dosyasını kontrol edin.';
+          } else if (errorCode == 'network_error') {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorCode == 'sign_in_canceled') {
+            return;
+          }
         }
         CustomToast.showError(context, errorMessage);
       }
@@ -102,19 +125,45 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         String errorMessage = 'Google ile giriş yapılamadı.';
         final errorStr = e.toString().toLowerCase();
-        if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
-          errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (errorStr.contains('cancelled') || errorStr.contains('canceled')) {
-          // Kullanıcı iptal etti, mesaj gösterme
-          return;
-        } else if (errorStr.contains('yapılandırma') || 
-                   errorStr.contains('googleservice-info.plist') ||
-                   errorStr.contains('configuration') ||
-                   errorStr.contains('clientid') ||
-                   errorStr.contains('gidclientid')) {
-          errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
-        } else if (errorStr.contains('firebase başlatılamadı')) {
-          errorMessage = 'Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.';
+        
+        if (Platform.isAndroid) {
+          if (errorStr.contains('yapılandırma') || 
+              errorStr.contains('configuration') ||
+              errorStr.contains('clientid') ||
+              errorStr.contains('google-services.json') ||
+              errorStr.contains('sha') ||
+              errorStr.contains('fingerprint')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Firebase Console\'da SHA parmak izlerini ekleyip google-services.json dosyasını yeniden indirin.';
+          } else if (errorStr.contains('network') || 
+                     errorStr.contains('connection') || 
+                     errorStr.contains('internet')) {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorStr.contains('cancelled') || 
+                     errorStr.contains('canceled')) {
+            return;
+          } else if (errorStr.contains('developer_error') ||
+                     errorStr.contains('invalid_client')) {
+            errorMessage = 'Google Sign-In yapılandırma hatası. Firebase Console ayarlarını kontrol edin.';
+          } else if (errorStr.contains('firebase başlatılamadı')) {
+            errorMessage = 'Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.';
+          }
+        } else {
+          if (errorStr.contains('yapılandırma') || 
+              errorStr.contains('googleservice-info.plist') ||
+              errorStr.contains('configuration') ||
+              errorStr.contains('clientid') ||
+              errorStr.contains('gidclientid')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+          } else if (errorStr.contains('network') || 
+                     errorStr.contains('connection') || 
+                     errorStr.contains('internet')) {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorStr.contains('cancelled') || 
+                     errorStr.contains('canceled')) {
+            return;
+          } else if (errorStr.contains('firebase başlatılamadı')) {
+            errorMessage = 'Uygulama başlatılamadı. Lütfen uygulamayı yeniden başlatın.';
+          }
         }
         CustomToast.showError(context, errorMessage);
       }

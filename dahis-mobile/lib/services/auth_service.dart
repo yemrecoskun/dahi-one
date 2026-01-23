@@ -89,34 +89,83 @@ class AuthService {
       } on PlatformException catch (e) {
         // Platform exception - native tarafından gelen hata
         String errorMessage = 'Google ile giriş yapılamadı.';
-        if (e.code == 'sign_in_failed' || 
-            e.message?.toLowerCase().contains('configuration') == true ||
-            e.message?.toLowerCase().contains('googleservice-info.plist') == true ||
-            e.message?.toLowerCase().contains('clientid') == true ||
-            e.message?.toLowerCase().contains('gidclientid') == true) {
-          errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
-        } else if (e.code == 'network_error' || 
-                   e.message?.toLowerCase().contains('network') == true ||
-                   e.message?.toLowerCase().contains('connection') == true) {
-          errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (e.code == 'sign_in_canceled') {
-          // Kullanıcı iptal etti
-          return null;
+        final errorCode = e.code.toLowerCase();
+        final errorMsg = e.message?.toLowerCase() ?? '';
+        
+        if (Platform.isAndroid) {
+          // Android için özel hata mesajları
+          if (errorCode == 'sign_in_failed' || 
+              errorMsg.contains('configuration') ||
+              errorMsg.contains('clientid') ||
+              errorMsg.contains('google-services.json') ||
+              errorMsg.contains('sha') ||
+              errorMsg.contains('fingerprint')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Firebase Console\'da SHA-1/SHA-256 parmak izlerini ekleyip google-services.json dosyasını yeniden indirin.';
+          } else if (errorCode == 'network_error' || 
+                     errorMsg.contains('network') ||
+                     errorMsg.contains('connection')) {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorCode == 'sign_in_canceled') {
+            // Kullanıcı iptal etti
+            return null;
+          } else if (errorMsg.contains('developer_error') ||
+                     errorMsg.contains('invalid_client')) {
+            errorMessage = 'Google Sign-In yapılandırma hatası. Firebase Console\'da Google Sign-In\'in etkin olduğundan ve SHA parmak izlerinin eklendiğinden emin olun.';
+          }
+        } else {
+          // iOS için hata mesajları
+          if (errorCode == 'sign_in_failed' || 
+              errorMsg.contains('configuration') ||
+              errorMsg.contains('googleservice-info.plist') ||
+              errorMsg.contains('clientid') ||
+              errorMsg.contains('gidclientid')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+          } else if (errorCode == 'network_error' || 
+                     errorMsg.contains('network') ||
+                     errorMsg.contains('connection')) {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorCode == 'sign_in_canceled') {
+            return null;
+          }
         }
         throw Exception(errorMessage);
       } catch (e) {
         // Diğer exception'lar
         String errorMessage = 'Google ile giriş yapılamadı.';
         final errorStr = e.toString().toLowerCase();
-        if (errorStr.contains('configuration') || 
-            errorStr.contains('googleservice-info.plist') ||
-            errorStr.contains('clientid') ||
-            errorStr.contains('gidclientid')) {
-          errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
-        } else if (errorStr.contains('network') || errorStr.contains('connection') || errorStr.contains('internet')) {
-          errorMessage = 'İnternet bağlantınızı kontrol edin.';
-        } else if (errorStr.contains('cancelled') || errorStr.contains('canceled')) {
-          return null;
+        
+        if (Platform.isAndroid) {
+          if (errorStr.contains('configuration') || 
+              errorStr.contains('clientid') ||
+              errorStr.contains('google-services.json') ||
+              errorStr.contains('sha') ||
+              errorStr.contains('fingerprint')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Firebase Console\'da SHA-1/SHA-256 parmak izlerini ekleyip google-services.json dosyasını yeniden indirin.';
+          } else if (errorStr.contains('network') || 
+                     errorStr.contains('connection') || 
+                     errorStr.contains('internet')) {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorStr.contains('cancelled') || 
+                     errorStr.contains('canceled')) {
+            return null;
+          } else if (errorStr.contains('developer_error') ||
+                     errorStr.contains('invalid_client')) {
+            errorMessage = 'Google Sign-In yapılandırma hatası. Firebase Console ayarlarını kontrol edin.';
+          }
+        } else {
+          if (errorStr.contains('configuration') || 
+              errorStr.contains('googleservice-info.plist') ||
+              errorStr.contains('clientid') ||
+              errorStr.contains('gidclientid')) {
+            errorMessage = 'Google giriş yapılandırması eksik. Lütfen daha sonra tekrar deneyin.';
+          } else if (errorStr.contains('network') || 
+                     errorStr.contains('connection') || 
+                     errorStr.contains('internet')) {
+            errorMessage = 'İnternet bağlantınızı kontrol edin.';
+          } else if (errorStr.contains('cancelled') || 
+                     errorStr.contains('canceled')) {
+            return null;
+          }
         }
         throw Exception(errorMessage);
       }

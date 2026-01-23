@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "412418089622-iflp7fcjk1d8hs2uvt6880pvf336jndd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dahis.app",
+            "certificate_hash": "f10c65625bec664abd06d8fe62e1a13c00fa124c"
+          }
+        },
+        {
           "client_id": "412418089622-dq5r9ntoqjrbgdavl6ikuftra395lu0h.apps.googleusercontent.com",
           "client_type": 3
         }
