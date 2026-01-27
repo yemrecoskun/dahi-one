@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dahiOS Tag Detay</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2672908385908922"
+     crossorigin="anonymous"></script>
+    <script>
+        // AdSense reklamlarını başlat (sadece bir kez, hata kontrolü ile)
+        (function() {
+            var adsInitialized = false;
+            
+            // AdSense 400 hatalarını console'da gizle (hesap onayı beklenirken normal)
+            var originalError = console.error;
+            console.error = function() {
+                var args = Array.prototype.slice.call(arguments);
+                var errorStr = args.join(' ');
+                // AdSense 400 hatalarını gizle
+                if (errorStr.includes('ads?client=ca-pub-') && errorStr.includes('400')) {
+                    return; // Bu hatayı gösterme
+                }
+                originalError.apply(console, args);
+            };
+            
+            function initAds() {
+                if (adsInitialized) return;
+                
+                // AdSense script yüklenmiş mi kontrol et
+                if (!window.adsbygoogle) {
+                    // Script henüz yüklenmemiş, bekle
+                    setTimeout(initAds, 200);
+                    return;
+                }
+                
+                var ads = document.querySelectorAll('.adsbygoogle');
+                if (ads.length === 0) return;
+                
+                ads.forEach(function(ad) {
+                    if (ad.innerHTML.trim() !== '') return;
+                    
+                    try {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (e) {
+                        // Hataları sessizce ignore et (AdSense hesap onayı beklenirken normal)
+                        if (e.message && !e.message.includes('already have ads')) {
+                            // Sessizce devam et
+                        }
+                    }
+                });
+                adsInitialized = true;
+            }
+            
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(initAds, 1000);
+            } else {
+                window.addEventListener('load', function() {
+                    setTimeout(initAds, 1000);
+                });
+            }
+        })();
+    </script>
+    <style>
+        .tag-detail-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .tag-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .error {
+            color: #ff4444;
+            text-align: center;
+            padding: 40px;
+        }
+        .adsense-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .adsense-top {
+            margin-bottom: 20px;
+        }
+        .adsense-bottom {
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .adsense-container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- AdSense Banner - Top -->
+    <div class="adsense-container adsense-top">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-2672908385908922"
+             data-ad-slot="2251888532"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
+    <div class="tag-detail-container">
+        <div id="tagContent" class="tag-content">
+            <div class="loading">
+                <p>Yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AdSense Banner - Bottom -->
+    <div class="adsense-container adsense-bottom">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-2672908385908922"
+             data-ad-slot="2251888532"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
+    <script>
+        // URL parametrelerinden bilgileri al
+        const urlParams = new URLSearchParams(window.location.search);
+        const dahiosId = urlParams.get('dahiosId') || urlParams.get('nfcId');
+        const isActive = urlParams.get('isActive') === 'true';
+        const characterId = urlParams.get('characterId') || '';
+        const profileLinkTypesStr = urlParams.get('profileLinkTypes');
+        const userDataStr = urlParams.get('userData');
+
+        if (!dahiosId) {
+            document.getElementById('tagContent').innerHTML = `
+                <div class="error">
+                    <h2>Hata</h2>
+                    <p>dahiOS ID bulunamadı.</p>
+                    <a href="index.html" style="color: #fff; text-decoration: underline;">Ana Sayfaya Dön</a>
+                </div>
+            `;
+        } else {
+            // URL parametrelerinden tag bilgilerini oluştur
+            const tagData = {
+                dahiosId: dahiosId,
+                isActive: isActive,
+                characterId: characterId,
+                profileLinkTypes: profileLinkTypesStr,
+                userData: userDataStr
+            };
+            
+            // Direkt render et
+            renderTagContent(tagData);
+        }
+
+        // Tag bilgilerini HTML olarak render et
+        function renderTagContent(tagData) {
+            const contentDiv = document.getElementById('tagContent');
+            
+            // Pasif tag durumu
+            if (!tagData.isActive) {
+                const characterId = tagData.characterId || "unknown";
+                const characterName = characterId.charAt(0).toUpperCase() + characterId.slice(1);
+                
+                contentDiv.innerHTML = `
+                    <div class="icon" style="font-size: 64px; margin-bottom: 20px; opacity: 0.8;">⏸️</div>
+                    <h1 style="font-size: 28px; margin-bottom: 16px; font-weight: 700;">Bu dahiOS Cihazı Şu Anda Pasif</h1>
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px; opacity: 0.9;">
+                        <span style="font-weight: 600; color: #ffd700;">${characterName}</span> karakterine
+                        ait dahiOS cihazı şu anda aktif değil.
+                    </p>
+                    <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px; opacity: 0.9;">
+                        Cihazı aktif hale getirmek için lütfen cihaz sahibiyle iletişime
+                        geçin veya dahi's uygulamasından cihazı yönetin.
+                    </p>
+                    <a href="https://dahis.io" style="display: inline-block; background: rgba(255, 255, 255, 0.2); color: #fff; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.3);">dahi's Ana Sayfaya Dön</a>
+                    <div style="margin-top: 32px; font-size: 12px; opacity: 0.7;">
+                        dahi's One © 2025
+                    </div>
+                `;
+                return;
+            }
+
+            // Aktif tag - profil linkleri varsa göster
+            let profileLinkTypes = null;
+            if (tagData.profileLinkTypes) {
+                try {
+                    profileLinkTypes = typeof tagData.profileLinkTypes === 'string' 
+                        ? JSON.parse(tagData.profileLinkTypes) 
+                        : tagData.profileLinkTypes;
+                } catch (e) {
+                    profileLinkTypes = tagData.profileLinkTypes;
+                }
+            } else if (tagData.profileLinkType) {
+                profileLinkTypes = [tagData.profileLinkType];
+            }
+            
+            let userData = null;
+            if (tagData.userData) {
+                try {
+                    userData = typeof tagData.userData === 'string' 
+                        ? JSON.parse(tagData.userData) 
+                        : tagData.userData;
+                } catch (e) {
+                    userData = tagData.userData;
+                }
+            } else if (tagData.user) {
+                userData = tagData.user;
+            }
+            
+            if (profileLinkTypes && profileLinkTypes.length > 0 && userData) {
+                // Karakter renk kodları
+                const characterColors = {
+                    "puls": {primary: "#ff4444", secondary: "#cc3333"},
+                    "zest": {primary: "#ff8844", secondary: "#cc6633"},
+                    "lumo": {primary: "#ffdd44", secondary: "#ccaa33"},
+                    "vigo": {primary: "#44dd88", secondary: "#33aa66"},
+                    "aura": {primary: "#4488ff", secondary: "#3366cc"},
+                };
+                
+                const characterId = tagData.characterId || "puls";
+                const charColor = characterColors[characterId] || characterColors["puls"];
+                
+                // Body background rengini değiştir
+                document.querySelector('.tag-detail-container').style.background = 
+                    `linear-gradient(135deg, ${charColor.primary} 0%, ${charColor.secondary} 100%)`;
+                
+                // Profil linklerini oluştur
+                const profileLinks = profileLinkTypes.map(linkType => {
+                    const profileValue = userData[linkType] || "";
+                    if (!profileValue) return null;
+                    
+                    let url = "";
+                    let label = "";
+                    let icon = "";
+                    
+                    switch (linkType) {
+                        case "instagram": {
+                            const instagramHandle = profileValue.replace(/^@?/, "");
+                            url = `https://www.instagram.com/${instagramHandle}/`;
+                            label = "Instagram";
+                            icon = "📷";
+                            break;
+                        }
+                        case "whatsapp": {
+                            const whatsappNumber = profileValue.replace(/\D/g, "");
+                            url = `https://wa.me/${whatsappNumber}`;
+                            label = "WhatsApp";
+                            icon = "💬";
+                            break;
+                        }
+                        case "phone": {
+                            const phoneNumber = profileValue.replace(/\D/g, "");
+                            url = `tel:${phoneNumber}`;
+                            label = "Telefon";
+                            icon = "📞";
+                            break;
+                        }
+                        case "email":
+                            url = `mailto:${profileValue}`;
+                            label = "E-posta";
+                            icon = "✉️";
+                            break;
+                    }
+                    
+                    return {url, label, icon, value: profileValue};
+                }).filter(link => link !== null);
+                
+                if (profileLinks.length > 1) {
+                    // Birden fazla link varsa liste göster
+                    contentDiv.innerHTML = `
+                        <h1 style="font-size: 28px; margin-bottom: 16px; font-weight: 700;">İletişim Bilgileri</h1>
+                        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 32px; opacity: 0.9;">İletişime geçmek için bir seçenek seçin</p>
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            ${profileLinks.map(link => `
+                                <a href="${link.url}" style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; text-decoration: none; color: #fff; display: flex; align-items: center; gap: 16px; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                    <span style="font-size: 32px;">${link.icon}</span>
+                                    <div style="flex: 1; text-align: left;">
+                                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${link.label}</div>
+                                        <div style="font-size: 14px; opacity: 0.8;">${link.value}</div>
+                                    </div>
+                                    <span style="font-size: 20px; opacity: 0.7;">→</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (profileLinks.length === 1) {
+                    // Tek link varsa direkt yönlendir
+                    window.location.href = profileLinks[0].url;
+                    return;
+                }
+            } else {
+                // Profil linki yoksa karakter sayfasına yönlendir
+                const characterId = tagData.characterId;
+                if (characterId) {
+                    window.location.href = `https://dahis.io/character/${characterId}`;
+                    return;
+                }
+                
+                // Fallback
+                contentDiv.innerHTML = `
+                    <div class="error">
+                        <h2>Bilinmeyen Durum</h2>
+                        <p>Tag bilgisi yüklenemedi.</p>
+                        <a href="index.html" style="color: #fff; text-decoration: underline; margin-top: 20px; display: inline-block;">Ana Sayfaya Dön</a>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

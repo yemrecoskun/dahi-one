@@ -39,126 +39,42 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
 
     const dahiosData = dahiosDoc.data();
 
-    // Aktif değilse özel sayfa göster
-    if (!dahiosData.isActive) {
-      const characterId = dahiosData.characterId || "unknown";
-      const characterName =
-        characterId.charAt(0).toUpperCase() + characterId.slice(1);
+    // format=json query parameter'ı varsa JSON döndür (tag-detail.html için)
+    const format = req.query.format;
+    if (format === "json") {
+      // Tag bilgilerini JSON olarak döndür
+      // Kullanıcı bilgilerini de ekle (profil linkleri için)
+      let userData = null;
+      if (dahiosData.isActive) {
+        const usersSnapshot = await db
+            .collection("users")
+            .where("devices", "array-contains", dahiosId)
+            .limit(1)
+            .get();
 
-      // Pasif tag için özel HTML sayfası
-      const html = `
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dahiOS Cihazı Pasif</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        if (!usersSnapshot.empty) {
+          userData = usersSnapshot.docs[0].data();
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-              Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: #fff;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 16px;
-            font-weight: 700;
-        }
-        p {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 24px;
-            opacity: 0.9;
-        }
-        .character-name {
-            font-weight: 600;
-            color: #ffd700;
-        }
-        .button {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        .footer {
-            margin-top: 32px;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="icon">⏸️</div>
-        <h1>Bu dahiOS Cihazı Şu Anda Pasif</h1>
-        <p>
-            <span class="character-name">${characterName}</span> karakterine
-            ait dahiOS cihazı şu anda aktif değil.
-        </p>
-        <p>
-            Cihazı aktif hale getirmek için lütfen cihaz sahibiyle iletişime
-            geçin veya dahi's uygulamasından cihazı yönetin.
-        </p>
-        <a href="https://dahis.io" class="button">dahi's Ana Sayfaya Dön</a>
-        <div class="footer">
-            dahi's One © 2025
-        </div>
-    </div>
-</body>
-</html>
-      `;
+      }
 
-      return res.status(200).send(html);
+      return res.status(200).json({
+        status: "success",
+        data: {
+          dahiosId: dahiosId,
+          ...dahiosData,
+          user: userData,
+        },
+      });
     }
 
-    // Yönlendirme URL'ini oluştur
-    let redirectUrl;
-    // Backward compatibility: profileLinkType varsa array'e çevir
+    // Tüm bilgileri URL parametreleri olarak gönder
     const profileLinkTypes = dahiosData.profileLinkTypes ||
       (dahiosData.profileLinkType ? [dahiosData.profileLinkType] : []);
-    const redirectType = dahiosData.redirectType || "character";
-    const characterId = dahiosData.characterId;
-    const customUrl = dahiosData.customUrl || "";
 
-    // Önce profil link tiplerini kontrol et
-    if (profileLinkTypes && profileLinkTypes.length > 0) {
-      // Kullanıcının profil bilgilerini al
+    // Kullanıcı bilgilerini al (profil linkleri için)
+    let userData = null;
+    if (dahiosData.isActive && profileLinkTypes &&
+        profileLinkTypes.length > 0) {
       const usersSnapshot = await db
           .collection("users")
           .where("devices", "array-contains", dahiosId)
@@ -166,246 +82,114 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
           .get();
 
       if (!usersSnapshot.empty) {
-        const userData = usersSnapshot.docs[0].data();
+        userData = usersSnapshot.docs[0].data();
+      }
+    }
 
-        // Birden fazla link varsa profil ekranı döndür
-        if (profileLinkTypes.length > 1) {
-          // Karakter renk kodlarını al
-          const characterColors = {
-            "puls": {primary: "#ff4444", secondary: "#cc3333"},
-            "zest": {primary: "#ff8844", secondary: "#cc6633"},
-            "lumo": {primary: "#ffdd44", secondary: "#ccaa33"},
-            "vigo": {primary: "#44dd88", secondary: "#33aa66"},
-            "aura": {primary: "#4488ff", secondary: "#3366cc"},
-          };
+    // Pasif tag veya birden fazla profil linki varsa
+    // tag-detail.html'e yönlendir
+    if (!dahiosData.isActive ||
+        (profileLinkTypes && profileLinkTypes.length > 1)) {
+      const params = new URLSearchParams();
+      params.append("dahiosId", dahiosId);
+      params.append("isActive",
+          dahiosData.isActive ? "true" : "false");
+      params.append("characterId", dahiosData.characterId || "");
 
-          const characterId = dahiosData.characterId || "puls";
-          const charColor =
-              characterColors[characterId] || characterColors["puls"];
+      if (profileLinkTypes && profileLinkTypes.length > 0) {
+        params.append("profileLinkTypes",
+            JSON.stringify(profileLinkTypes));
+      }
 
-          // Profil ekranı HTML'i oluştur
-          const profileLinks = profileLinkTypes.map((linkType) => {
-            const profileValue = userData[linkType] || "";
-            if (!profileValue) return null;
-
-            let url = "";
-            let label = "";
-            let icon = "";
-
-            switch (linkType) {
-              case "instagram": {
-                const instagramHandle = profileValue.replace(/^@?/, "");
-                url = `https://www.instagram.com/${instagramHandle}/`;
-                label = "Instagram";
-                icon = "📷";
-                break;
-              }
-              case "whatsapp": {
-                const whatsappNumber = profileValue.replace(/\D/g, "");
-                url = `https://wa.me/${whatsappNumber}`;
-                label = "WhatsApp";
-                icon = "💬";
-                break;
-              }
-              case "phone": {
-                const phoneNumber = profileValue.replace(/\D/g, "");
-                url = `tel:${phoneNumber}`;
-                label = "Telefon";
-                icon = "📞";
-                break;
-              }
-              case "email":
-                url = `mailto:${profileValue}`;
-                label = "E-posta";
-                icon = "✉️";
-                break;
-            }
-
-            return {url, label, icon, value: profileValue};
-          }).filter((link) => link !== null);
-
-          const html = `
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İletişim Bilgileri</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, ${charColor.primary} 0%,
-                ${charColor.secondary} 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: #fff;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 16px;
-            font-weight: 700;
-        }
-        p {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 32px;
-            opacity: 0.9;
-        }
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .link-item {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 20px;
-            text-decoration: none;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .link-item:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-        .link-icon {
-            font-size: 32px;
-        }
-        .link-content {
-            flex: 1;
-            text-align: left;
-        }
-        .link-label {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .link-value {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        .arrow {
-            font-size: 20px;
-            opacity: 0.7;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>İletişim Bilgileri</h1>
-        <p>İletişime geçmek için bir seçenek seçin</p>
-        <div class="links">
-            ${profileLinks.map((link) => `
-                <a href="${link.url}" class="link-item">
-                    <span class="link-icon">${link.icon}</span>
-                    <div class="link-content">
-                        <div class="link-label">${link.label}</div>
-                        <div class="link-value">${link.value}</div>
-                    </div>
-                    <span class="arrow">→</span>
-                </a>
-            `).join("")}
-        </div>
-    </div>
-</body>
-</html>`;
-
-          return res.status(200).send(html);
-        }
-
-        // Tek link varsa direkt yönlendir
-        const profileLinkType = profileLinkTypes[0];
-        const profileValue = userData[profileLinkType] || "";
-
-        if (profileValue) {
-          switch (profileLinkType) {
-            case "instagram": {
-              const instagramHandle = profileValue.replace(/^@?/, "");
-              redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
-              break;
-            }
-            case "whatsapp": {
-              const whatsappNumber = profileValue.replace(/\D/g, "");
-              redirectUrl = `https://wa.me/${whatsappNumber}`;
-              break;
-            }
-            case "phone": {
-              const phoneNumber = profileValue.replace(/\D/g, "");
-              redirectUrl = `tel:${phoneNumber}`;
-              break;
-            }
-            case "email":
-              redirectUrl = `mailto:${profileValue}`;
-              break;
-            default:
-              redirectUrl = `https://www.dahis.io/character/${characterId}`;
+      if (userData) {
+        // Kullanıcı bilgilerini JSON olarak ekle
+        const userInfo = {};
+        profileLinkTypes.forEach((linkType) => {
+          if (userData[linkType]) {
+            userInfo[linkType] = userData[linkType];
           }
-        } else {
-          // Profil değeri yoksa karakter sayfasına yönlendir
-          redirectUrl = `https://www.dahis.io/character/${characterId}`;
+        });
+        if (Object.keys(userInfo).length > 0) {
+          params.append("userData", JSON.stringify(userInfo));
         }
-      } else {
-        // Kullanıcı bulunamadıysa karakter sayfasına yönlendir
+      }
+
+      const redirectUrl =
+          `https://dahis.io/tag-detail.html?${params.toString()}`;
+      return res.redirect(302, redirectUrl);
+    }
+
+    // Tek profil linki varsa direkt yönlendir
+    if (profileLinkTypes && profileLinkTypes.length === 1 && userData) {
+      const profileLinkType = profileLinkTypes[0];
+      const profileValue = userData[profileLinkType] || "";
+
+      if (profileValue) {
+        let redirectUrl;
+        switch (profileLinkType) {
+          case "instagram": {
+            const instagramHandle = profileValue.replace(/^@?/, "");
+            redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
+            break;
+          }
+          case "whatsapp": {
+            const whatsappNumber = profileValue.replace(/\D/g, "");
+            redirectUrl = `https://wa.me/${whatsappNumber}`;
+            break;
+          }
+          case "phone": {
+            const phoneNumber = profileValue.replace(/\D/g, "");
+            redirectUrl = `tel:${phoneNumber}`;
+            break;
+          }
+          case "email":
+            redirectUrl = `mailto:${profileValue}`;
+            break;
+          default:
+            redirectUrl =
+                `https://www.dahis.io/character/${dahiosData.characterId || ""}`;
+        }
+        return res.redirect(302, redirectUrl);
+      }
+    }
+
+    // Diğer durumlar için yönlendirme URL'ini oluştur
+    let redirectUrl;
+    const redirectType = dahiosData.redirectType || "character";
+    const characterId = dahiosData.characterId;
+    const customUrl = dahiosData.customUrl || "";
+
+    // Eski redirectType mantığı (geriye dönük uyumluluk)
+    switch (redirectType) {
+      case "character":
         redirectUrl = `https://www.dahis.io/character/${characterId}`;
+        break;
+      case "store":
+        redirectUrl = `https://dahis.shop/one-${characterId}`;
+        break;
+      case "campaign":
+        redirectUrl = customUrl || "https://www.dahis.io";
+        break;
+      case "instagram": {
+        const instagramHandle = customUrl.replace(/^@?/, "");
+        redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
+        break;
       }
-    } else {
-      // Eski redirectType mantığı (geriye dönük uyumluluk)
-      switch (redirectType) {
-        case "character":
-          redirectUrl = `https://www.dahis.io/character/${characterId}`;
-          break;
-        case "store":
-          redirectUrl = `https://dahis.shop/one-${characterId}`;
-          break;
-        case "campaign":
-          redirectUrl = customUrl || "https://www.dahis.io";
-          break;
-        case "instagram": {
-          const instagramHandle = customUrl.replace(/^@?/, "");
-          redirectUrl = `https://www.instagram.com/${instagramHandle}/`;
-          break;
-        }
-        case "whatsapp": {
-          const whatsappNumber = customUrl.replace(/\D/g, "");
-          redirectUrl = `https://wa.me/${whatsappNumber}`;
-          break;
-        }
-        case "phone": {
-          const phoneNumber = customUrl.replace(/\D/g, "");
-          redirectUrl = `tel:${phoneNumber}`;
-          break;
-        }
-        case "email":
-          redirectUrl = `mailto:${customUrl}`;
-          break;
-        default:
-          redirectUrl = customUrl ||
-          `https://www.dahis.io/character/${characterId}`;
+      case "whatsapp": {
+        const whatsappNumber = customUrl.replace(/\D/g, "");
+        redirectUrl = `https://wa.me/${whatsappNumber}`;
+        break;
       }
+      case "phone": {
+        const phoneNumber = customUrl.replace(/\D/g, "");
+        redirectUrl = `tel:${phoneNumber}`;
+        break;
+      }
+      case "email":
+        redirectUrl = `mailto:${customUrl}`;
+        break;
+      default:
+        redirectUrl = customUrl || `https://www.dahis.io/character/${characterId}`;
     }
 
     // İstatistik kaydet
