@@ -27,12 +27,7 @@ body {
     color: var(--text-primary);
     overflow-x: hidden;
     line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding-bottom: 70px;
-    }
+    padding-bottom: 80px; /* Üstte sabit navbar altında footer kalmasın diye */
 }
 
 .container {
@@ -366,6 +361,35 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Header - Uygulamayı indir */
+.nav-app-download {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-app-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.nav-store-badge {
+    display: inline-block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.nav-store-badge:hover {
+    transform: scale(1.08);
+    opacity: 0.9;
+}
+
+.nav-store-img {
+    height: 32px;
+    width: auto;
+    display: block;
 }
 
 /* Characters Section */
@@ -1513,6 +1537,10 @@ body {
     }
 
     /* Mobile Bottom Navigation */
+    body {
+        padding-bottom: 160px; /* Altta sabit navbar yüksekliği, footer görünsün */
+    }
+
     .navbar {
         top: auto;
         bottom: 0;
@@ -1524,10 +1552,30 @@ body {
 
     .nav-container {
         padding: 0 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
     }
 
     .logo {
         display: none;
+    }
+
+    .nav-app-download {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-app-label {
+        font-size: 0.75rem;
+    }
+
+    .nav-store-img {
+        height: 26px;
     }
 
     .nav-menu {
