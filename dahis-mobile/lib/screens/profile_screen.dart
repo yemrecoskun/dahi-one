@@ -328,10 +328,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           size: 32,
                         ),
                         title: const Text(
-                          'İletişim Bilgileri',
+                          'Kişisel Bilgilerim',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          'İletişim bilgileri',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFFb0b0b8),
                           ),
                         ),
                         trailing: const Icon(
@@ -341,6 +348,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         onTap: () {
                           context.push('/contact-info');
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Ödeme Bilgilerim Menü Öğesi
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1a1a2e),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.payment,
+                          color: Color(0xFF667eea),
+                          size: 32,
+                        ),
+                        title: const Text(
+                          'Ödeme Bilgilerim',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          'IBAN, banka, ad soyad',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFFb0b0b8),
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Color(0xFFb0b0b8),
+                        ),
+                        onTap: () {
+                          context.push('/payment-info');
                         },
                       ),
                     ),

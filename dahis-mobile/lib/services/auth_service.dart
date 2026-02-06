@@ -552,5 +552,37 @@ class AuthService {
       rethrow;
     }
   }
+
+  /// Ödeme bilgilerini güncelle (IBAN, banka, ad soyad)
+  Future<void> updatePaymentInfo({
+    String? iban,
+    String? bankName,
+    String? paymentAccountName,
+  }) async {
+    try {
+      if (currentUser == null || _firestore == null) return;
+
+      final updateData = <String, dynamic>{};
+      if (iban != null && iban.trim().isNotEmpty) {
+        updateData['iban'] = iban.trim();
+      } else {
+        updateData['iban'] = FieldValue.delete();
+      }
+      if (bankName != null && bankName.trim().isNotEmpty) {
+        updateData['bankName'] = bankName.trim();
+      } else {
+        updateData['bankName'] = FieldValue.delete();
+      }
+      if (paymentAccountName != null && paymentAccountName.trim().isNotEmpty) {
+        updateData['paymentAccountName'] = paymentAccountName.trim();
+      } else {
+        updateData['paymentAccountName'] = FieldValue.delete();
+      }
+
+      await _firestore!.collection('users').doc(currentUser!.uid).update(updateData);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 

@@ -86,10 +86,14 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
       }
     }
 
-    // Pasif tag veya birden fazla profil linki varsa
-    // tag-detail.html'e yönlendir
+    // Pasif tag, birden fazla profil linki veya sadece IBAN varsa
+    // tag-detail.html'e yönlendir (IBAN için tek link de sayfada gösterilsin)
+    const onlyIban = profileLinkTypes &&
+        profileLinkTypes.length === 1 &&
+        profileLinkTypes[0] === "iban";
     if (!dahiosData.isActive ||
-        (profileLinkTypes && profileLinkTypes.length > 1)) {
+        (profileLinkTypes && profileLinkTypes.length > 1) ||
+        onlyIban) {
       const params = new URLSearchParams();
       params.append("dahiosId", dahiosId);
       params.append("isActive",
@@ -109,6 +113,15 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
             userInfo[linkType] = userData[linkType];
           }
         });
+        // IBAN paylaşımında banka ve ad soyad da gönderilsin
+        if (profileLinkTypes.includes("iban")) {
+          if (userData.paymentAccountName) {
+            userInfo.paymentAccountName = userData.paymentAccountName;
+          }
+          if (userData.bankName) {
+            userInfo.bankName = userData.bankName;
+          }
+        }
         if (Object.keys(userInfo).length > 0) {
           params.append("userData", JSON.stringify(userInfo));
         }
@@ -119,8 +132,11 @@ exports.dahiosRedirect = onRequest({cors: true}, async (req, res) => {
       return res.redirect(302, redirectUrl);
     }
 
-    // Tek profil linki varsa direkt yönlendir
-    if (profileLinkTypes && profileLinkTypes.length === 1 && userData) {
+    // Tek profil linki varsa direkt yönlendir (IBAN hariç; IBAN yukarıda tag-detail'a gitti)
+    if (profileLinkTypes &&
+        profileLinkTypes.length === 1 &&
+        profileLinkTypes[0] !== "iban" &&
+        userData) {
       const profileLinkType = profileLinkTypes[0];
       const profileValue = userData[profileLinkType] || "";
 

@@ -14,6 +14,7 @@ import 'screens/season_detail_screen.dart';
 import 'screens/episode_detail_screen.dart';
 import 'screens/store_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/payment_info_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/devices_screen.dart';
 import 'screens/device_detail_screen.dart';
@@ -230,6 +231,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/contact-info',
       builder: (context, state) => const ContactInfoScreen(),
+    ),
+    GoRoute(
+      path: '/payment-info',
+      builder: (context, state) => const PaymentInfoScreen(),
     ),
   ],
 );

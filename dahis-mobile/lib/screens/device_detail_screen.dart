@@ -70,6 +70,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           _profileLinks['whatsapp'] = userData['whatsapp'] ?? '';
           _profileLinks['phone'] = userData['phone'] ?? '';
           _profileLinks['email'] = userData['email'] ?? '';
+          _profileLinks['iban'] = userData['iban'] ?? '';
         });
       }
 
@@ -211,6 +212,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
       {'key': 'whatsapp', 'label': 'WhatsApp', 'icon': Icons.chat},
       {'key': 'phone', 'label': 'Telefon', 'icon': Icons.phone},
       {'key': 'email', 'label': 'E-posta', 'icon': Icons.email},
+      {'key': 'iban', 'label': 'IBAN', 'icon': Icons.credit_card},
     ];
 
     return Container(

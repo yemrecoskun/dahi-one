@@ -286,33 +286,77 @@
                             label = "E-posta";
                             icon = "✉️";
                             break;
+                        case "iban": {
+                            const accountName = userData.paymentAccountName || "";
+                            const bankName = userData.bankName || "";
+                            label = "Ödeme Bilgileri (IBAN)";
+                            icon = "🏦";
+                            return {url: null, label, icon, value: profileValue, accountName, bankName, isIban: true};
+                        }
                     }
                     
                     return {url, label, icon, value: profileValue};
                 }).filter(link => link !== null);
                 
-                if (profileLinks.length > 1) {
-                    // Birden fazla link varsa liste göster
-                    contentDiv.innerHTML = `
-                        <h1 style="font-size: 28px; margin-bottom: 16px; font-weight: 700;">İletişim Bilgileri</h1>
-                        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 32px; opacity: 0.9;">İletişime geçmek için bir seçenek seçin</p>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
-                            ${profileLinks.map(link => `
-                                <a href="${link.url}" style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; text-decoration: none; color: #fff; display: flex; align-items: center; gap: 16px; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);">
+                // IBAN / ödeme kartları (tıklanmaz, kopyalanabilir)
+                const ibanLinks = profileLinks.filter(l => l.isIban);
+                const otherLinks = profileLinks.filter(l => !l.isIban);
+                
+                if (otherLinks.length === 1 && ibanLinks.length === 0) {
+                    // Sadece tek iletişim linki varsa direkt yönlendir
+                    window.location.href = otherLinks[0].url;
+                    return;
+                }
+                
+                if (profileLinks.length > 0) {
+                    let linksHtml = "";
+                    otherLinks.forEach(link => {
+                        linksHtml += `
+                            <a href="${link.url}" style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; text-decoration: none; color: #fff; display: flex; align-items: center; gap: 16px; transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <span style="font-size: 32px;">${link.icon}</span>
+                                <div style="flex: 1; text-align: left;">
+                                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${link.label}</div>
+                                    <div style="font-size: 14px; opacity: 0.8;">${link.value}</div>
+                                </div>
+                                <span style="font-size: 20px; opacity: 0.7;">→</span>
+                            </a>
+                        `;
+                    });
+                    ibanLinks.forEach(link => {
+                        const ibanFormatted = (link.value || "").replace(/\s/g, " ");
+                        linksHtml += `
+                            <div class="iban-card" style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
                                     <span style="font-size: 32px;">${link.icon}</span>
-                                    <div style="flex: 1; text-align: left;">
-                                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${link.label}</div>
-                                        <div style="font-size: 14px; opacity: 0.8;">${link.value}</div>
-                                    </div>
-                                    <span style="font-size: 20px; opacity: 0.7;">→</span>
-                                </a>
-                            `).join('')}
+                                    <div style="font-size: 18px; font-weight: 600;">${link.label}</div>
+                                </div>
+                                ${link.accountName ? `<div style="font-size: 14px; opacity: 0.95; margin-bottom: 6px;"><strong>Ad Soyad:</strong> ${link.accountName}</div>` : ""}
+                                ${link.bankName ? `<div style="font-size: 14px; opacity: 0.95; margin-bottom: 6px;"><strong>Banka:</strong> ${link.bankName}</div>` : ""}
+                                <div style="font-size: 14px; opacity: 0.95; margin-bottom: 12px;"><strong>IBAN:</strong> <span class="iban-value">${ibanFormatted}</span></div>
+                                <button type="button" class="copy-iban-btn" data-iban="${ibanFormatted.replace(/"/g, '&quot;')}" style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">IBAN\'ı Kopyala</button>
+                            </div>
+                        `;
+                    });
+                    contentDiv.innerHTML = `
+                        <h1 style="font-size: 28px; margin-bottom: 16px; font-weight: 700;">${ibanLinks.length && otherLinks.length ? "İletişim ve Ödeme" : ibanLinks.length ? "Ödeme Bilgileri" : "İletişim Bilgileri"}</h1>
+                        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 32px; opacity: 0.9;">${ibanLinks.length && otherLinks.length ? "İletişime geçin veya ödeme bilgilerini kopyalayın" : ibanLinks.length ? "Havale / EFT için aşağıdaki bilgileri kullanabilirsiniz" : "İletişime geçmek için bir seçenek seçin"}</p>
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            ${linksHtml}
                         </div>
                     `;
-                } else if (profileLinks.length === 1) {
-                    // Tek link varsa direkt yönlendir
-                    window.location.href = profileLinks[0].url;
-                    return;
+                    // IBAN kopyalama butonları
+                    contentDiv.querySelectorAll(".copy-iban-btn").forEach(btn => {
+                        btn.addEventListener("click", function() {
+                            const iban = (this.getAttribute("data-iban") || "").replace(/\s/g, "");
+                            if (!iban) return;
+                            navigator.clipboard.writeText(iban).then(function() {
+                                const t = btn.textContent;
+                                btn.textContent = "Kopyalandı!";
+                                btn.style.background = "rgba(76, 175, 80, 0.6)";
+                                setTimeout(function() { btn.textContent = t; btn.style.background = ""; }, 2000);
+                            });
+                        });
+                    });
                 }
             } else {
                 // Profil linki yoksa karakter sayfasına yönlendir
