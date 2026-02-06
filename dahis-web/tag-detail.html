@@ -324,6 +324,8 @@
                     });
                     ibanLinks.forEach(link => {
                         const ibanFormatted = (link.value || "").replace(/\s/g, " ");
+                        const accountNameEscaped = (link.accountName || "").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        const hasAccountName = link.accountName && link.accountName.trim() !== "";
                         linksHtml += `
                             <div class="iban-card" style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 20px; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); text-align: left;">
                                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
@@ -333,7 +335,10 @@
                                 ${link.accountName ? `<div style="font-size: 14px; opacity: 0.95; margin-bottom: 6px;"><strong>Ad Soyad:</strong> ${link.accountName}</div>` : ""}
                                 ${link.bankName ? `<div style="font-size: 14px; opacity: 0.95; margin-bottom: 6px;"><strong>Banka:</strong> ${link.bankName}</div>` : ""}
                                 <div style="font-size: 14px; opacity: 0.95; margin-bottom: 12px;"><strong>IBAN:</strong> <span class="iban-value">${ibanFormatted}</span></div>
-                                <button type="button" class="copy-iban-btn" data-iban="${ibanFormatted.replace(/"/g, '&quot;')}" style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">IBAN\'ı Kopyala</button>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    ${hasAccountName ? `<button type="button" class="copy-name-btn" data-account-name="${accountNameEscaped}" style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Ad Soyad Kopyala</button>` : ""}
+                                    <button type="button" class="copy-iban-btn" data-iban="${ibanFormatted.replace(/"/g, '&quot;')}" style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">IBAN\'ı Kopyala</button>
+                                </div>
                             </div>
                         `;
                     });
@@ -350,6 +355,20 @@
                             const iban = (this.getAttribute("data-iban") || "").replace(/\s/g, "");
                             if (!iban) return;
                             navigator.clipboard.writeText(iban).then(function() {
+                                const t = btn.textContent;
+                                btn.textContent = "Kopyalandı!";
+                                btn.style.background = "rgba(76, 175, 80, 0.6)";
+                                setTimeout(function() { btn.textContent = t; btn.style.background = ""; }, 2000);
+                            });
+                        });
+                    });
+                    // Ad Soyad kopyalama butonları
+                    contentDiv.querySelectorAll(".copy-name-btn").forEach(btn => {
+                        btn.addEventListener("click", function() {
+                            const name = this.getAttribute("data-account-name") || "";
+                            const decoded = name.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+                            if (!decoded) return;
+                            navigator.clipboard.writeText(decoded).then(function() {
                                 const t = btn.textContent;
                                 btn.textContent = "Kopyalandı!";
                                 btn.style.background = "rgba(76, 175, 80, 0.6)";
