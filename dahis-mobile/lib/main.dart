@@ -20,6 +20,7 @@ import 'screens/login_screen.dart';
 import 'screens/devices_screen.dart';
 import 'screens/device_detail_screen.dart';
 import 'screens/contact_info_screen.dart';
+import 'screens/webview_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'widgets/logo.dart';
 import 'widgets/update_dialog.dart';
@@ -241,6 +242,14 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/payment-info',
       builder: (context, state) => const PaymentInfoScreen(),
+    ),
+    GoRoute(
+      path: '/webview',
+      builder: (context, state) {
+        final url = state.uri.queryParameters['url'] ?? 'https://dahis.io';
+        final title = state.uri.queryParameters['title'] ?? 'Sayfa';
+        return WebViewScreen(url: url, title: title);
+      },
     ),
   ],
 );

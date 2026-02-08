@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _authService = AuthService();
   bool _isLogin = true;
   bool _isLoading = false;
+  bool _acceptedKvkk = false;
+  bool _showKvkkError = false;
 
   @override
   void dispose() {
@@ -31,6 +33,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    // Kayıt ol için KVKK kabulü zorunlu
+    if (!_isLogin && !_acceptedKvkk) {
+      setState(() => _showKvkkError = true);
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -70,7 +78,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleGoogleSignIn() async {
     if (_isLoading) return;
-    
+
+    if (!_acceptedKvkk) {
+      setState(() => _showKvkkError = true);
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -181,6 +194,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (_isLoading) return;
+
+    if (!_acceptedKvkk) {
+      setState(() => _showKvkkError = true);
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -345,7 +363,106 @@ class _LoginScreenState extends State<LoginScreen> {
                   Expanded(child: Divider(color: Colors.grey.withValues(alpha: 0.3))),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+              // KVKK kabul (Google, Apple, Kayıt Ol için zorunlu)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _showKvkkError ? Colors.red.withValues(alpha: 0.08) : null,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _showKvkkError ? Colors.red : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _acceptedKvkk,
+                      onChanged: (value) {
+                        setState(() {
+                          _acceptedKvkk = value ?? false;
+                          _showKvkkError = false;
+                        });
+                      },
+                      activeColor: const Color(0xFF667eea),
+                      fillColor: WidgetStateProperty.resolveWith((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return const Color(0xFF667eea);
+                        }
+                        return null;
+                      }),
+                      side: BorderSide(
+                        color: _showKvkkError ? Colors.red : Colors.grey,
+                        width: _showKvkkError ? 2 : 1.5,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          'KVKK ',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.withValues(alpha: 0.95),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            context.push(
+                              '/webview?url=${Uri.encodeComponent('https://dahis.io/kvkk.html')}&title=${Uri.encodeComponent('Aydınlatma Metni (KVKK)')}',
+                            );
+                          },
+                          child: const Text(
+                            'Aydınlatma Metni',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF667eea),
+                              decoration: TextDecoration.underline,
+                              decorationColor: Color(0xFF667eea),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          ' ve ',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.withValues(alpha: 0.95),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            context.push(
+                              '/webview?url=${Uri.encodeComponent('https://dahis.io/privacy-policy.html')}&title=${Uri.encodeComponent('Gizlilik Politikası')}',
+                            );
+                          },
+                          child: const Text(
+                            'Gizlilik Politikası',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF667eea),
+                              decoration: TextDecoration.underline,
+                              decorationColor: Color(0xFF667eea),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '\'nı okudum, kabul ediyorum.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.withValues(alpha: 0.95),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                ),
+              ),
+              const SizedBox(height: 20),
               // Google ile Giriş
               Container(
                 decoration: BoxDecoration(
