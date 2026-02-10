@@ -1880,10 +1880,6 @@ body {
     }
 }
 
-/* NFC Components - Hidden (will be enabled later) */
-.nfc-section {
-    display: none !important;
-}
 
 .nfc-tag-single,
 .nfc-hero-link {
