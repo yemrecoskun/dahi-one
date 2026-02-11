@@ -4,6 +4,7 @@ import 'home_screen.dart';
 import 'characters_screen.dart';
 import 'seasons_screen.dart';
 import 'store_screen.dart';
+import 'eglence_menu_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/logo.dart';
 
@@ -29,8 +30,10 @@ class _MainScreenState extends State<MainScreen> {
           _currentIndex = 1;
         } else if (uri.path == '/seasons') {
           _currentIndex = 2;
-        } else if (uri.path == '/store') {
+        } else if (uri.path == '/eglence') {
           _currentIndex = 3;
+        } else if (uri.path == '/store') {
+          _currentIndex = 4;
         } else {
           _currentIndex = 0;
         }
@@ -45,6 +48,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const CharactersScreen(),
     const SeasonsScreen(),
+    const EglenceMenuScreen(),
     const StoreScreen(),
   ];
 

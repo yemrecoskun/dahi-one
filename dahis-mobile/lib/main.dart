@@ -207,6 +207,10 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/eglence',
+      builder: (context, state) => const MainScreen(),
+    ),
+    GoRoute(
       path: '/store',
       builder: (context, state) => const MainScreen(),
     ),

@@ -30,6 +30,15 @@ body {
     padding-bottom: 80px; /* Üstte sabit navbar altında footer kalmasın diye */
 }
 
+/* Uygulama içi WebView: navbar ve footer gizle (URL'de ?app=1) */
+body.embed-app .navbar,
+body.embed-app .footer {
+    display: none !important;
+}
+body.embed-app {
+    padding-bottom: 24px;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

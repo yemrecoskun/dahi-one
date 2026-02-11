@@ -53,9 +53,16 @@ class BottomNavBar extends StatelessWidget {
               ),
               _buildNavItem(
                 context,
+                label: 'Eğlence',
+                icon: Icons.games_outlined,
+                index: 3,
+                route: '/eglence',
+              ),
+              _buildNavItem(
+                context,
                 label: '',
                 icon: Icons.shopping_bag,
-                index: 3,
+                index: 4,
                 route: '/store',
                 isSpecial: true,
               ),
