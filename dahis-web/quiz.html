@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangi One sensin? - dahi's</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">dahi's</div>
+            <ul class="nav-menu">
+                <li><a href="index.html#hero" class="nav-link">Ana Sayfa</a></li>
+                <li><a href="index.html#characters" class="nav-link">Onelar</a></li>
+                <li><a href="index.html#seasons-id" class="nav-link">Sezonlar</a></li>
+                <li><a href="eglence.html" class="nav-link">Eğlence</a></li>
+                <li><a href="dahios.html" class="nav-link">dahiOS</a></li>
+                <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Quiz Section -->
+    <section class="quiz-section">
+        <div class="container quiz-container">
+            <!-- Start Screen -->
+            <div id="quizStart" class="quiz-screen quiz-start">
+                <h1 class="quiz-title">Hangi One sensin?</h1>
+                <p class="quiz-intro">Birkaç soruyla seni en iyi yansıtan dahi's One karakterini keşfet.</p>
+                <button type="button" class="quiz-btn quiz-btn-primary" id="quizStartBtn">Başla</button>
+            </div>
+
+            <!-- Question Screen -->
+            <div id="quizQuestions" class="quiz-screen quiz-questions" hidden>
+                <div class="quiz-progress-wrap">
+                    <div class="quiz-progress-track">
+                        <div class="quiz-progress-bar" id="quizProgressBar"></div>
+                    </div>
+                    <span class="quiz-progress-text" id="quizProgressText">1 / 6</span>
+                </div>
+                <h2 class="quiz-question-title" id="quizQuestionTitle"></h2>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-nav">
+                    <button type="button" class="quiz-btn quiz-btn-secondary" id="quizPrevBtn" hidden>Geri</button>
+                    <button type="button" class="quiz-btn quiz-btn-primary" id="quizNextBtn" disabled>İleri</button>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="quizResult" class="quiz-screen quiz-result" hidden>
+                <h2 class="quiz-result-heading">Senin One'ın</h2>
+                <div class="quiz-result-card" id="quizResultCard">
+                    <div class="quiz-result-glow" id="quizResultGlow"></div>
+                    <div class="quiz-result-icon" id="quizResultIcon">
+                        <img id="quizResultImage" src="" alt="">
+                    </div>
+                    <h3 class="quiz-result-name" id="quizResultName"></h3>
+                    <p class="quiz-result-description" id="quizResultDescription"></p>
+                    <div class="quiz-result-traits" id="quizResultTraits"></div>
+                </div>
+                <div class="quiz-result-actions">
+                    <a href="index.html#characters" class="quiz-btn quiz-btn-primary">Tüm Oneları Gör</a>
+                    <button type="button" class="quiz-btn quiz-btn-secondary" id="quizRetryBtn">Tekrar Oyna</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 dahi's One - Harmonya'nın Kahramanları</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html">Gizlilik Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="cookie-policy.html">Çerez Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="about.html">Hakkımızda</a>
+                    <span class="separator">|</span>
+                    <a href="contact.html">İletişim</a>
+                    <span class="separator">|</span>
+                    <a href="kvkk.html">Aydınlatma Metni</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="quiz.js"></script>
+    <script>
+(function () {
+  const characters = getQuizCharacters();
+  const questions = getQuizQuestions();
+  const totalQuestions = questions.length;
+
+  let currentQuestionIndex = 0;
+  let answers = [];
+
+  const startScreen = document.getElementById('quizStart');
+  const questionsScreen = document.getElementById('quizQuestions');
+  const resultScreen = document.getElementById('quizResult');
+  const progressBar = document.getElementById('quizProgressBar');
+  const progressText = document.getElementById('quizProgressText');
+  const questionTitle = document.getElementById('quizQuestionTitle');
+  const optionsContainer = document.getElementById('quizOptions');
+  const prevBtn = document.getElementById('quizPrevBtn');
+  const nextBtn = document.getElementById('quizNextBtn');
+  const resultCard = document.getElementById('quizResultCard');
+  const resultGlow = document.getElementById('quizResultGlow');
+  const resultIcon = document.getElementById('quizResultIcon');
+  const resultImage = document.getElementById('quizResultImage');
+  const resultName = document.getElementById('quizResultName');
+  const resultDescription = document.getElementById('quizResultDescription');
+  const resultTraits = document.getElementById('quizResultTraits');
+
+  function showScreen(screen) {
+    startScreen.hidden = screen !== 'start';
+    questionsScreen.hidden = screen !== 'questions';
+    resultScreen.hidden = screen !== 'result';
+  }
+
+  function renderQuestion() {
+    const q = questions[currentQuestionIndex];
+    questionTitle.textContent = q.text;
+    progressText.textContent = (currentQuestionIndex + 1) + ' / ' + totalQuestions;
+    progressBar.style.width = ((currentQuestionIndex + 1) / totalQuestions * 100) + '%';
+
+    optionsContainer.innerHTML = '';
+    q.options.forEach(function (opt, i) {
+      const isSelected = answers[currentQuestionIndex] === opt.character;
+      const label = document.createElement('label');
+      label.className = 'quiz-option' + (isSelected ? ' quiz-option-selected' : '');
+      label.innerHTML =
+        '<input type="radio" name="quizOption" value="' + opt.character + '" ' + (isSelected ? 'checked' : '') + '>' +
+        '<span class="quiz-option-text">' + opt.text + '</span>';
+      label.querySelector('input').addEventListener('change', function () {
+        answers[currentQuestionIndex] = this.value;
+        document.querySelectorAll('.quiz-option').forEach(function (el) { el.classList.remove('quiz-option-selected'); });
+        label.classList.add('quiz-option-selected');
+        nextBtn.disabled = false;
+      });
+      optionsContainer.appendChild(label);
+    });
+
+    prevBtn.hidden = currentQuestionIndex === 0;
+    nextBtn.disabled = answers[currentQuestionIndex] == null;
+    nextBtn.textContent = currentQuestionIndex === totalQuestions - 1 ? 'Sonucu Gör' : 'İleri';
+  }
+
+  function showResult() {
+    const resultId = computeQuizResult(answers);
+    const char = characters[resultId];
+    if (!char) return;
+
+    resultGlow.style.setProperty('--glow-color', char.color);
+    resultIcon.style.background = 'linear-gradient(135deg, ' + char.color + ', ' + char.color + 'dd)';
+    resultImage.src = char.image;
+    resultImage.alt = char.name;
+    resultName.textContent = char.name;
+    resultDescription.textContent = char.description;
+    resultTraits.innerHTML = char.traits.map(function (t) {
+      return '<span class="quiz-result-trait">' + t + '</span>';
+    }).join('');
+    showScreen('result');
+  }
+
+  document.getElementById('quizStartBtn').addEventListener('click', function () {
+    answers = [];
+    currentQuestionIndex = 0;
+    showScreen('questions');
+    renderQuestion();
+  });
+
+  prevBtn.addEventListener('click', function () {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      renderQuestion();
+    }
+  });
+
+  nextBtn.addEventListener('click', function () {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      currentQuestionIndex++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  document.getElementById('quizRetryBtn').addEventListener('click', function () {
+    showScreen('start');
+  });
+})();
+    </script>
+</body>
+</html>

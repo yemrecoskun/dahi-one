@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onelar Arası Uyum - dahi's</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">dahi's</div>
+            <ul class="nav-menu">
+                <li><a href="index.html#hero" class="nav-link">Ana Sayfa</a></li>
+                <li><a href="index.html#characters" class="nav-link">Onelar</a></li>
+                <li><a href="index.html#seasons-id" class="nav-link">Sezonlar</a></li>
+                <li><a href="eglence.html" class="nav-link">Eğlence</a></li>
+                <li><a href="dahios.html" class="nav-link">dahiOS</a></li>
+                <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="uyum-section">
+        <div class="container">
+            <h1 class="uyum-title">Onelar Arası Uyum</h1>
+            <p class="uyum-intro">Önce kendini hangi karakter olarak görüyorsan onu seç; sonra o karakterin diğer Onelarla uyumunu tek tek oku.</p>
+
+            <!-- Adım 1: Karakter seçimi -->
+            <div class="uyum-step uyum-step-select" id="uyumStepSelect">
+                <p class="uyum-step-label">Sen hangi karaktersin?</p>
+                <div class="uyum-char-select" id="uyumCharSelect"></div>
+            </div>
+
+            <!-- Adım 2: Seçilen karakterin uyumları (tek tek açıklamalı) -->
+            <div class="uyum-step uyum-step-result" id="uyumStepResult" hidden>
+                <div class="uyum-result-header" id="uyumResultHeader"></div>
+                <button type="button" class="uyum-back-btn" id="uyumBackBtn">← Başka karakter seç</button>
+                <div class="uyum-list" id="uyumList"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 dahi's One - Harmonya'nın Kahramanları</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html">Gizlilik Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="cookie-policy.html">Çerez Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="about.html">Hakkımızda</a>
+                    <span class="separator">|</span>
+                    <a href="contact.html">İletişim</a>
+                    <span class="separator">|</span>
+                    <a href="kvkk.html">Aydınlatma Metni</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="uyum.js"></script>
+    <script>
+(function () {
+  var chars = getUyumCharacters();
+  var types = getUyumTypes();
+  var charIds = ['puls', 'zest', 'lumo', 'vigo', 'aura'];
+
+  var stepSelect = document.getElementById('uyumStepSelect');
+  var stepResult = document.getElementById('uyumStepResult');
+  var charSelectEl = document.getElementById('uyumCharSelect');
+  var resultHeaderEl = document.getElementById('uyumResultHeader');
+  var listEl = document.getElementById('uyumList');
+  var backBtn = document.getElementById('uyumBackBtn');
+
+  charIds.forEach(function (id) {
+    var c = chars[id];
+    var card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'uyum-char-card';
+    card.style.setProperty('--uyum-char-color', c.color);
+    card.innerHTML =
+      '<div class="uyum-char-card-avatar"><img src="' + c.image + '" alt="' + c.name + '"></div>' +
+      '<span class="uyum-char-card-name">' + c.name + '</span>';
+    card.addEventListener('click', function () { showResult(id); });
+    charSelectEl.appendChild(card);
+  });
+
+  function showResult(selectedId) {
+    var selected = chars[selectedId];
+    var relations = getRelationsForCharacter(selectedId);
+
+    resultHeaderEl.innerHTML =
+      '<div class="uyum-result-hero">' +
+        '<div class="uyum-result-hero-avatar" style="--uyum-char-color:' + selected.color + '">' +
+          '<img src="' + selected.image + '" alt="' + selected.name + '">' +
+        '</div>' +
+        '<h2 class="uyum-result-title">' + selected.name + '\'un diğer Onelarla uyumu</h2>' +
+      '</div>';
+
+    listEl.innerHTML = '';
+    relations.forEach(function (r) {
+      var other = chars[r.other];
+      var t = types[r.type];
+      var item = document.createElement('div');
+      item.className = 'uyum-list-item';
+      item.style.setProperty('--uyum-type-color', t.color);
+      item.innerHTML =
+        '<div class="uyum-list-item-top">' +
+          '<div class="uyum-list-item-avatar" style="--uyum-char-color:' + other.color + '">' +
+            '<img src="' + other.image + '" alt="' + other.name + '">' +
+          '</div>' +
+          '<div class="uyum-list-item-meta">' +
+            '<span class="uyum-list-item-pair">' + other.name + ' ile</span>' +
+            '<span class="uyum-list-item-type"><span class="uyum-list-item-icon">' + t.icon + '</span> ' + t.label + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<p class="uyum-list-item-aciklama">' + r.aciklama + '</p>';
+      listEl.appendChild(item);
+    });
+
+    stepSelect.hidden = true;
+    stepResult.hidden = false;
+  }
+
+  backBtn.addEventListener('click', function () {
+    stepResult.hidden = true;
+    stepSelect.hidden = false;
+  });
+})();
+    </script>
+</body>
+</html>

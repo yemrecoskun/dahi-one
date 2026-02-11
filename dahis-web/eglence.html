@@ -3,33 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dahi's One - Sezon Detayı</title>
+    <title>Eğlence - dahi's</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-69TYYFHVDK"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-69TYYFHVDK');
-    </script>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo" id="homeBtn">dahi's</div>
+            <div class="logo" onclick="window.location.href='index.html'">dahi's</div>
             <ul class="nav-menu">
                 <li><a href="index.html#hero" class="nav-link">Ana Sayfa</a></li>
                 <li><a href="index.html#characters" class="nav-link">Onelar</a></li>
-                <li><a href="index.html#seasons" class="nav-link">Sezonlar</a></li>
+                <li><a href="index.html#seasons-id" class="nav-link">Sezonlar</a></li>
                 <li><a href="eglence.html" class="nav-link">Eğlence</a></li>
                 <li><a href="dahios.html" class="nav-link">dahiOS</a></li>
                 <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
@@ -37,35 +27,27 @@
         </div>
     </nav>
 
-    <!-- Season Detail Section -->
-    <section class="season-detail-section" style="display: block;">
+    <!-- Eğlence Section -->
+    <section class="eglence-section">
         <div class="container">
-            <button class="back-btn" id="backToSeasons">
-                <span>←</span> Sezonlara Dön
-            </button>
-            <div class="season-header" id="seasonHeader">
-                <!-- Season info will be loaded here -->
-            </div>
-            <div class="season-summary" id="seasonSummary">
-                <!-- Season summary will be loaded here -->
-            </div>
-            <div class="episodes-list" id="episodesList">
-                <!-- Episodes will be loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Episode Detail Page (Hidden by default) -->
-    <section id="episodeDetail" class="episode-detail-section" style="display: none;">
-        <div class="container">
-            <button class="back-btn" id="backToSeason">
-                <span>←</span> Sezona Dön
-            </button>
-            <div class="episode-content" id="episodeContent">
-                <!-- Episode content will be loaded here -->
-            </div>
-            <div class="episode-navigation" id="episodeNavigation">
-                <!-- Navigation buttons will be loaded here -->
+            <h1 class="eglence-title">Eğlence</h1>
+            <p class="eglence-intro">Oyunlar, quizler ve eğlenceli içerikler. Birini seç ve başla.</p>
+            <div class="eglence-grid" id="eglenceGrid">
+                <!-- Hangi One sensin? → Quiz -->
+                <a href="quiz.html" class="eglence-card eglence-card-link">
+                    <div class="eglence-card-glow" style="--eglence-color: #667eea;"></div>
+                    <div class="eglence-card-icon">🎯</div>
+                    <h3 class="eglence-card-title">Hangi One sensin?</h3>
+                    <p class="eglence-card-desc">Soru-cevap ile seni yansıtan One karakterini keşfet.</p>
+                    <span class="eglence-card-cta">Başla →</span>
+                </a>
+                <a href="uyum.html" class="eglence-card eglence-card-link">
+                    <div class="eglence-card-glow" style="--eglence-color: #44dd88;"></div>
+                    <div class="eglence-card-icon">💕</div>
+                    <h3 class="eglence-card-title">Onelar Arası Uyum</h3>
+                    <p class="eglence-card-desc">Hangi One hangisiyle eş, arkadaş, anlaşır veya anlaşamaz? Tüm ikilileri keşfet.</p>
+                    <span class="eglence-card-cta">Keşfet →</span>
+                </a>
             </div>
         </div>
     </section>
@@ -89,9 +71,5 @@
             </div>
         </div>
     </footer>
-
-    <script src="data.js"></script>
-    <script src="season-script.js"></script>
 </body>
 </html>
-

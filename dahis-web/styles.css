@@ -308,7 +308,15 @@ body {
 }
 
 .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.08) rotate(-2deg);
+    animation: logoWiggle 0.5s ease;
+}
+
+@keyframes logoWiggle {
+    0%, 100% { transform: scale(1.08) rotate(-2deg); }
+    25% { transform: scale(1.08) rotate(2deg); }
+    50% { transform: scale(1.08) rotate(-1deg); }
+    75% { transform: scale(1.08) rotate(1deg); }
 }
 
 .nav-menu {
@@ -317,12 +325,17 @@ body {
     gap: 2rem;
 }
 
+.nav-menu li {
+    position: relative;
+}
+
 .nav-link {
     color: var(--text-secondary);
     text-decoration: none;
     font-weight: 400;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
+    display: inline-block;
 }
 
 .nav-link::after {
@@ -331,18 +344,33 @@ body {
     bottom: -5px;
     left: 0;
     width: 0;
-    height: 2px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    transition: width 0.3s ease;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    background-size: 200% 100%;
+    transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nav-link:hover {
     color: var(--text-primary);
+    transform: translateY(-4px) scale(1.05);
 }
 
 .nav-link:hover::after {
     width: 100%;
 }
+
+.nav-link:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Her menü öğesine hover'da hafif renk (One karakterleri teması) */
+.nav-menu li:nth-child(1) .nav-link:hover { text-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+.nav-menu li:nth-child(2) .nav-link:hover { text-shadow: 0 0 20px rgba(255, 68, 68, 0.4); }
+.nav-menu li:nth-child(3) .nav-link:hover { text-shadow: 0 0 20px rgba(255, 221, 68, 0.4); }
+.nav-menu li:nth-child(4) .nav-link:hover { text-shadow: 0 0 20px rgba(255, 136, 68, 0.4); }
+.nav-menu li:nth-child(5) .nav-link:hover { text-shadow: 0 0 20px rgba(68, 136, 255, 0.4); }
+.nav-menu li:nth-child(6) .store-btn:hover { box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5), 0 0 30px rgba(245, 87, 108, 0.3); }
 
 .store-btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -350,7 +378,7 @@ body {
     padding: 0.6rem 1.5rem;
     border-radius: 25px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .store-btn::after {
@@ -358,9 +386,15 @@ body {
 }
 
 .store-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #f093fb 100%);
+    animation: storePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes storePulse {
+    0%, 100% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7), 0 0 40px rgba(240, 147, 251, 0.2); }
 }
 
 /* Header - Uygulamayı indir */
@@ -1884,5 +1918,571 @@ body {
 .nfc-tag-single,
 .nfc-hero-link {
     display: none !important;
+}
+
+/* ========== Eğlence (selection) ========== */
+.eglence-section {
+    min-height: 80vh;
+    padding: 6rem 1rem 4rem;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, var(--bg-darker) 100%);
+}
+
+.eglence-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.eglence-intro {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+}
+
+.eglence-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.eglence-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.eglence-card-link:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
+}
+
+.eglence-card-glow {
+    position: absolute;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse, var(--eglence-color, #667eea) 0%, transparent 70%);
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.eglence-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.eglence-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.eglence-card-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.eglence-card-cta {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #667eea;
+    transition: transform 0.2s ease;
+}
+
+.eglence-card-link:hover .eglence-card-cta {
+    transform: translateX(4px);
+}
+
+/* ========== Onelar arası uyum ========== */
+.uyum-section {
+    min-height: 80vh;
+    padding: 6rem 1rem 4rem;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, var(--bg-darker) 100%);
+}
+
+.uyum-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.uyum-intro {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Adım 1: Karakter seçimi */
+.uyum-step-label {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.uyum-char-select {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.uyum-char-card {
+    width: 100px;
+    padding: 1rem 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+    color: inherit;
+}
+
+.uyum-char-card:hover {
+    transform: translateY(-4px) scale(1.03);
+    border-color: var(--uyum-char-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.uyum-char-card-avatar {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 0.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--uyum-char-color), var(--uyum-char-color)dd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.uyum-char-card-avatar img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.uyum-char-card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Adım 2: Sonuç ekranı */
+.uyum-result-header {
+    margin-bottom: 1.5rem;
+}
+
+.uyum-result-hero {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.uyum-result-hero-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 0.75rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--uyum-char-color), var(--uyum-char-color)dd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.uyum-result-hero-avatar img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.uyum-result-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.uyum-back-btn {
+    display: block;
+    margin: 0 auto 2rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.uyum-back-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+}
+
+/* Uyum listesi: tek tek açıklamalı bloklar */
+.uyum-list {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.uyum-list-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    border-left: 4px solid var(--uyum-type-color, #667eea);
+    transition: box-shadow 0.2s ease;
+}
+
+.uyum-list-item:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.uyum-list-item-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.uyum-list-item-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--uyum-char-color), var(--uyum-char-color)dd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.uyum-list-item-avatar img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.uyum-list-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.uyum-list-item-pair {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.uyum-list-item-type {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--uyum-type-color);
+}
+
+.uyum-list-item-icon {
+    margin-right: 0.2rem;
+}
+
+.uyum-list-item-aciklama {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* ========== Quiz: Hangi One sensin? ========== */
+.quiz-section {
+    min-height: 80vh;
+    padding: 6rem 1rem 4rem;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, var(--bg-darker) 100%);
+}
+
+.quiz-container {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.quiz-screen {
+    animation: quizFadeIn 0.35s ease;
+}
+
+@keyframes quizFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.quiz-start {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.quiz-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.quiz-intro {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.quiz-btn {
+    display: inline-block;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    text-decoration: none;
+}
+
+.quiz-btn:hover {
+    transform: translateY(-2px);
+}
+
+.quiz-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.quiz-btn-primary:hover {
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.quiz-btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.quiz-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.quiz-progress-wrap {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.quiz-progress-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(102, 126, 234, 0.25);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.quiz-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.quiz-progress-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    min-width: 3rem;
+}
+
+.quiz-question-title {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.quiz-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.quiz-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.quiz-option-selected {
+    border-color: rgba(102, 126, 234, 0.7);
+    background: rgba(102, 126, 234, 0.15);
+    box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.3);
+}
+
+.quiz-option input {
+    accent-color: #667eea;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.quiz-option-text {
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.quiz-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.quiz-result {
+    text-align: center;
+    padding: 1rem 0 2rem;
+}
+
+.quiz-result-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.quiz-result-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.quiz-result-glow {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 100%;
+    background: radial-gradient(ellipse, var(--glow-color, #667eea) 0%, transparent 70%);
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.quiz-result-icon {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.quiz-result-icon img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.quiz-result-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.quiz-result-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.quiz-result-traits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.quiz-result-trait {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.quiz-result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
 }
 
