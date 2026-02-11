@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Hafıza Kartları - dahi's</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">dahi's</div>
+            <ul class="nav-menu">
+                <li><a href="index.html#hero" class="nav-link">Ana Sayfa</a></li>
+                <li><a href="index.html#characters" class="nav-link">Onelar</a></li>
+                <li><a href="index.html#seasons-id" class="nav-link">Sezonlar</a></li>
+                <li><a href="eglence.html" class="nav-link">Eğlence</a></li>
+                <li><a href="dahios.html" class="nav-link">dahiOS</a></li>
+                <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="memory-section">
+        <div class="container memory-container">
+            <h1 class="memory-title">One Hafıza Kartları</h1>
+            <p class="memory-intro">Aynı One çiftini bul. Kartları çevir, eşleştir!</p>
+            <div class="memory-bar">
+                <span class="memory-moves" id="memoryMoves">Hamle: 0</span>
+                <button type="button" class="memory-btn" id="memoryRestart">Yeniden başla</button>
+            </div>
+            <div class="memory-grid" id="memoryGrid"></div>
+            <div class="memory-done" id="memoryDone" hidden>
+                <p class="memory-done-text">Tebrikler! Tüm eşleri buldun.</p>
+                <p class="memory-done-moves" id="memoryDoneMoves"></p>
+                <button type="button" class="memory-btn memory-btn-primary" id="memoryPlayAgain">Tekrar oyna</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 dahi's One - Harmonya'nın Kahramanları</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html">Gizlilik Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="cookie-policy.html">Çerez Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="about.html">Hakkımızda</a>
+                    <span class="separator">|</span>
+                    <a href="contact.html">İletişim</a>
+                    <span class="separator">|</span>
+                    <a href="kvkk.html">Aydınlatma Metni</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="memory.js"></script>
+    <script>
+(function () {
+  var gridEl = document.getElementById('memoryGrid');
+  var movesEl = document.getElementById('memoryMoves');
+  var doneEl = document.getElementById('memoryDone');
+  var doneMovesEl = document.getElementById('memoryDoneMoves');
+  var restartBtn = document.getElementById('memoryRestart');
+  var playAgainBtn = document.getElementById('memoryPlayAgain');
+
+  var cards = [];
+  var flipped = [];
+  var moves = 0;
+  var matched = 0;
+  var lock = false;
+
+  function createCard(pair, index) {
+    var div = document.createElement('div');
+    div.className = 'memory-card';
+    div.dataset.char = pair.id;
+    div.dataset.index = index;
+    div.style.setProperty('--memory-color', pair.color);
+    div.innerHTML =
+      '<div class="memory-card-inner">' +
+        '<div class="memory-card-back"></div>' +
+        '<div class="memory-card-front">' +
+          '<img src="' + pair.image + '" alt="' + pair.name + '">' +
+          '<span class="memory-card-name">' + pair.name + '</span>' +
+        '</div>' +
+      '</div>';
+    return div;
+  }
+
+  function init() {
+    gridEl.innerHTML = '';
+    var pairs = shuffleArray(getMemoryPairs());
+    cards = [];
+    flipped = [];
+    moves = 0;
+    matched = 0;
+    lock = false;
+    doneEl.hidden = true;
+
+    pairs.forEach(function (p, i) {
+      var el = createCard(p, i);
+      cards.push({ el: el, id: p.id });
+      el.addEventListener('click', function () { onCardClick(i); });
+      gridEl.appendChild(el);
+    });
+    updateMoves();
+  }
+
+  function onCardClick(index) {
+    if (lock) return;
+    var card = cards[index];
+    if (card.el.classList.contains('flipped') || card.el.classList.contains('matched')) return;
+
+    card.el.classList.add('flipped');
+    flipped.push(index);
+
+    if (flipped.length === 2) {
+      lock = true;
+      moves++;
+      updateMoves();
+      var a = cards[flipped[0]].id;
+      var b = cards[flipped[1]].id;
+      if (a === b) {
+        cards[flipped[0]].el.classList.add('matched');
+        cards[flipped[1]].el.classList.add('matched');
+        matched += 2;
+        flipped = [];
+        lock = false;
+        if (matched === cards.length) setTimeout(showDone, 400);
+      } else {
+        setTimeout(function () {
+          cards[flipped[0]].el.classList.remove('flipped');
+          cards[flipped[1]].el.classList.remove('flipped');
+          flipped = [];
+          lock = false;
+        }, 600);
+      }
+    }
+  }
+
+  function updateMoves() {
+    movesEl.textContent = 'Hamle: ' + moves;
+  }
+
+  function showDone() {
+    doneMovesEl.textContent = moves + ' hamlede tamamladın.';
+    doneEl.hidden = false;
+  }
+
+  restartBtn.addEventListener('click', init);
+  playAgainBtn.addEventListener('click', function () {
+    doneEl.hidden = true;
+    init();
+  });
+
+  init();
+})();
+    </script>
+</body>
+</html>

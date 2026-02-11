@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One'ının Bugünkü Sözü - dahi's</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">dahi's</div>
+            <ul class="nav-menu">
+                <li><a href="index.html#hero" class="nav-link">Ana Sayfa</a></li>
+                <li><a href="index.html#characters" class="nav-link">Onelar</a></li>
+                <li><a href="index.html#seasons-id" class="nav-link">Sezonlar</a></li>
+                <li><a href="eglence.html" class="nav-link">Eğlence</a></li>
+                <li><a href="dahios.html" class="nav-link">dahiOS</a></li>
+                <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="soz-section">
+        <div class="container soz-container">
+            <h1 class="soz-title">One'ının bugünkü sözü</h1>
+            <p class="soz-intro">Rastgele bir One senin için bir cümle seçti. Yenile, yeni söz gelsin.</p>
+            <div class="soz-card" id="sozCard">
+                <div class="soz-card-glow" id="sozCardGlow"></div>
+                <div class="soz-card-avatar" id="sozCardAvatar">
+                    <img id="sozCardImage" src="" alt="">
+                </div>
+                <p class="soz-card-name" id="sozCardName"></p>
+                <blockquote class="soz-card-quote" id="sozCardQuote"></blockquote>
+                <div class="soz-card-actions">
+                    <button type="button" class="soz-btn soz-btn-primary" id="sozBtnYenile">Yenile</button>
+                    <button type="button" class="soz-btn soz-btn-secondary" id="sozBtnPaylas">Paylaş</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 dahi's One - Harmonya'nın Kahramanları</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html">Gizlilik Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="cookie-policy.html">Çerez Politikası</a>
+                    <span class="separator">|</span>
+                    <a href="about.html">Hakkımızda</a>
+                    <span class="separator">|</span>
+                    <a href="contact.html">İletişim</a>
+                    <span class="separator">|</span>
+                    <a href="kvkk.html">Aydınlatma Metni</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="soz.js"></script>
+    <script>
+(function () {
+  var card = document.getElementById('sozCard');
+  var cardGlow = document.getElementById('sozCardGlow');
+  var cardAvatar = document.getElementById('sozCardAvatar');
+  var cardImage = document.getElementById('sozCardImage');
+  var cardName = document.getElementById('sozCardName');
+  var cardQuote = document.getElementById('sozCardQuote');
+
+  function showSoz() {
+    var r = getRandomSoz();
+    var c = r.character;
+    cardGlow.style.setProperty('--soz-color', c.color);
+    cardAvatar.style.setProperty('--soz-color', c.color);
+    cardImage.src = c.image;
+    cardImage.alt = c.name;
+    cardName.textContent = c.name;
+    cardQuote.textContent = r.quote;
+  }
+
+  document.getElementById('sozBtnYenile').addEventListener('click', showSoz);
+  document.getElementById('sozBtnPaylas').addEventListener('click', function () {
+    var name = document.getElementById('sozCardName').textContent;
+    var quote = document.getElementById('sozCardQuote').textContent;
+    var text = name + ': "' + quote + '" — dahi\'s One';
+    var url = window.location.href;
+    if (navigator.share && navigator.canShare && navigator.canShare({ text: text, url: url })) {
+      navigator.share({ title: 'One\'ının Bugünkü Sözü', text: text, url: url }).catch(function () { copyFallback(text); });
+    } else {
+      copyFallback(text);
+    }
+  });
+
+  function copyFallback(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { alert('Metin kopyalandı!'); }).catch(function () { promptCopy(text); });
+    } else {
+      promptCopy(text);
+    }
+  }
+  function promptCopy(text) {
+    prompt('Paylaşmak için bu metni kopyala:', text);
+  }
+
+  showSoz();
+})();
+    </script>
+</body>
+</html>
