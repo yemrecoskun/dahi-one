@@ -6,6 +6,7 @@
     <meta name="description" content="Which Dahis character are you? Free Dahis personality test – find your character: Puls, Zest, Lumo, Vigo or Aura. What character matches your personality? Ultimate Dahis character quiz.">
     <meta name="keywords" content="which dahis character are you, dahis personality test, find your dahis character, dahis character quiz, Puls Zest Lumo Vigo Aura, what character type are you, dahis hero quiz">
     <title>Which Dahis Character Are You? | Dahis Personality Test – Free Quiz</title>
+    <link rel="canonical" href="https://dahis.io/which-dahis-character-are-you">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="styles.css">
@@ -15,20 +16,7 @@
 </head>
 <body>
     <script>if (new URLSearchParams(window.location.search).get('app') === '1') document.body.classList.add('embed-app');</script>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo" onclick="window.location.href='index.html'">dahi's</div>
-            <ul class="nav-menu">
-                <li><a href="/#hero" class="nav-link">Ana Sayfa</a></li>
-                <li><a href="/#characters" class="nav-link">Onelar</a></li>
-                <li><a href="/#seasons-id" class="nav-link">Sezonlar</a></li>
-                <li><a href="/eglence" class="nav-link">Eğlence</a></li>
-                <li><a href="/dahios" class="nav-link">dahiOS</a></li>
-                <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
-            </ul>
-        </div>
-    </nav>
+    <div id="nav-placeholder"></div>
 
     <!-- Quiz Section -->
     <section class="quiz-section">
@@ -76,26 +64,8 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2025 dahi's One - Harmonya'nın Kahramanları</p>
-                <div class="footer-links">
-                    <a href="/privacy-policy">Gizlilik Politikası</a>
-                    <span class="separator">|</span>
-                    <a href="/cookie-policy">Çerez Politikası</a>
-                    <span class="separator">|</span>
-                    <a href="/about">Hakkımızda</a>
-                    <span class="separator">|</span>
-                    <a href="/contact">İletişim</a>
-                    <span class="separator">|</span>
-                    <a href="/kvkk">Aydınlatma Metni</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
+    <div id="footer-placeholder"></div>
+    <script src="/includes/load-common.js"></script>
     <script src="quiz.js"></script>
     <script>
 (function () {

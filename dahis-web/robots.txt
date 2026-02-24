@@ -1,4 +1,9 @@
+# Dahis.io - Allow all crawlers
 User-agent: *
 Allow: /
 
+# Sitemap
 Sitemap: https://dahis.io/sitemap.xml
+
+# Optional: disallow admin or private paths if any (none for static site)
+# Disallow: /private/
