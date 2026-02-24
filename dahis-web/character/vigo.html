@@ -4,40 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vigo | dahi's One</title>
-    <meta name="description" content="Vigo - Harmonya'nın doğa koruyucusu.">
+    <meta name="description" content="Vigo - Harmonya'nın doğa koruyucusu. Yeşil dahi's One.">
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="character-detail.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        .char-page { padding-top: 100px; min-height: 100vh; }
-        .char-page .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        .char-page__back { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; font-weight: 600; margin-bottom: 2rem; }
-        .char-page__back:hover { color: #fff; }
-        .char-page__card { background: rgba(255,255,255,0.03); border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; display: grid; grid-template-columns: 1fr; gap: 2rem; }
-        @media (min-width: 768px) { .char-page__card { grid-template-columns: 280px 1fr; } }
-        .char-page__media { padding: 2rem; display: flex; align-items: center; justify-content: center; }
-        .char-page__img-wrap { width: 200px; height: 200px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .char-page__img-wrap img { width: 85%; height: 85%; object-fit: contain; }
-        .char-page__body { padding: 2rem; }
-        .char-page__name { font-size: 2rem; font-weight: 800; margin-bottom: 0.25rem; }
-        .char-page__color { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; opacity: 0.9; }
-        .char-page__short { color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem; }
-        .char-page__full { color: var(--text-primary); line-height: 1.8; margin-bottom: 1.5rem; }
-        .char-page__traits { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .char-page__trait { padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
-        .char-page__stats { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
-        .char-page__stat { font-size: 0.9rem; color: var(--text-secondary); }
-        .char-page__stat-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
-        .char-page__stat-fill { height: 100%; border-radius: 6px; }
-        .char-page__cta { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.9rem 1.75rem; border-radius: 24px; font-weight: 700; text-decoration: none; color: #fff; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin-bottom: 2rem; }
-        .char-page__cta:hover { opacity: 0.95; transform: translateY(-1px); }
-        .char-page__others h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--text-secondary); }
-        .char-page__others a { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,255,255,0.06); border-radius: 12px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.5rem; }
-        .char-page__others a:hover { background: rgba(255,255,255,0.12); }
-        .char-page__others a span { width: 20px; height: 20px; border-radius: 50%; }
-    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -57,33 +30,108 @@
     <main class="char-page">
         <div class="container">
             <a href="/#characters" class="char-page__back">← Tüm Onelar</a>
-            <article class="char-page__card">
-                <div class="char-page__media">
-                    <div class="char-page__img-wrap" id="imgWrap">
+
+            <section class="char-hero">
+                <div class="char-hero__media">
+                    <div class="char-hero__img-wrap" id="imgWrap">
                         <img src="../yesil.png" alt="Vigo">
                     </div>
                 </div>
-                <div class="char-page__body">
-                    <h1 class="char-page__name">Vigo</h1>
-                    <p class="char-page__color" style="color:#44dd88">Yeşil</p>
-                    <p class="char-page__short">Doğayı seven, huzurlu ve sürdürülebilir enerji dehası. Bilge ve araştırmacı.</p>
-                    <p class="char-page__full">Vigo, Harmonya'nın doğa koruyucusudur. Yeşil dahi's One saatiyle, doğayla derin bir bağ kurar ve sürdürülebilir enerji çözümleri üretir. Bilgeliği ve huzurlu doğasıyla, ekibin denge sağlayıcısıdır.</p>
-                    <div class="char-page__traits">
-                        <span class="char-page__trait" style="background:#44dd8822;color:#44dd88">Bilge</span>
-                        <span class="char-page__trait" style="background:#44dd8822;color:#44dd88">Huzurlu</span>
-                        <span class="char-page__trait" style="background:#44dd8822;color:#44dd88">Doğa Sever</span>
+                <div class="char-hero__info">
+                    <h1 class="char-hero__name">Vigo</h1>
+                    <span class="char-hero__badge" style="background:#44dd8822;color:#44dd88">Yeşil One</span>
+                    <p class="char-hero__slogan" style="color:#44dd88">"Doğanın Bilgesi, Dengecin Koruyucusu"</p>
+                    <p class="char-hero__tagline">Doğayı seven, huzurlu ve sürdürülebilir enerji dehası. Ekibin denge sağlayıcısı.</p>
+                </div>
+            </section>
+
+            <blockquote class="char-quote" style="border-color:#44dd88">
+                "Doğa bize her şeyi öğretir – yeter ki dinlemeyi bilelim."
+            </blockquote>
+
+            <section class="char-section">
+                <h2 class="char-section__title">Hikaye</h2>
+                <div class="char-section__text">
+                    <p>Vigo, Harmonya'nın doğa koruyucusudur. Yeşil dahi's One saatiyle, doğayla derin bir bağ kurar ve sürdürülebilir enerji çözümleri üretir. Bilgeliği ve huzurlu doğasıyla, ekibin denge sağlayıcısıdır.</p>
+                    <p>Yeşil renk büyümeyi, huzuru ve doğayı temsil eder. Vigo, zorlu anlarda sakin kalan, araştıran ve uzlaştıran kişidir; ekibin "bilge" üyesi olarak stratejik kararlarda görüşüne başvurulur.</p>
+                </div>
+            </section>
+
+            <section class="char-section">
+                <h2 class="char-section__title">Özellikler</h2>
+                <div class="char-traits">
+                    <span class="char-trait" style="background:#44dd8822;color:#44dd88">Bilge</span>
+                    <span class="char-trait" style="background:#44dd8822;color:#44dd88">Huzurlu</span>
+                    <span class="char-trait" style="background:#44dd8822;color:#44dd88">Doğa Sever</span>
+                    <span class="char-trait" style="background:#44dd8822;color:#44dd88">Araştırmacı</span>
+                    <span class="char-trait" style="background:#44dd8822;color:#44dd88">Uzlaştırıcı</span>
+                </div>
+            </section>
+
+            <section class="char-section">
+                <h2 class="char-section__title">Güçlü & Zayıf Yanlar</h2>
+                <div class="char-pros-cons">
+                    <div class="char-pros">
+                        <div class="char-pros__title char-pros__title--pro">Güçlü Yanları</div>
+                        <ul class="char-pros__list">
+                            <li>Yüksek empati yeteneği</li>
+                            <li>Hayatta kalma (survivor) uzmanlığı</li>
+                            <li>İyileştirme gücü</li>
+                        </ul>
                     </div>
-                    <div class="char-page__stats" id="charStats"></div>
-                    <a href="https://dahis.shop/one-vigo" class="char-page__cta">Mağazada Gör →</a>
-                    <div class="char-page__others">
-                        <h3>Diğer Onelar</h3>
-                        <a href="/character/puls"><span style="background:#ff4444"></span>Puls</a>
-                        <a href="/character/zest"><span style="background:#ff8844"></span>Zest</a>
-                        <a href="/character/lumo"><span style="background:#ffdd44"></span>Lumo</a>
-                        <a href="/character/aura"><span style="background:#4488ff"></span>Aura</a>
+                    <div class="char-cons">
+                        <div class="char-pros__title char-pros__title--con">Zayıf Yanları</div>
+                        <ul class="char-cons__list">
+                            <li>Çatışmadan kaçınma eğilimi</li>
+                            <li>Teknolojiye bazen şüpheyle yaklaşması</li>
+                        </ul>
                     </div>
                 </div>
-            </article>
+            </section>
+
+            <section class="char-section">
+                <h2 class="char-section__title">Yetenekler</h2>
+                <div class="char-skills">
+                    <div class="char-skill">
+                        <div class="char-skill__name" style="color:#44dd88">Regeneration</div>
+                        <p class="char-skill__desc">Kendi ve takım arkadaşlarının "yaşam enerjisini" dijital bir frekansla yeniler.</p>
+                    </div>
+                    <div class="char-skill">
+                        <div class="char-skill__name" style="color:#44dd88">Camouflage</div>
+                        <p class="char-skill__desc">Çevredeki dijital gürültüyle uyumlanarak tamamen görünmez hale gelir.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="char-section">
+                <h2 class="char-section__title">İstatistikler</h2>
+                <div class="char-stats">
+                    <div class="char-stat"><span class="char-stat__label">Güç</span><div class="char-stat__bar"><div class="char-stat__fill" style="width:70%;background:#44dd88"></div></div></div>
+                    <div class="char-stat"><span class="char-stat__label">Zeka</span><div class="char-stat__bar"><div class="char-stat__fill" style="width:88%;background:#44dd88"></div></div></div>
+                    <div class="char-stat"><span class="char-stat__label">Hız</span><div class="char-stat__bar"><div class="char-stat__fill" style="width:68%;background:#44dd88"></div></div></div>
+                    <div class="char-stat"><span class="char-stat__label">Bilgelik</span><div class="char-stat__bar"><div class="char-stat__fill" style="width:94%;background:#44dd88"></div></div></div>
+                    <div class="char-stat"><span class="char-stat__label">Denge</span><div class="char-stat__bar"><div class="char-stat__fill" style="width:96%;background:#44dd88"></div></div></div>
+                </div>
+            </section>
+
+            <section class="char-section">
+                <div class="char-role">
+                    <div class="char-role__title">Ekipte rolü</div>
+                    <p class="char-role__text">Vigo, ekibin sürdürülebilirlik ve denge uzmanıdır. Yeşil dahi's One saatiyle doğayla uyum içinde çalışır; zor kararlarda sakin kalır, araştırır ve uzlaştırır. Projelerin uzun vadeli ve doğa dostu olmasına katkı sunar.</p>
+                </div>
+            </section>
+
+            <a href="https://dahis.shop/one-vigo" class="char-cta">Mağazada Vigo One'ı Gör →</a>
+
+            <div class="char-others">
+                <h3 class="char-others__title">Diğer Onelar</h3>
+                <div class="char-others__list">
+                    <a href="/character/puls" class="char-others__link"><span style="background:#ff4444"></span>Puls</a>
+                    <a href="/character/zest" class="char-others__link"><span style="background:#ff8844"></span>Zest</a>
+                    <a href="/character/lumo" class="char-others__link"><span style="background:#ffdd44"></span>Lumo</a>
+                    <a href="/character/aura" class="char-others__link"><span style="background:#4488ff"></span>Aura</a>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -106,14 +154,7 @@
         (function() {
             var wrap = document.getElementById('imgWrap');
             wrap.style.background = 'linear-gradient(135deg, #44dd8822, #44dd8808)';
-            wrap.style.boxShadow = '0 0 50px #44dd8840';
-            var stats = document.getElementById('charStats');
-            ['Güç 85%', 'Zeka 90%', 'Hız 80%'].forEach(function(s) {
-                var p = s.split(' ');
-                var d = document.createElement('div');
-                d.innerHTML = '<span class="char-page__stat">' + p[0] + '</span><div class="char-page__stat-bar"><div class="char-page__stat-fill" style="width:' + p[1] + ';background:#44dd88"></div></div>';
-                stats.appendChild(d);
-            });
+            wrap.style.boxShadow = '0 0 60px #44dd8840';
         })();
     </script>
 </body>
