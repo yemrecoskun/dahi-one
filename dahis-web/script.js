@@ -83,7 +83,7 @@ function createSeasonCard(season) {
     card.className = 'season-card';
     card.addEventListener('click', () => {
         // Navigate to new page
-        window.location.href = `season.html?id=${season.id}`;
+        window.location.href = `/season?id=${season.id}`;
     });
     
     card.innerHTML = `

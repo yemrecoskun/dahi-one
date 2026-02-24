@@ -1,0 +1,20 @@
+# Temiz URL'ler: .html uzantısı olmadan sayfa açılsın (rewrite, adres çubuğu değişmez)
+/about    /about.html   200
+/contact  /contact.html   200
+/privacy-policy    /privacy-policy.html   200
+/cookie-policy    /cookie-policy.html   200
+/kvkk    /kvkk.html   200
+/eglence    /eglence.html   200
+/dahios    /dahios.html   200
+/quiz    /quiz.html   200
+/uyum    /uyum.html   200
+/soz    /soz.html   200
+/memory    /memory.html   200
+/season    /season.html   200
+/tag-detail    /tag-detail.html   200
+/intro    /intro.html   200
+/character/puls    /character/puls/index.html   200
+/character/zest    /character/zest/index.html   200
+/character/lumo    /character/lumo/index.html   200
+/character/vigo    /character/vigo/index.html   200
+/character/aura    /character/aura/index.html   200
