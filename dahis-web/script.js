@@ -445,6 +445,10 @@ function showCharacterModal(characterId) {
                     </div>
                 </div>
             </div>
+            <a href="/character/${characterId}" class="modal-detail-button">
+                <span>DETAY</span>
+                <span class="buy-icon">→</span>
+            </a>
             <button class="buy-button" onclick="goToStore('${characterId}')">
                 <span>SATIN AL</span>
                 <span class="buy-icon">→</span>

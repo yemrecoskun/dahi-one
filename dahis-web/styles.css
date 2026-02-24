@@ -1442,6 +1442,36 @@ body.embed-app {
     transition: width 0.5s ease;
 }
 
+.modal-detail-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.2rem 3rem;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    margin-top: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+}
+.modal-detail-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+}
+.modal-detail-button .buy-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+.modal-detail-button:hover .buy-icon {
+    transform: translateX(5px);
+}
+
 .buy-button {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;

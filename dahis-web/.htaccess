@@ -22,5 +22,5 @@ RewriteRule ^season/?$ season.html [L]
 RewriteRule ^tag-detail/?$ tag-detail.html [L]
 RewriteRule ^intro/?$ intro.html [L]
 
-# Karakter sayfaları: /character/puls -> character/puls/index.html
-RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1/index.html [L]
+# Karakter: /character/puls -> character/puls.html
+RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
