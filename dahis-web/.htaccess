@@ -21,6 +21,11 @@ RewriteRule ^memory/?$ memory.html [L]
 RewriteRule ^season/?$ season.html [L]
 RewriteRule ^tag-detail/?$ tag-detail.html [L]
 RewriteRule ^intro/?$ intro.html [L]
+RewriteRule ^characters/?$ characters.html [L]
+RewriteRule ^which-dahis-character-are-you/?$ quiz.html [R=302,L]
+RewriteRule ^top-dahis-characters/?$ top-dahis-characters.html [L]
+RewriteRule ^smartest-dahis-characters/?$ smartest-dahis-characters.html [L]
+RewriteRule ^most-dangerous-dahis-characters/?$ most-dangerous-dahis-characters.html [L]
 
 # Karakter: /character/puls -> character/puls.html
 RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
