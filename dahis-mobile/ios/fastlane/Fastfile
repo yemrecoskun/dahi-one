@@ -25,7 +25,7 @@ platform :ios do
       configuration: "Release",
       derived_data_path: "build/ios",
       export_method: "app-store",
-      allow_provisioning_updates: true,
+      xcargs: "-allowProvisioningUpdates",
       export_options: {
         provisioningProfiles: {
           "com.dahis.app" => "match AppStore com.dahis.app"
