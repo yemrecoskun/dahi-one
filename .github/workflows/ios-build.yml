@@ -70,4 +70,3 @@ jobs:
         if: always()
         working-directory: dahis-mobile/ios
         run: rm -f fastlane/AuthKey.p8
-```
