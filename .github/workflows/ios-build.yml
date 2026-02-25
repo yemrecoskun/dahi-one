@@ -10,9 +10,9 @@ jobs:
     runs-on: macos-14
 
     steps:
-    - name: Test SSH connection
-      run: |
-        ssh -T git@github.com || true
+      - name: Test SSH connection
+        run: |
+          ssh -T git@github.com || true
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
