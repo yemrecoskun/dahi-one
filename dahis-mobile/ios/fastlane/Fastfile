@@ -18,10 +18,13 @@ default_platform(:ios)
 platform :ios do
   desc "Description of what the lane does"
   lane :custom_lane do
+    # CI'da provisioning profile yoksa Xcode'un indirmesine izin ver
     build_app(
-      scheme: "Runner"
+      scheme: "Runner",
+      export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates"
     )
-  
+
     upload_to_testflight
   end
 end

@@ -1,0 +1,75 @@
+# Android build & App Bundle (Play Store için .aab)
+# iOS workflow ile aynı mantık: Flutter, version bump, build, (imza için secrets)
+#
+# Gereken GitHub Secrets (release imza için):
+#   ANDROID_KEYSTORE_BASE64  - Keystore .jks dosyasının base64 içeriği
+#   ANDROID_KEY_ALIAS        - keyAlias
+#   ANDROID_KEY_PASSWORD     - keyPassword
+#   ANDROID_STORE_PASSWORD   - storePassword
+
+name: Android Build
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Bump build number
+        working-directory: dahis-mobile
+        run: |
+          BUILD_NUM=$(sed -n 's/^version:.*+\([0-9]*\)$/\1/p' pubspec.yaml)
+          NEW_NUM=$((BUILD_NUM + 1))
+          sed -i "s/^version: \(.*\)+[0-9]*$/version: \1+$NEW_NUM/" pubspec.yaml
+          echo "Build number: $BUILD_NUM → $NEW_NUM" && grep '^version:' pubspec.yaml
+
+      - name: Get Flutter dependencies
+        working-directory: dahis-mobile
+        run: flutter pub get
+
+      - name: Create keystore and key.properties
+        working-directory: dahis-mobile/android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/upload-keystore.jks
+          printf "storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=app/upload-keystore.jks\n" \
+            "$ANDROID_STORE_PASSWORD" "$ANDROID_KEY_PASSWORD" "$ANDROID_KEY_ALIAS" > key.properties
+
+      - name: Build App Bundle
+        working-directory: dahis-mobile
+        run: flutter build appbundle --release
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release.aab
+          path: dahis-mobile/build/app/outputs/bundle/release/app-release.aab
+
+      - name: Remove keystore
+        if: always()
+        working-directory: dahis-mobile/android
+        run: rm -f app/upload-keystore.jks key.properties
