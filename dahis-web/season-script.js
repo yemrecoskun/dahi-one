@@ -1,3 +1,12 @@
+// i18n helper for season UI (getI18n from load-common.js)
+function seasonT(key, fallback) {
+    return (typeof window.getI18n === 'function' ? window.getI18n(key) : null) || fallback || key;
+}
+function seasonSubtitleLabel(season) {
+    const num = (season.subtitle || '').replace(/^Sezon\s*/i, '') || (season.id || '').replace(/season/i, '');
+    return (seasonT('season.season_label', 'Sezon') + ' ' + num).trim();
+}
+
 // Get season ID from URL parameter
 function getSeasonIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -24,20 +33,20 @@ function loadSeasonDetail(seasonId) {
     // Load season header
     const seasonHeader = document.getElementById('seasonHeader');
     seasonHeader.innerHTML = `
-        <div class="season-number-badge">${season.subtitle}</div>
+        <div class="season-number-badge">${seasonSubtitleLabel(season)}</div>
         <h2 class="season-detail-title">${season.title}</h2>
     `;
 
     // Load season summary
     const seasonSummary = document.getElementById('seasonSummary');
     seasonSummary.innerHTML = `
-        <h3 class="summary-title">Sezon Özeti</h3>
+        <h3 class="summary-title">${seasonT('season.summary_title', 'Sezon Özeti')}</h3>
         <p class="summary-text">${season.summary}</p>
     `;
 
     // Load episodes list
     const episodesList = document.getElementById('episodesList');
-    episodesList.innerHTML = '<h3 class="episodes-title">Bölümler</h3><div class="episodes-grid"></div>';
+    episodesList.innerHTML = '<h3 class="episodes-title">' + seasonT('season.episodes_title', 'Bölümler') + '</h3><div class="episodes-grid"></div>';
     
     const episodesGrid = episodesList.querySelector('.episodes-grid');
     season.episodes.forEach(episode => {
@@ -51,18 +60,19 @@ function createEpisodeCard(episode, seasonId) {
     card.className = 'episode-card';
     card.addEventListener('click', () => showEpisodeDetail(seasonId, episode.id));
     
-    const characterName = episode.character === 'All' ? 'Tüm Ekip' : episode.character;
-    
+    const characterName = episode.character === 'All' ? seasonT('season.all_team', 'Tüm Ekip') : episode.character;
+    const epLabel = seasonT('season.episode', 'Bölüm');
+    const readBtn = seasonT('season.read_btn', 'Oku →');
     card.innerHTML = `
         <div class="episode-card-glow" style="--glow-color: ${episode.characterColor};"></div>
-        <div class="episode-number">Bölüm ${episode.number}</div>
+        <div class="episode-number">${epLabel} ${episode.number}</div>
         <h4 class="episode-card-title">${episode.title}</h4>
         <div class="episode-character" style="color: ${episode.characterColor};">
             <span class="character-icon-small">${characterName}</span>
         </div>
         <p class="episode-card-summary">${episode.summary}</p>
         <div class="episode-card-footer">
-            <span class="read-btn">Oku →</span>
+            <span class="read-btn">${readBtn}</span>
         </div>
     `;
     
@@ -86,11 +96,11 @@ function showEpisodeDetail(seasonId, episodeId) {
 
     // Load episode content
     const episodeContent = document.getElementById('episodeContent');
-    const characterName = episode.character === 'All' ? 'Tüm Ekip' : episode.character;
-    
+    const characterName = episode.character === 'All' ? seasonT('season.all_team', 'Tüm Ekip') : episode.character;
+    const epLabel = seasonT('season.episode', 'Bölüm');
     episodeContent.innerHTML = `
         <div class="episode-header">
-            <div class="episode-number-badge">Bölüm ${episode.number}</div>
+            <div class="episode-number-badge">${epLabel} ${episode.number}</div>
             <h2 class="episode-detail-title">${episode.title}</h2>
             <div class="episode-character-badge" style="background: ${episode.characterColor};">
                 ${characterName}
@@ -107,17 +117,20 @@ function showEpisodeDetail(seasonId, episodeId) {
     const prevEpisode = currentIndex > 0 ? season.episodes[currentIndex - 1] : null;
     const nextEpisode = currentIndex < season.episodes.length - 1 ? season.episodes[currentIndex + 1] : null;
 
+    const prevLabel = seasonT('season.prev_episode', 'Önceki Bölüm');
+    const nextLabel = seasonT('season.next_episode', 'Sonraki Bölüm');
+    const backSeasonLabel = seasonT('season.back_episode', 'Sezona Dön');
     episodeNavigation.innerHTML = `
         <button class="episode-nav-btn prev-episode" ${!prevEpisode ? 'disabled' : ''} 
                 ${prevEpisode ? `onclick="showEpisodeDetail('${seasonId}', '${prevEpisode.id}')"` : ''}>
-            <span>←</span> Önceki Bölüm
+            <span>←</span> ${prevLabel}
         </button>
         <button class="episode-nav-btn back-to-season" onclick="backToSeasonDetail()">
-            Sezona Dön
+            ${backSeasonLabel}
         </button>
         <button class="episode-nav-btn next-episode" ${!nextEpisode ? 'disabled' : ''} 
                 ${nextEpisode ? `onclick="showEpisodeDetail('${seasonId}', '${nextEpisode.id}')"` : ''}>
-            Sonraki Bölüm <span>→</span>
+            ${nextLabel} <span>→</span>
         </button>
     `;
 

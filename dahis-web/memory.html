@@ -24,17 +24,17 @@
 
     <section class="memory-section">
         <div class="container memory-container">
-            <h1 class="memory-title">One Hafıza Kartları</h1>
-            <p class="memory-intro">Aynı One çiftini bul. Kartları çevir, eşleştir!</p>
+            <h1 class="memory-title" data-i18n="memory.title">One Hafıza Kartları</h1>
+            <p class="memory-intro" data-i18n="memory.intro">Aynı One çiftini bul. Kartları çevir, eşleştir!</p>
             <div class="memory-bar">
-                <span class="memory-moves" id="memoryMoves">Hamle: 0</span>
-                <button type="button" class="memory-btn" id="memoryRestart">Yeniden başla</button>
+                <span class="memory-moves" id="memoryMoves"><span data-i18n="memory.moves_label"></span>: <span id="memoryMovesCount">0</span></span>
+                <button type="button" class="memory-btn" id="memoryRestart" data-i18n="memory.restart">Yeniden başla</button>
             </div>
             <div class="memory-grid" id="memoryGrid"></div>
             <div class="memory-done" id="memoryDone" hidden>
-                <p class="memory-done-text">Tebrikler! Tüm eşleri buldun.</p>
+                <p class="memory-done-text" data-i18n="memory.done_text">Tebrikler! Tüm eşleri buldun.</p>
                 <p class="memory-done-moves" id="memoryDoneMoves"></p>
-                <button type="button" class="memory-btn memory-btn-primary" id="memoryPlayAgain">Tekrar oyna</button>
+                <button type="button" class="memory-btn memory-btn-primary" id="memoryPlayAgain" data-i18n="memory.play_again">Tekrar oyna</button>
             </div>
         </div>
     </section>
@@ -45,7 +45,7 @@
     <script>
 (function () {
   var gridEl = document.getElementById('memoryGrid');
-  var movesEl = document.getElementById('memoryMoves');
+  var movesCountEl = document.getElementById('memoryMovesCount');
   var doneEl = document.getElementById('memoryDone');
   var doneMovesEl = document.getElementById('memoryDoneMoves');
   var restartBtn = document.getElementById('memoryRestart');
@@ -126,7 +126,7 @@
   }
 
   function updateMoves() {
-    movesEl.textContent = 'Hamle: ' + moves;
+    if (movesCountEl) movesCountEl.textContent = moves;
   }
 
   function showDone() {

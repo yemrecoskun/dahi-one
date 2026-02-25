@@ -94,19 +94,22 @@
 </head>
 <body>
     <script>if (new URLSearchParams(window.location.search).get('app') === '1') document.body.classList.add('embed-app');</script>
+    <div id="nav-placeholder"></div>
 
     <a href="/" class="error-page__logo">dahi's</a>
 
     <main class="error-page">
         <h1 class="error-page__code">404</h1>
-        <p class="error-page__title">Sayfa bulunamadı</p>
-        <p class="error-page__text">Aradığınız sayfa taşınmış, silinmiş veya adresi yanlış olabilir.</p>
+        <p class="error-page__title" data-i18n="error404.title">Sayfa bulunamadı</p>
+        <p class="error-page__text" data-i18n="error404.text">Aradığınız sayfa taşınmış, silinmiş veya adresi yanlış olabilir.</p>
         <div class="error-page__links">
-            <a href="/" class="error-page__btn">Ana sayfaya dön</a>
-            <a href="/#characters" class="error-page__btn error-page__btn--secondary">Onelar</a>
-            <a href="/eglence" class="error-page__btn error-page__btn--secondary">Eğlence</a>
-            <a href="/dahios" class="error-page__btn error-page__btn--secondary">dahiOS</a>
+            <a href="/" class="error-page__btn" data-i18n="error404.home_link">Ana sayfaya dön</a>
+            <a href="/#characters" class="error-page__btn error-page__btn--secondary" data-i18n="nav.characters">Onelar</a>
+            <a href="/eglence" class="error-page__btn error-page__btn--secondary" data-i18n="nav.fun">Eğlence</a>
+            <a href="/dahios" class="error-page__btn error-page__btn--secondary" data-i18n="nav.dahios">dahiOS</a>
         </div>
     </main>
+    <div id="footer-placeholder"></div>
+    <script src="/includes/load-common.js"></script>
 </body>
 </html>

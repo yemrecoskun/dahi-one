@@ -1,15 +1,22 @@
 <div class="nav-container">
     <a href="/" class="logo">dahi's</a>
     <ul class="nav-menu" role="navigation" aria-label="Ana menü">
-        <li><a href="/" class="nav-link">Ana Sayfa</a></li>
-        <li><a href="/characters" class="nav-link">Onelar</a></li>
-        <li><a href="/#seasons-id" class="nav-link">Sezonlar</a></li>
-        <li><a href="/eglence" class="nav-link">Eğlence</a></li>
-        <li><a href="/dahios" class="nav-link">dahiOS</a></li>
-        <li><a href="https://dahis.shop/" class="nav-link store-btn">Mağaza</a></li>
+        <li><a href="/" class="nav-link" data-i18n="nav.home">Ana Sayfa</a></li>
+        <li><a href="/characters" class="nav-link" data-i18n="nav.characters">Onelar</a></li>
+        <li><a href="/#seasons-id" class="nav-link" data-i18n="nav.seasons">Sezonlar</a></li>
+        <li><a href="/eglence" class="nav-link" data-i18n="nav.fun">Eğlence</a></li>
+        <li><a href="/dahios" class="nav-link" data-i18n="nav.dahios">dahiOS</a></li>
+        <li><a href="https://dahis.shop/" class="nav-link store-btn" data-i18n="nav.store">Mağaza</a></li>
     </ul>
+    <div class="nav-utils">
+        <button type="button" id="theme-toggle" class="nav-theme-btn" aria-label="Koyu mod">🌙</button>
+        <span class="nav-lang-switcher">
+            <button type="button" class="nav-lang-btn active" data-lang="tr">TR</button>
+            <button type="button" class="nav-lang-btn" data-lang="en">EN</button>
+        </span>
+    </div>
     <div class="nav-app-download">
-        <span class="nav-app-label">dahi's Uygulamayı indir</span>
+        <span class="nav-app-label" data-i18n="nav.app_download">dahi's Uygulamayı indir</span>
         <a href="https://apps.apple.com/tr/app/dahis/id6757339261?l=tr" target="_blank" rel="noopener noreferrer" class="nav-store-badge" aria-label="App Store'dan indir">
             <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/tr-tr?size=standard&amp;releaseDate=1704067200" alt="App Store" class="nav-store-img">
         </a>

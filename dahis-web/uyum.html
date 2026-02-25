@@ -24,19 +24,19 @@
 
     <section class="uyum-section">
         <div class="container">
-            <h1 class="uyum-title">Onelar Arası Uyum</h1>
-            <p class="uyum-intro">Önce kendini hangi karakter olarak görüyorsan onu seç; sonra o karakterin diğer Onelarla uyumunu tek tek oku.</p>
+            <h1 class="uyum-title" data-i18n="uyum.title">Onelar Arası Uyum</h1>
+            <p class="uyum-intro" data-i18n="uyum.intro">Önce kendini hangi karakter olarak görüyorsan onu seç; sonra o karakterin diğer Onelarla uyumunu tek tek oku.</p>
 
             <!-- Adım 1: Karakter seçimi -->
             <div class="uyum-step uyum-step-select" id="uyumStepSelect">
-                <p class="uyum-step-label">Sen hangi karaktersin?</p>
+                <p class="uyum-step-label" data-i18n="uyum.step_label">Sen hangi karaktersin?</p>
                 <div class="uyum-char-select" id="uyumCharSelect"></div>
             </div>
 
             <!-- Adım 2: Seçilen karakterin uyumları (tek tek açıklamalı) -->
             <div class="uyum-step uyum-step-result" id="uyumStepResult" hidden>
                 <div class="uyum-result-header" id="uyumResultHeader"></div>
-                <button type="button" class="uyum-back-btn" id="uyumBackBtn">← Başka karakter seç</button>
+                <button type="button" class="uyum-back-btn" id="uyumBackBtn" data-i18n="uyum.back_btn">← Başka karakter seç</button>
                 <div class="uyum-list" id="uyumList"></div>
             </div>
         </div>

@@ -11,6 +11,35 @@
     --text-primary: #ffffff;
     --text-secondary: #b0b0b8;
     --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Light theme */
+html[data-theme="light"] {
+    --bg-dark: #f0f0f5;
+    --bg-darker: #ffffff;
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a5a;
+}
+
+html[data-theme="light"] .navbar {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .footer {
+    border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .hero {
+    background: radial-gradient(ellipse at center, #e8e8f0 0%, var(--bg-darker) 100%);
+}
+
+html[data-theme="light"] .hero::before,
+html[data-theme="light"] .hero::after {
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+}
+
+:root {
     --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
@@ -428,6 +457,75 @@ body.embed-app {
 .nav-store-badge:hover {
     transform: scale(1.08);
     opacity: 0.9;
+}
+
+/* Theme toggle & Lang switcher */
+.nav-utils {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.nav-theme-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.nav-theme-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: scale(1.05);
+}
+
+html[data-theme="light"] .nav-theme-btn {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: var(--text-primary);
+}
+
+.nav-lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.nav-lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+}
+
+.nav-lang-btn:hover {
+    color: var(--text-primary);
+}
+
+.nav-lang-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+html[data-theme="light"] .nav-lang-switcher {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
 }
 
 .nav-store-img {
@@ -1633,6 +1731,14 @@ body.embed-app {
 
     .logo {
         display: none;
+    }
+
+    .nav-utils {
+        order: -2;
+        width: 100%;
+        justify-content: center;
+        padding-bottom: 0.25rem;
+        margin-bottom: 0.15rem;
     }
 
     .nav-app-download {

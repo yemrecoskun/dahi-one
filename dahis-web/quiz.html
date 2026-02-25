@@ -32,9 +32,9 @@
         <div class="container quiz-container">
             <!-- Start Screen -->
             <div id="quizStart" class="quiz-screen quiz-start">
-                <h1 class="quiz-title">Hangi One sensin?</h1>
-                <p class="quiz-intro">Which Dahis character matches your personality? Birkaç soruyla seni en iyi yansıtan dahi's One karakterini keşfet – Puls, Zest, Lumo, Vigo veya Aura.</p>
-                <button type="button" class="quiz-btn quiz-btn-primary" id="quizStartBtn">Başla</button>
+                <h1 class="quiz-title" data-i18n="quiz.title">Hangi One sensin?</h1>
+                <p class="quiz-intro" data-i18n="quiz.intro">Which Dahis character matches your personality? Birkaç soruyla seni en iyi yansıtan dahi's One karakterini keşfet – Puls, Zest, Lumo, Vigo veya Aura.</p>
+                <button type="button" class="quiz-btn quiz-btn-primary" id="quizStartBtn" data-i18n="quiz.start">Başla</button>
             </div>
 
             <!-- Question Screen -->
@@ -48,14 +48,14 @@
                 <h2 class="quiz-question-title" id="quizQuestionTitle"></h2>
                 <div class="quiz-options" id="quizOptions"></div>
                 <div class="quiz-nav">
-                    <button type="button" class="quiz-btn quiz-btn-secondary" id="quizPrevBtn" hidden>Geri</button>
-                    <button type="button" class="quiz-btn quiz-btn-primary" id="quizNextBtn" disabled>İleri</button>
+                    <button type="button" class="quiz-btn quiz-btn-secondary" id="quizPrevBtn" hidden data-i18n="quiz.prev">Geri</button>
+                    <button type="button" class="quiz-btn quiz-btn-primary" id="quizNextBtn" disabled data-i18n="quiz.next">İleri</button>
                 </div>
             </div>
 
             <!-- Result Screen -->
             <div id="quizResult" class="quiz-screen quiz-result" hidden>
-                <h2 class="quiz-result-heading">Senin One'ın</h2>
+                <h2 class="quiz-result-heading" data-i18n="quiz.result_heading">Senin One'ın</h2>
                 <div class="quiz-result-card" id="quizResultCard">
                     <div class="quiz-result-glow" id="quizResultGlow"></div>
                     <div class="quiz-result-icon" id="quizResultIcon">
@@ -66,8 +66,8 @@
                     <div class="quiz-result-traits" id="quizResultTraits"></div>
                 </div>
                 <div class="quiz-result-actions">
-                    <a href="/#characters" class="quiz-btn quiz-btn-primary">Tüm Oneları Gör</a>
-                    <button type="button" class="quiz-btn quiz-btn-secondary" id="quizRetryBtn">Tekrar Oyna</button>
+                    <a href="/#characters" class="quiz-btn quiz-btn-primary" data-i18n="quiz.see_all">Tüm Oneları Gör</a>
+                    <button type="button" class="quiz-btn quiz-btn-secondary" id="quizRetryBtn" data-i18n="quiz.retry">Tekrar Oyna</button>
                 </div>
             </div>
         </div>
@@ -133,7 +133,7 @@
 
     prevBtn.hidden = currentQuestionIndex === 0;
     nextBtn.disabled = answers[currentQuestionIndex] == null;
-    nextBtn.textContent = currentQuestionIndex === totalQuestions - 1 ? 'Sonucu Gör' : 'İleri';
+    nextBtn.textContent = currentQuestionIndex === totalQuestions - 1 ? (window.getI18n ? window.getI18n('quiz.see_result') : 'Sonucu Gör') : (window.getI18n ? window.getI18n('quiz.next') : 'İleri');
   }
 
   function showResult() {
