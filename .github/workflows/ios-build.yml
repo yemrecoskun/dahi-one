@@ -1,9 +1,7 @@
-# iOS build & TestFlight via Fastlane + Match (Flutter)
-# Gereken Secrets:
-#   APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY  (TestFlight upload)
-#   MATCH_PASSWORD   (Match repo şifresi - sertifika şifrelemesi)
-#   MATCH_GIT_URL    (Match certs repo URL, örn. https://github.com/user/dahis-one-certs.git)
-# Private certs repo ise: MATCH_GIT_BASIC_AUTH = base64(git_username:personal_access_token)
+# iOS build & TestFlight upload via Fastlane (Flutter)
+# Gereken GitHub Secrets:
+#   APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY
+# Code signing: Match veya manuel sertifika gerekebilir.
 
 name: iOS Build & TestFlight
 
@@ -58,9 +56,6 @@ jobs:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY_FILEPATH: ${{ github.workspace }}/dahis-mobile/ios/fastlane/AuthKey.p8
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          MATCH_GIT_BASIC_AUTH: ${{ secrets.MATCH_GIT_BASIC_AUTH }}
         run: bundle exec fastlane custom_lane
 
       - name: Remove API key file
