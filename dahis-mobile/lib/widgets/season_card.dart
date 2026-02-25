@@ -30,7 +30,7 @@ class SeasonCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF667eea).withValues(alpha: 0.3),
+              color: const Color(0xFF667eea).withOpacity(0.3),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -43,7 +43,7 @@ class SeasonCard extends StatelessWidget {
               season.subtitle,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Colors.white.withOpacity(0.8),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -61,7 +61,7 @@ class SeasonCard extends StatelessWidget {
               '${season.summary.substring(0, season.summary.length > 150 ? 150 : season.summary.length)}...',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Colors.white.withOpacity(0.9),
                 height: 1.5,
               ),
               maxLines: 4,
@@ -75,7 +75,7 @@ class SeasonCard extends StatelessWidget {
                   '${season.episodes.length} Bölüm',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: Colors.white.withOpacity(0.8),
                   ),
                 ),
                 const Text(

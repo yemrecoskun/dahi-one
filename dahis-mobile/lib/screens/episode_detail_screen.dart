@@ -112,7 +112,7 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
                   end: Alignment.bottomRight,
                   colors: [
                     color,
-                    color.withValues(alpha: 0.7),
+                    color.withOpacity(0.7),
                   ],
                 ),
               ),
@@ -123,7 +123,7 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
                     'Bölüm ${episode.number}',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: Colors.white.withOpacity(0.8),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -143,7 +143,7 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -188,7 +188,7 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
                       },
                       icon: const Icon(Icons.arrow_back),
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                        backgroundColor: Colors.grey.withOpacity(0.2),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.all(16),
                       ),
@@ -222,7 +222,7 @@ class _EpisodeDetailScreenState extends State<EpisodeDetailScreen> {
                       },
                       icon: const Icon(Icons.arrow_forward),
                       style: IconButton.styleFrom(
-                        backgroundColor: color.withValues(alpha: 0.8),
+                        backgroundColor: color.withOpacity(0.8),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.all(16),
                       ),

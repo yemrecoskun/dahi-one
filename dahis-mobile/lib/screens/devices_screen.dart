@@ -418,7 +418,7 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
         color: const Color(0xFF1a1a2e),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(
-          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+          color: const Color(0xFF667eea).withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -485,7 +485,7 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
         color: const Color(0xFF1a1a2e),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+          color: const Color(0xFF667eea).withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -526,13 +526,13 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            characterColor.withValues(alpha: 0.2),
-            characterColor.withValues(alpha: 0.1),
+            characterColor.withOpacity(0.2),
+            characterColor.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: characterColor.withValues(alpha: 0.3),
+          color: characterColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -579,7 +579,7 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
       height: 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: color.withValues(alpha: 0.2),
+        color: color.withOpacity(0.2),
       ),
       child: Center(
         child: Text(
@@ -618,8 +618,8 @@ class _DevicesScreenState extends State<DevicesScreen> with WidgetsBindingObserv
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isActive
-            ? Colors.green.withValues(alpha: 0.2)
-            : Colors.grey.withValues(alpha: 0.2),
+            ? Colors.green.withOpacity(0.2)
+            : Colors.grey.withOpacity(0.2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

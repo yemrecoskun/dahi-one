@@ -36,12 +36,12 @@ class DahisLogo extends StatelessWidget {
           shadows: showShadow
               ? [
                   Shadow(
-                    color: const Color(0xFF667eea).withValues(alpha: 0.5),
+                    color: const Color(0xFF667eea).withOpacity(0.5),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                   Shadow(
-                    color: const Color(0xFF764ba2).withValues(alpha: 0.3),
+                    color: const Color(0xFF764ba2).withOpacity(0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),

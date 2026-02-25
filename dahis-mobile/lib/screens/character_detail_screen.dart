@@ -148,7 +148,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   end: Alignment.bottomCenter,
                   colors: [
                     color,
-                    color.withValues(alpha: 0.3),
+                    color.withOpacity(0.3),
                   ],
                 ),
               ),
@@ -158,7 +158,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: Colors.white.withOpacity(0.2),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(30.0),
@@ -209,10 +209,10 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.2),
+                          color: color.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: color.withValues(alpha: 0.5),
+                            color: color.withOpacity(0.5),
                             width: 1,
                           ),
                         ),
@@ -306,7 +306,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: value,
-            backgroundColor: Colors.grey.withValues(alpha: 0.2),
+            backgroundColor: Colors.grey.withOpacity(0.2),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 8,
           ),

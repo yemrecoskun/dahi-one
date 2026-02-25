@@ -232,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 80,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.white.withOpacity(0.2),
                             ),
                             child: const Icon(
                               Icons.person,
@@ -258,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   user?.email ?? '',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.white.withValues(alpha: 0.8),
+                                    color: Colors.white.withOpacity(0.8),
                                   ),
                                 ),
                               ],
@@ -275,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: const Color(0xFF1a1a2e),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+                          color: const Color(0xFF667eea).withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -317,7 +317,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: const Color(0xFF1a1a2e),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+                          color: const Color(0xFF667eea).withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -359,7 +359,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: const Color(0xFF1a1a2e),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFF667eea).withValues(alpha: 0.3),
+                          color: const Color(0xFF667eea).withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -398,10 +398,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Hesabı Sil Butonu
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.1),
+                        color: Colors.orange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Colors.orange.withValues(alpha: 0.3),
+                          color: Colors.orange.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -426,10 +426,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Çıkış Butonu
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
+                        color: Colors.red.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Colors.red.withValues(alpha: 0.3),
+                          color: Colors.red.withOpacity(0.3),
                           width: 1,
                         ),
                       ),

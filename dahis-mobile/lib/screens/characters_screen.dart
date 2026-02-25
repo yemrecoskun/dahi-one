@@ -103,7 +103,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
                   borderRadius: BorderRadius.circular(4),
                   color: index == _charactersCurrentPage
                       ? const Color(0xFF667eea)
-                      : const Color(0xFFb0b0b8).withValues(alpha: 0.3),
+                      : const Color(0xFFb0b0b8).withOpacity(0.3),
                 ),
               ),
             ),

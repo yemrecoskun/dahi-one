@@ -349,18 +349,18 @@ class _LoginScreenState extends State<LoginScreen> {
               // Ayırıcı
               Row(
                 children: [
-                  Expanded(child: Divider(color: Colors.grey.withValues(alpha: 0.3))),
+                  Expanded(child: Divider(color: Colors.grey.withOpacity(0.3))),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'veya',
                       style: TextStyle(
-                        color: Colors.grey.withValues(alpha: 0.7),
+                        color: Colors.grey.withOpacity(0.7),
                         fontSize: 14,
                       ),
                     ),
                   ),
-                  Expanded(child: Divider(color: Colors.grey.withValues(alpha: 0.3))),
+                  Expanded(child: Divider(color: Colors.grey.withOpacity(0.3))),
                 ],
               ),
               const SizedBox(height: 20),
@@ -368,7 +368,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _showKvkkError ? Colors.red.withValues(alpha: 0.08) : null,
+                  color: _showKvkkError ? Colors.red.withOpacity(0.08) : null,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: _showKvkkError ? Colors.red : Colors.transparent,
@@ -407,7 +407,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           'KVKK ',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey.withValues(alpha: 0.95),
+                            color: Colors.grey.withOpacity(0.95),
                           ),
                         ),
                         InkWell(
@@ -430,7 +430,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ' ve ',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey.withValues(alpha: 0.95),
+                            color: Colors.grey.withOpacity(0.95),
                           ),
                         ),
                         InkWell(
@@ -453,7 +453,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           '\'nı okudum, kabul ediyorum.',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey.withValues(alpha: 0.95),
+                            color: Colors.grey.withOpacity(0.95),
                           ),
                         ),
                       ],
@@ -469,7 +469,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(
-                    color: Colors.grey.withValues(alpha: 0.2),
+                    color: Colors.grey.withOpacity(0.2),
                     width: 1,
                   ),
                 ),

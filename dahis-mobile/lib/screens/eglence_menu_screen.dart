@@ -62,7 +62,7 @@ class EglenceMenuScreen extends StatelessWidget {
           Text(
             'Bir eğlence seç',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: Colors.white.withOpacity(0.7),
               fontSize: 14,
             ),
           ),
@@ -89,7 +89,7 @@ class EglenceMenuScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white.withOpacity(0.06),
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () => _openWebView(context, url, title),
@@ -102,7 +102,7 @@ class EglenceMenuScreen extends StatelessWidget {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF667eea).withValues(alpha: 0.25),
+                    color: const Color(0xFF667eea).withOpacity(0.25),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   alignment: Alignment.center,
@@ -125,7 +125,7 @@ class EglenceMenuScreen extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.65),
+                          color: Colors.white.withOpacity(0.65),
                           fontSize: 13,
                         ),
                         maxLines: 2,
@@ -137,7 +137,7 @@ class EglenceMenuScreen extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 14,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withOpacity(0.5),
                 ),
               ],
             ),

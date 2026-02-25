@@ -221,7 +221,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
         color: const Color(0xFF1a1a2e),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: characterColor.withValues(alpha: 0.3),
+          color: characterColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -243,7 +243,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
               border: Border.all(
                 color: isSelected
                     ? characterColor
-                    : const Color(0xFF667eea).withValues(alpha: 0.2),
+                    : const Color(0xFF667eea).withOpacity(0.2),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -461,13 +461,13 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          characterColor.withValues(alpha: 0.3),
-                          characterColor.withValues(alpha: 0.1),
+                          characterColor.withOpacity(0.3),
+                          characterColor.withOpacity(0.1),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: characterColor.withValues(alpha: 0.3),
+                        color: characterColor.withOpacity(0.3),
                         width: 1,
                       ),
                     ),
@@ -479,7 +479,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                           height: 100,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: characterColor.withValues(alpha: 0.2),
+                            color: characterColor.withOpacity(0.2),
                           ),
                           child: Center(
                             child: Text(
@@ -513,8 +513,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: _isActive
-                                    ? Colors.green.withValues(alpha: 0.2)
-                                    : Colors.grey.withValues(alpha: 0.2),
+                                    ? Colors.green.withOpacity(0.2)
+                                    : Colors.grey.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -554,7 +554,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                 onChanged: (value) => _toggleActiveStatus(),
                                 activeColor: Colors.green,
                                 inactiveThumbColor: Colors.grey,
-                                inactiveTrackColor: Colors.grey.withValues(alpha: 0.3),
+                                inactiveTrackColor: Colors.grey.withOpacity(0.3),
                               ),
                           ],
                         ),
@@ -579,7 +579,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       color: const Color(0xFF1a1a2e),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFF667eea).withValues(alpha: 0.2),
+                        color: const Color(0xFF667eea).withOpacity(0.2),
                         width: 1,
                       ),
                     ),
@@ -615,8 +615,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: _warrantyEndDate!.isAfter(DateTime.now())
-                                  ? Colors.green.withValues(alpha: 0.3)
-                                  : Colors.red.withValues(alpha: 0.3),
+                                  ? Colors.green.withOpacity(0.3)
+                                  : Colors.red.withOpacity(0.3),
                               width: 1,
                             ),
                           ),
@@ -658,7 +658,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                       'Bitiş: ${_warrantyEndDate!.day}/${_warrantyEndDate!.month}/${_warrantyEndDate!.year}',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors.green.withValues(alpha: 0.7),
+                                        color: Colors.green.withOpacity(0.7),
                                       ),
                                     ),
                                   ],
@@ -698,7 +698,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                       'Bitiş: ${_warrantyEndDate!.day}/${_warrantyEndDate!.month}/${_warrantyEndDate!.year}',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors.red.withValues(alpha: 0.7),
+                                        color: Colors.red.withOpacity(0.7),
                                       ),
                                     ),
                                   ],
@@ -744,7 +744,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       gradient: LinearGradient(
                         colors: [
                           characterColor,
-                          characterColor.withValues(alpha: 0.8),
+                          characterColor.withOpacity(0.8),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16),
@@ -796,7 +796,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       color: const Color(0xFF1a1a2e),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFF667eea).withValues(alpha: 0.2),
+                        color: const Color(0xFF667eea).withOpacity(0.2),
                         width: 1,
                       ),
                     ),

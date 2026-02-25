@@ -190,7 +190,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
           color: const Color(0xFF1a1a2e),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFF667eea).withValues(alpha: 0.2),
+            color: const Color(0xFF667eea).withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -217,7 +217,7 @@ class _ContactInfoScreenState extends State<ContactInfoScreen> {
         color: const Color(0xFF1a1a2e),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF667eea).withValues(alpha: 0.2),
+          color: const Color(0xFF667eea).withOpacity(0.2),
           width: 1,
         ),
       ),
