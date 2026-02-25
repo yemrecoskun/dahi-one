@@ -19,7 +19,7 @@ platform :ios do
   desc "Description of what the lane does"
   lane :custom_lane do
     build_app(
-      scheme: "dahis"
+      scheme: "Runner"
     )
   
     upload_to_testflight

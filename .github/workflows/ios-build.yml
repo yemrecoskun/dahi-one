@@ -1,30 +1,33 @@
-# iOS build & TestFlight upload via Fastlane
-# Tüm adımlar dahis-mobile/ios dizininde çalışır (working-directory).
-#
-# Gereken GitHub Secrets (Settings → Secrets and variables → Actions):
-#   APPSTORE_KEY_ID      - App Store Connect API Key ID
-#   APPSTORE_ISSUER_ID   - App Store Connect Issuer ID
-#   APPSTORE_PRIVATE_KEY - .p8 dosyasının tam içeriği (-----BEGIN PRIVATE KEY----- ... -----END PRIVATE KEY-----)
-#
-# Code signing: Sertifika/provisioning Fastlane Match veya Xcode manuel ayarlı olmalı.
+# iOS build & TestFlight upload via Fastlane (Flutter)
+# Gereken GitHub Secrets:
+#   APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY
+# Code signing: Match veya manuel sertifika gerekebilir.
 
 name: iOS Build & TestFlight
 
 on:
   push:
     branches: [main, master]
-  workflow_dispatch: # Manuel tetikleme
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-14
-    defaults:
-      run:
-        working-directory: dahis-mobile/ios
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Flutter dependencies
+        working-directory: dahis-mobile
+        run: flutter pub get
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -32,24 +35,30 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Install dependencies
+      - name: Install CocoaPods and Fastlane
+        working-directory: dahis-mobile/ios
         run: bundle install
 
-      # App Store Connect API Key - .p8 dosyasını oluştur (dahis-mobile/ios/fastlane/ içinde)
+      - name: Install iOS pods
+        working-directory: dahis-mobile/ios
+        run: pod install
+
       - name: Create App Store Connect API key file
+        working-directory: dahis-mobile/ios
         env:
           APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
         run: |
           echo "$APPSTORE_PRIVATE_KEY" > fastlane/AuthKey.p8
 
       - name: Build and upload to TestFlight
+        working-directory: dahis-mobile/ios
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY_FILEPATH: ${{ github.workspace }}/dahis-mobile/ios/fastlane/AuthKey.p8
         run: bundle exec fastlane custom_lane
 
-      # Key dosyasını CI'dan sonra temizle (güvenlik)
       - name: Remove API key file
         if: always()
+        working-directory: dahis-mobile/ios
         run: rm -f fastlane/AuthKey.p8
