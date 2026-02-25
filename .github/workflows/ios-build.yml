@@ -1,7 +1,6 @@
-# iOS build & TestFlight upload via Fastlane (Flutter)
-# Gereken GitHub Secrets:
-#   APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY
-# Code signing: Match veya manuel sertifika gerekebilir.
+# iOS build & TestFlight (Flutter). CI imza için Match zorunlu.
+# Secrets: APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY
+#          MATCH_GIT_URL (örn. https://github.com/yemrecoskun/dahis-one-certs.git), MATCH_PASSWORD
 
 name: iOS Build & TestFlight
 
@@ -15,6 +14,14 @@ jobs:
     runs-on: macos-14
 
     steps:
+      - name: Check Match secrets
+        run: |
+          if [ -z "${{ secrets.MATCH_GIT_URL }}" ] || [ -z "${{ secrets.MATCH_PASSWORD }}" ]; then
+            echo "::error::MATCH_GIT_URL ve MATCH_PASSWORD GitHub Secrets ekle."
+            echo "Önce lokalde: cd dahis-mobile/ios && MATCH_GIT_URL=<repo_url> bundle exec fastlane match appstore"
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -56,6 +63,9 @@ jobs:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY_FILEPATH: ${{ github.workspace }}/dahis-mobile/ios/fastlane/AuthKey.p8
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTH: ${{ secrets.MATCH_GIT_BASIC_AUTH }}
         run: bundle exec fastlane custom_lane
 
       - name: Remove API key file

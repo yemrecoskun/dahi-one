@@ -16,15 +16,13 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Description of what the lane does"
+  desc "Build + TestFlight (CI: Match ile imza)"
   lane :custom_lane do
-    # CI'da provisioning profile yoksa Xcode'un indirmesine izin ver
+    match(type: "appstore", readonly: true)
     build_app(
       scheme: "Runner",
-      export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates"
+      export_method: "app-store"
     )
-
     upload_to_testflight
   end
 end

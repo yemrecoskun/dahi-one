@@ -16,8 +16,8 @@ GitHub'da repo oluşturduktan sonra, aşağıdaki komutları çalıştırın:
 ```bash
 cd /Users/yunusemrecoskun/dahi-one
 
-# GitHub repo URL'inizi buraya yazın (örn: https://github.com/kullaniciadi/dahi-one.git)
-git remote add origin https://github.com/KULLANICI_ADI/REPO_ADI.git
+# GitHub repo URL (kullanıcı: yemrecoskun)
+git remote add origin https://github.com/yemrecoskun/dahi-one.git
 
 # Branch'i main olarak ayarla (eğer master ise)
 git branch -M main
@@ -47,7 +47,7 @@ Eğer GitHub CLI yoksa:
 # 1. GitHub'da repo oluşturun (yukarıdaki adımlar)
 
 # 2. Remote ekleyin
-git remote add origin https://github.com/KULLANICI_ADI/REPO_ADI.git
+git remote add origin https://github.com/yemrecoskun/dahi-one.git
 
 # 3. Push edin
 git push -u origin main
