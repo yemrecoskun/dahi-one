@@ -18,8 +18,10 @@ jobs:
         run: |
           if [ -z "${{ secrets.MATCH_GIT_URL }}" ] || [ -z "${{ secrets.MATCH_PASSWORD }}" ]; then
             echo "::error::MATCH_GIT_URL ve MATCH_PASSWORD GitHub Secrets ekle."
-            echo "Önce lokalde: cd dahis-mobile/ios && MATCH_GIT_URL=<repo_url> bundle exec fastlane match appstore"
             exit 1
+          fi
+          if [ -z "${{ secrets.MATCH_GIT_BASIC_AUTH }}" ]; then
+            echo "::warning::Cert repo private ise MATCH_GIT_BASIC_AUTH ekleyin: echo -n 'USER:TOKEN' | base64"
           fi
 
       - name: Checkout
@@ -57,15 +59,25 @@ jobs:
         run: |
           echo "$APPSTORE_PRIVATE_KEY" > fastlane/AuthKey.p8
 
+      - name: Prepare Match Git URL (auth for private cert repo)
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_GIT_BASIC_AUTH: ${{ secrets.MATCH_GIT_BASIC_AUTH }}
+        run: |
+          if [ -n "$MATCH_GIT_BASIC_AUTH" ] && [ -n "$MATCH_GIT_URL" ]; then
+            CREDS=$(echo "$MATCH_GIT_BASIC_AUTH" | base64 -d)
+            echo "MATCH_GIT_URL=https://${CREDS}@${MATCH_GIT_URL#https://}" >> "$GITHUB_ENV"
+          else
+            echo "MATCH_GIT_URL=$MATCH_GIT_URL" >> "$GITHUB_ENV"
+          fi
+
       - name: Build and upload to TestFlight
         working-directory: dahis-mobile/ios
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY_FILEPATH: ${{ github.workspace }}/dahis-mobile/ios/fastlane/AuthKey.p8
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTH: ${{ secrets.MATCH_GIT_BASIC_AUTH }}
         run: bundle exec fastlane custom_lane
 
       - name: Remove API key file
