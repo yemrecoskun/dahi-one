@@ -1,7 +1,7 @@
 # CI'da sertifika + provisioning profile bu repo'dan indirilir.
 # MATCH_GIT_URL ve MATCH_PASSWORD GitHub Secrets'ta zorunlu.
 
-git_url(ENV["MATCH_GIT_URL"])
+git_url("git@github.com:yemrecoskun/dahis-one-certs.git")
 storage_mode("git")
 type("appstore")
 app_identifier(["com.dahis.app"])

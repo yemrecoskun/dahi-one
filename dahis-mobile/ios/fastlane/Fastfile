@@ -21,7 +21,8 @@ platform :ios do
     match(type: "appstore", readonly: true)
     build_app(
       scheme: "Runner",
-      export_method: "app-store"
+      export_method: "app-store",
+      clean: true
     )
     upload_to_testflight
   end

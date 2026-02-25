@@ -59,17 +59,12 @@ jobs:
         run: |
           echo "$APPSTORE_PRIVATE_KEY" > fastlane/AuthKey.p8
 
-      - name: Prepare Match Git URL (auth for private cert repo)
-        env:
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          MATCH_GIT_BASIC_AUTH: ${{ secrets.MATCH_GIT_BASIC_AUTH }}
+      - name: Setup SSH
         run: |
-          if [ -n "$MATCH_GIT_BASIC_AUTH" ] && [ -n "$MATCH_GIT_URL" ]; then
-            CREDS=$(echo "$MATCH_GIT_BASIC_AUTH" | base64 -d)
-            echo "MATCH_GIT_URL=https://${CREDS}@${MATCH_GIT_URL#https://}" >> "$GITHUB_ENV"
-          else
-            echo "MATCH_GIT_URL=$MATCH_GIT_URL" >> "$GITHUB_ENV"
-          fi
+        mkdir -p ~/.ssh
+        echo "${{ secrets.MATCH_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Build and upload to TestFlight
         working-directory: dahis-mobile/ios
