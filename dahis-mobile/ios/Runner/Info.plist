@@ -35,7 +35,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>1</string>
 	<key>GIDClientID</key>
 	<string>412418089622-ia1dv46dn4c68h5ak0tlaugpj91e5qm2.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
