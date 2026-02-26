@@ -41,8 +41,6 @@
 
     # Karakter: /character/puls -> character/puls.html (tanımlı karakterler)
     RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
-    # Diğer karakter slug'ları index.html?character=slug (eski mantık)
-    RewriteRule ^character/([^/]+)/?$ index.html?character=$1 [L,QSA]
 
     # Fallback: dosya/dizin yoksa index.html
     RewriteCond %{REQUEST_FILENAME} !-f
