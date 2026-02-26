@@ -3,6 +3,8 @@ name: iOS Build & TestFlight
 on:
   push:
     branches: [main, master]
+    paths:
+      - "dahis-mobile/**"
   workflow_dispatch:
 
 jobs:
