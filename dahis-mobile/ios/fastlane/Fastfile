@@ -20,6 +20,16 @@ platform :ios do
   lane :custom_lane do
     setup_ci if is_ci
 
+    # CI: App Store Connect API key ile giriş (şifre sormaz)
+    if ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] && ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"]
+      app_store_connect_api_key(
+        key_id: ENV["APPSTORE_KEY_ID"],
+        issuer_id: ENV["APPSTORE_ISSUER_ID"],
+        key_filepath: ENV["APPSTORE_PRIVATE_KEY"],
+        is_key_content_base64: false
+      )
+    end
+
     match(type: "appstore", readonly: true)
     build_app(
       scheme: "Runner",
