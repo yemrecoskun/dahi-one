@@ -1,36 +1,58 @@
-# Apache: .html uzantısı olmadan sayfa açılsın
-RewriteEngine On
-RewriteBase /
+# Apache .htaccess: clean URLs + character routing
+# .html uzantısı olmadan sayfa açılsın
 
-# Mevcut dosya veya dizin varsa dokunma
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
 
-# Kök sayfalar: /about -> about.html
-RewriteRule ^about/?$ about.html [L]
-RewriteRule ^contact/?$ contact.html [L]
-RewriteRule ^privacy-policy/?$ privacy-policy.html [L]
-RewriteRule ^cookie-policy/?$ cookie-policy.html [L]
-RewriteRule ^kvkk/?$ kvkk.html [L]
-RewriteRule ^eglence/?$ eglence.html [L]
-RewriteRule ^dahios/?$ dahios.html [L]
-RewriteRule ^quiz/?$ quiz.html [L]
-RewriteRule ^uyum/?$ uyum.html [L]
-RewriteRule ^soz/?$ soz.html [L]
-RewriteRule ^memory/?$ memory.html [L]
-RewriteRule ^season/?$ season.html [L]
-RewriteRule ^tag-detail/?$ tag-detail.html [L]
-RewriteRule ^intro/?$ intro.html [L]
-RewriteRule ^characters/?$ characters.html [L]
-RewriteRule ^which-dahis-character-are-you/?$ quiz.html [L]
-RewriteRule ^dahis-personality-test/?$ quiz.html [L]
-RewriteRule ^top-dahis-characters/?$ top-dahis-characters.html [L]
-RewriteRule ^smartest-dahis-characters/?$ smartest-dahis-characters.html [L]
-RewriteRule ^most-dangerous-dahis-characters/?$ most-dangerous-dahis-characters.html [L]
-RewriteRule ^most-powerful-dahis-characters/?$ most-powerful-dahis-characters.html [L]
-RewriteRule ^most-creative-dahis-characters/?$ most-creative-dahis-characters.html [L]
-RewriteRule ^funniest-dahis-characters/?$ funniest-dahis-characters.html [L]
-RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
+    # .html olmadan çağrılan sayfaları .html'e yönlendir (dosya varsa)
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^([^/]+)/?$ $1.html [L]
 
-# Karakter: /character/puls -> character/puls.html
-RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
+    # Mevcut dosya veya dizin varsa dokunma
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Kök sayfalar: /about -> about.html
+    RewriteRule ^about/?$ about.html [L]
+    RewriteRule ^contact/?$ contact.html [L]
+    RewriteRule ^privacy-policy/?$ privacy-policy.html [L]
+    RewriteRule ^cookie-policy/?$ cookie-policy.html [L]
+    RewriteRule ^kvkk/?$ kvkk.html [L]
+    RewriteRule ^eglence/?$ eglence.html [L]
+    RewriteRule ^dahios/?$ dahios.html [L]
+    RewriteRule ^quiz/?$ quiz.html [L]
+    RewriteRule ^uyum/?$ uyum.html [L]
+    RewriteRule ^soz/?$ soz.html [L]
+    RewriteRule ^memory/?$ memory.html [L]
+    RewriteRule ^season/?$ season.html [L]
+    RewriteRule ^tag-detail/?$ tag-detail.html [L]
+    RewriteRule ^intro/?$ intro.html [L]
+    RewriteRule ^characters/?$ characters.html [L]
+    RewriteRule ^which-dahis-character-are-you/?$ quiz.html [L]
+    RewriteRule ^dahis-personality-test/?$ quiz.html [L]
+    RewriteRule ^top-dahis-characters/?$ top-dahis-characters.html [L]
+    RewriteRule ^smartest-dahis-characters/?$ smartest-dahis-characters.html [L]
+    RewriteRule ^most-dangerous-dahis-characters/?$ most-dangerous-dahis-characters.html [L]
+    RewriteRule ^most-powerful-dahis-characters/?$ most-powerful-dahis-characters.html [L]
+    RewriteRule ^most-creative-dahis-characters/?$ most-creative-dahis-characters.html [L]
+    RewriteRule ^funniest-dahis-characters/?$ funniest-dahis-characters.html [L]
+    RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
+
+    # Karakter: /character/puls -> character/puls.html (tanımlı karakterler)
+    RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
+    # Diğer karakter slug'ları index.html?character=slug (eski mantık)
+    RewriteRule ^character/([^/]+)/?$ index.html?character=$1 [L,QSA]
+
+    # Fallback: dosya/dizin yoksa index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+ErrorDocument 404 /404.html
+
+# CORS (API istekleri için)
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
