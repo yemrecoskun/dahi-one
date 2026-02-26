@@ -1,12 +1,11 @@
-# dahis-web: sadece dahis-web/ değiştiğinde tüm dosyaları cPanel'e FTP ile yükler (npm/build yok)
-# Secrets: CPANEL_FTP_HOST, CPANEL_FTP_USER, CPANEL_FTP_PASSWORD, CPANEL_REMOTE_DIR (örn. /public_html/)
-name: dahis-web Deploy (cPanel)
+name: Web Deploy
 
 on:
   push:
     branches: [main, master]
     paths:
       - "dahis-web/**"
+      - "dahis-panel/**"
   workflow_dispatch:
 
 jobs:
@@ -16,15 +15,42 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy to cPanel (FTP)
+      - name: Set server directory (must end with /)
+        run: |
+          DIR="${{ secrets.CPANEL_REMOTE_DIR }}"
+          [ -z "$DIR" ] && DIR="/public_html/"
+          [[ "$DIR" != */ ]] && DIR="${DIR}/"
+          echo "REMOTE_DIR=$DIR" >> "$GITHUB_ENV"
+
+      - name: Deploy dahis-web to cPanel (FTP)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.CPANEL_FTP_HOST }}
           username: ${{ secrets.CPANEL_FTP_USER }}
           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          port: 21
           local-dir: ./dahis-web/
-          server-dir: ${{ secrets.CPANEL_REMOTE_DIR }}
+          server-dir: ${{ env.REMOTE_DIR }}
           exclude: |
             **/.git*
             **/node_modules/
+            **/readme/**
+            **/readme*
+            **/*.md
+          dangerous-clean-slate: false
+
+      - name: Deploy dahis-panel to /panel/ (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.CPANEL_FTP_HOST }}
+          username: ${{ secrets.CPANEL_FTP_USER }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          port: 21
+          local-dir: ./dahis-panel/
+          server-dir: ${{ env.REMOTE_DIR }}panel/
+          exclude: |
+            **/.git*
+            **/node_modules/
+            **/readme*
+            **/*.md
           dangerous-clean-slate: false
