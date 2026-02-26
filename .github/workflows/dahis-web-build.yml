@@ -1,5 +1,6 @@
-# dahis-web: sadece dahis-web/ değiştiğinde çalışır
-name: dahis-web Build
+# dahis-web: sadece dahis-web/ değiştiğinde build + cPanel'e FTP ile yayın
+# Secrets: CPANEL_FTP_HOST, CPANEL_FTP_USER, CPANEL_FTP_PASSWORD, CPANEL_REMOTE_DIR (örn. /public_html/)
+name: dahis-web Build & Deploy (cPanel)
 
 on:
   push:
@@ -9,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,3 +30,23 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Deploy to cPanel (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.CPANEL_FTP_HOST }}
+          username: ${{ secrets.CPANEL_FTP_USER }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          local-dir: ./dahis-web/
+          server-dir: ${{ secrets.CPANEL_REMOTE_DIR }}
+          exclude: |
+            **/.git*
+            **/node_modules/
+            **/readme/
+            **/build/
+            **/package*.json
+            **/.gitignore
+            **/*.md
+            **/test-*
+            **/obfuscate*
+          dangerous-clean-slate: false
