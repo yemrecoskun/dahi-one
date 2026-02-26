@@ -1,6 +1,4 @@
-# dahis-web: sadece dahis-web/ değiştiğinde tüm dosyaları cPanel'e FTP ile yükler (npm/build yok)
-# Secrets: CPANEL_FTP_HOST, CPANEL_FTP_USER, CPANEL_FTP_PASSWORD, CPANEL_REMOTE_DIR (örn. /public_html/)
-name: dahis-web Deploy (cPanel)
+name: Web
 
 on:
   push:
@@ -22,8 +20,9 @@ jobs:
           server: ${{ secrets.CPANEL_FTP_HOST }}
           username: ${{ secrets.CPANEL_FTP_USER }}
           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          port: 21
           local-dir: ./dahis-web/
-          server-dir: ${{ secrets.CPANEL_REMOTE_DIR }}
+          server-dir: ${{ env.REMOTE_DIR }}
           exclude: |
             **/.git*
             **/node_modules/
