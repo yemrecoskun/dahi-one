@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAHIS: Five Forces - Lobby</title>
+    <meta name="description" content="DAHIS: Five Forces için lobby ve karakter seçimi." />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <main class="ff-shell">
+        <section class="ff-panel">
+            <span class="ff-chip">DAHIS: Five Forces</span>
+            <h1>Lobby</h1>
+            <p>3–5 oyuncu ile stratejik kart oyunu. İnsan + AI karışık oynayabilirsin.</p>
+
+            <div class="ff-form">
+                <label>
+                    Toplam Oyuncu (3-5)
+                    <select id="totalPlayers">
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5" selected>5</option>
+                    </select>
+                </label>
+                <label>
+                    İnsan Oyuncu Sayısı
+                    <select id="humanPlayers">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5" selected>5</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="ff-characters" id="characterSelect"></div>
+
+            <button class="ff-btn primary" id="startGame">Oyunu Başlat</button>
+        </section>
+    </main>
+
+    <script type="module">
+        import { CHARACTERS } from "/characters.js";
+
+        const totalPlayersSelect = document.getElementById("totalPlayers");
+        const humanPlayersSelect = document.getElementById("humanPlayers");
+        const characterSelect = document.getElementById("characterSelect");
+        const startGameBtn = document.getElementById("startGame");
+
+        const renderCharacterSelectors = () => {
+            const humanCount = parseInt(humanPlayersSelect.value, 10);
+            characterSelect.innerHTML = "";
+            for (let i = 0; i < humanCount; i += 1) {
+                const wrapper = document.createElement("div");
+                wrapper.className = "ff-character-select";
+                const label = document.createElement("label");
+                label.textContent = `Oyuncu ${i + 1} karakteri`;
+                const select = document.createElement("select");
+                select.dataset.playerIndex = i;
+                CHARACTERS.forEach((char) => {
+                    const option = document.createElement("option");
+                    option.value = char.id;
+                    option.textContent = `${char.name} — ${char.ability}`;
+                    select.appendChild(option);
+                });
+                wrapper.append(label, select);
+                characterSelect.appendChild(wrapper);
+            }
+        };
+
+        const validateUnique = () => {
+            const selects = characterSelect.querySelectorAll("select");
+            const values = Array.from(selects).map((sel) => sel.value);
+            return new Set(values).size === values.length;
+        };
+
+        totalPlayersSelect.addEventListener("change", () => {
+            const total = parseInt(totalPlayersSelect.value, 10);
+            if (parseInt(humanPlayersSelect.value, 10) > total) {
+                humanPlayersSelect.value = String(total);
+            }
+            renderCharacterSelectors();
+        });
+
+        humanPlayersSelect.addEventListener("change", renderCharacterSelectors);
+
+        startGameBtn.addEventListener("click", () => {
+            if (!validateUnique()) {
+                alert("Her oyuncu benzersiz karakter seçmeli.");
+                return;
+            }
+            const totalPlayers = parseInt(totalPlayersSelect.value, 10);
+            const humanPlayers = parseInt(humanPlayersSelect.value, 10);
+            const selections = Array.from(characterSelect.querySelectorAll("select")).map((sel, index) => ({
+                playerIndex: index,
+                characterId: sel.value
+            }));
+
+            localStorage.setItem(
+                "ff_settings",
+                JSON.stringify({ totalPlayers, humanPlayers, selections })
+            );
+            window.location.href = "game.html";
+        });
+
+        renderCharacterSelectors();
+    </script>
+</body>
+</html>
