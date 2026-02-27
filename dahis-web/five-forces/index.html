@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAHIS: Five Forces - Card Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Lobby Screen -->
+        <section id="lobby-screen" class="screen active">
+            <div class="lobby-content">
+                <h1 class="game-title">DAHIS<br><span class="highlight">FIVE FORCES</span></h1>
+                <p class="game-subtitle">Strategic Card Battles</p>
+                
+                <div class="lobby-controls">
+                    <div class="control-group">
+                        <label>Player Name</label>
+                        <input type="text" id="player-name" placeholder="Enter your name" value="Hero">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>AI Opponents</label>
+                        <select id="ai-count">
+                            <option value="2">2 AI Players (3 Total)</option>
+                            <option value="3" selected>3 AI Players (4 Total)</option>
+                            <option value="4">4 AI Players (5 Total)</option>
+                        </select>
+                    </div>
+
+                    <button id="start-game-btn" class="btn primary large">Enter the Arena</button>
+                    <button id="rules-btn" class="btn secondary">How to Play</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Character Selection Screen -->
+        <section id="char-select-screen" class="screen">
+            <header class="screen-header">
+                <h2>Choose Your Force</h2>
+                <p>Select a character to lead you into battle.</p>
+            </header>
+            
+            <div id="character-grid" class="character-grid">
+                <!-- Characters will be injected here by JS -->
+            </div>
+            
+            <div class="screen-footer">
+                <button id="confirm-char-btn" class="btn primary" disabled>Select Character</button>
+            </div>
+        </section>
+
+        <!-- Game Screen -->
+        <section id="game-screen" class="screen">
+            <!-- Top Bar: Turn Info, Deck Count, Round -->
+            <div class="game-top-bar">
+                <div class="turn-indicator">Round <span id="round-num">1</span>/12</div>
+                <div class="deck-status">Deck: <span id="deck-count">40</span></div>
+            </div>
+
+            <!-- Opponents Area -->
+            <div id="opponents-area" class="opponents-area">
+                <!-- Opponents injected by JS -->
+            </div>
+
+            <!-- Central Play Area -->
+            <div class="play-area">
+                <div class="stack-container">
+                    <div id="draw-pile" class="card-pile deck">
+                        <div class="card-back"></div>
+                    </div>
+                    <div id="discard-pile" class="card-pile discard">
+                        <!-- Last played card -->
+                    </div>
+                </div>
+                
+                <div id="action-log" class="action-log">
+                    <div class="log-entry">Game started.</div>
+                </div>
+            </div>
+
+            <!-- Player Area -->
+            <div class="player-area">
+                <div class="player-info">
+                    <div class="player-stats">
+                        <div class="player-avatar" id="my-avatar"></div>
+                        <div class="player-details">
+                            <span id="my-name">Player</span>
+                            <span class="score-badge">Score: <span id="my-score">0</span></span>
+                        </div>
+                    </div>
+                    <div class="player-tokens">
+                        <div id="betrayal-token" class="token betrayal" title="Betrayal Token: Cancel an effect">B</div>
+                        <button id="ability-btn" class="btn ability-btn" disabled>Use Ability</button>
+                    </div>
+                </div>
+
+                <div id="player-hand" class="hand-container">
+                    <!-- Player cards injected by JS -->
+                </div>
+            </div>
+            
+            <!-- Turn Actions Overlay (for non-card actions) -->
+            <div id="turn-overlay" class="turn-overlay hidden">
+                <h3 id="overlay-msg">Your Turn</h3>
+                <div id="overlay-actions">
+                    <button id="end-turn-btn" class="btn secondary">End Turn</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Game Over Screen -->
+        <section id="game-over-screen" class="screen">
+            <div class="results-content">
+                <h2>Game Over</h2>
+                <div id="winner-display">
+                    <div class="winner-avatar"></div>
+                    <h3>Winner: <span id="winner-name">Name</span></h3>
+                    <p class="winner-score">Score: <span id="winner-score">0</span></p>
+                </div>
+                
+                <div id="final-scoreboard" class="scoreboard">
+                    <!-- Scores injected -->
+                </div>
+                
+                <button id="restart-game-btn" class="btn primary">Play Again</button>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <div id="rules-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>How to Play</h2>
+                <ul>
+                    <li><strong>Goal:</strong> Highest score after 12 rounds or empty deck.</li>
+                    <li><strong>Turn:</strong> Draw 1, Play 1. Optional: Character Ability.</li>
+                    <li><strong>Betrayal Token:</strong> Use once to cancel any card effect.</li>
+                    <li><strong>Hand Limit:</strong> 7 Cards.</li>
+                </ul>
+                <button id="close-rules-btn" class="btn secondary">Close</button>
+            </div>
+        </div>
+        
+        <div id="target-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3 id="target-prompt">Choose a target</h3>
+                <div id="target-options" class="target-options"></div>
+                <button id="cancel-target-btn" class="btn secondary">Cancel</button>
+            </div>
+        </div>
+        
+        <div id="card-select-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3 id="card-select-prompt">Select a card</h3>
+                <div id="card-select-options" class="card-row"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="game.js"></script>
+</body>
+</html>
