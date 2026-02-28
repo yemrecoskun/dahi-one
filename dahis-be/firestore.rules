@@ -37,7 +37,8 @@ service cloud.firestore {
 
     // Five Forces online rooms (lobby + game state sync)
     match /ff_rooms/{roomId} {
-      allow read, write: if true;
+      allow get, list: if true;
+      allow create, update, delete: if true;
     }
 
     // Seasons - Public read (herkes okuyabilir)

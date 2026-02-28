@@ -71,6 +71,31 @@
     });
   }
 
+  /** List waiting rooms (status === 'waiting'). Returns [{ roomId, code, players, hostName, updatedAt }]. */
+  function listRooms() {
+    return init().then(function () {
+      return db.collection(COLLECTION)
+        .where('status', '==', 'waiting')
+        .get()
+        .then(function (snap) {
+          var list = [];
+          snap.forEach(function (doc) {
+            var d = doc.data();
+            var host = (d.players && d.players[0]) ? d.players[0] : null;
+            list.push({
+              roomId: doc.id,
+              code: d.code || doc.id,
+              players: d.players || [],
+              hostName: host ? host.name : '',
+              updatedAt: d.updatedAt && d.updatedAt.toMillis ? d.updatedAt.toMillis() : 0
+            });
+          });
+          list.sort(function (a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0); });
+          return list;
+        });
+    });
+  }
+
   /** Get room by code (read-only). Returns room data or null. */
   function getRoom(code) {
     return init().then(function () {
@@ -175,6 +200,7 @@
     isAvailable: isAvailable,
     init: init,
     clientId: clientId,
+    listRooms: listRooms,
     getRoom: getRoom,
     createRoom: createRoom,
     joinRoom: joinRoom,

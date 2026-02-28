@@ -65,6 +65,10 @@ var I18n = (function () {
       'lobby.online.min_players': 'At least 2 players to start.',
       'lobby.online.invalid_code': 'Enter 6-character code',
       'lobby.online.room_not_found': 'Room not found',
+      'lobby.online.available_rooms': 'Available rooms',
+      'lobby.online.refresh': 'Refresh',
+      'lobby.online.no_rooms': 'No rooms yet. Create one!',
+      'lobby.online.or_enter_code': 'Or enter room code',
 
       // ── Game UI ──────────────────────────────────────────────
       'game.back':            '← Lobby',
@@ -268,6 +272,10 @@ var I18n = (function () {
       'lobby.online.min_players': 'Başlamak için en az 2 oyuncu gerekli.',
       'lobby.online.invalid_code': '6 karakterlik kodu girin',
       'lobby.online.room_not_found': 'Oda bulunamadı',
+      'lobby.online.available_rooms': 'Mevcut odalar',
+      'lobby.online.refresh': 'Yenile',
+      'lobby.online.no_rooms': 'Henüz oda yok. Bir tane oluştur!',
+      'lobby.online.or_enter_code': 'Veya oda kodunu gir',
 
       // ── Oyun arayüzü ─────────────────────────────────────────
       'game.back':            '← Lobi',

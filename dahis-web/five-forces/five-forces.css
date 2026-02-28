@@ -330,6 +330,11 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   background: rgba(102,126,234,.1);
   transform: translateY(-2px);
 }
+.mode-btn.selected {
+  border-color: var(--accent);
+  background: rgba(102,126,234,.15);
+  box-shadow: 0 0 0 2px var(--accent);
+}
 .mode-icon { font-size: 2rem; }
 .mode-desc {
   font-size: .8rem;
@@ -355,6 +360,10 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   transition: all .2s;
 }
 .btn-online-choice:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-online-choice.selected {
   background: var(--accent);
   color: #fff;
 }
@@ -423,6 +432,63 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   cursor: pointer;
 }
 .btn-leave-room:hover { color: var(--danger); border-color: var(--danger); }
+
+/* Room list (join) */
+.room-list-title {
+  font-size: .95rem;
+  font-weight: 700;
+  margin: 16px 0 8px;
+  color: var(--muted);
+}
+.room-list-actions { margin-bottom: 10px; }
+.room-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.room-list.loading { opacity: .7; pointer-events: none; }
+.room-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+}
+.room-list-code {
+  font-family: var(--ff-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent);
+  min-width: 72px;
+}
+.room-list-meta {
+  flex: 1;
+  font-size: .88rem;
+  color: var(--muted);
+}
+.btn-join-room-item {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.btn-join-room-item:hover { opacity: .9; }
+.room-join-divider {
+  font-size: .85rem;
+  color: var(--muted);
+  margin: 16px 0 8px;
+}
+.room-code-input { max-width: 120px; display: inline-block; margin-right: 8px; }
 
 .btn-next, .btn-start {
   display: block;
