@@ -7,25 +7,22 @@
 var UI = (function () {
 
   var humanPlayerId = null;
-  var pendingCardPlay = null;   // { cardId } waiting for target selection
-  var pendingAbilityResolve = null; // { type }
+  var pendingCardPlay = null;
+  var pendingAbilityResolve = null;
 
   // ─── Bootstrap ───────────────────────────────────────────────────────────────
 
   function boot(sessionData) {
-    /**
-     * sessionData: { players: [{name, characterId, isAI}], humanIdx }
-     */
     var gs = Game.init(sessionData.players);
     humanPlayerId = gs.players[sessionData.humanIdx].id;
     render(gs);
+    // Re-render on language change so dynamic content updates instantly
+    document.addEventListener('langchange', function () { render(Game.getState()); });
   }
 
   // ─── Master render ───────────────────────────────────────────────────────────
 
-  function refresh(gs) {
-    render(gs);
-  }
+  function refresh(gs) { render(gs); }
 
   function render(gs) {
     if (!gs) return;
@@ -50,13 +47,18 @@ var UI = (function () {
       return '<div class="score-entry' + active + you + '">' +
         '<span class="score-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</span>' +
         '<div class="score-info">' +
-          '<span class="score-name">' + escHtml(p.name) + (p.id === humanPlayerId ? ' <em>(you)</em>' : '') + (p.isAI ? ' 🤖' : '') + '</span>' +
+          '<span class="score-name">' + escHtml(p.name) +
+            (p.id === humanPlayerId ? ' <em>(' + t('game.you') + ')</em>' : '') +
+            (p.isAI ? ' 🤖' : '') +
+          '</span>' +
           '<span class="score-char">' + chr.name + ' · ' + chr.ability.name + '</span>' +
         '</div>' +
         '<div class="score-right">' +
           '<span class="score-val">' + p.score + '</span>' +
           (p.betrayalToken ? '<span class="btray-token" title="Betrayal Token">⚔️</span>' : '') +
-          (p.abilityUsed ? '<span class="ability-tag used">used</span>' : '<span class="ability-tag avail">ability</span>') +
+          (p.abilityUsed
+            ? '<span class="ability-tag used">' + t('game.score.used') + '</span>'
+            : '<span class="ability-tag avail">' + t('game.score.avail') + '</span>') +
         '</div>' +
       '</div>';
     }).join('');
@@ -71,7 +73,7 @@ var UI = (function () {
       '<div class="deck-pile" id="deck-pile">' +
         '<div class="deck-back">' +
           '<span class="deck-count">' + gs.deckCount + '</span>' +
-          '<span class="deck-label">cards</span>' +
+          '<span class="deck-label">' + t('game.deck.label') + '</span>' +
         '</div>' +
       '</div>' +
       '<div class="discard-pile">' +
@@ -80,14 +82,15 @@ var UI = (function () {
               '<span class="card-emoji">' + gs.discardTop.emoji + '</span>' +
               '<span class="card-name">' + escHtml(gs.discardTop.name) + '</span>' +
             '</div>'
-          : '<div class="card-mini empty">discard</div>'
+          : '<div class="card-mini empty">' + t('game.discard.empty') + '</div>'
         ) +
       '</div>';
 
     var info = document.getElementById('round-info');
     if (info) {
       var cur = gs.players[gs.currentTurnIdx];
-      info.textContent = 'Round ' + gs.round + '/12  ·  ' + cur.name + '\'s turn' + (gs.scoreLocked ? '  🔒 Score Lock' : '');
+      info.textContent = t('game.round', { r: gs.round, name: cur.name }) +
+                         (gs.scoreLocked ? t('game.round.lock') : '');
     }
   }
 
@@ -99,6 +102,10 @@ var UI = (function () {
     var me = gs.players.find(function (p) { return p.id === humanPlayerId; });
     if (!me) return;
 
+    // Update static hand title
+    var titleEl = document.querySelector('.hand-title');
+    if (titleEl) titleEl.textContent = t('game.hand.title');
+
     var isMyTurn = gs.currentPlayerId === humanPlayerId;
     var canPlay = isMyTurn && (gs.phase === 'play') && !pendingAbilityResolve;
 
@@ -107,12 +114,11 @@ var UI = (function () {
       return '<div class="' + cls + '" data-card-id="' + card.id + '" style="' + cardStyle(card) + '">' +
         '<span class="card-emoji">' + card.emoji + '</span>' +
         '<span class="card-name">' + escHtml(card.name) + '</span>' +
-        '<span class="card-type">' + card.type + '</span>' +
+        '<span class="card-type">' + (card.typeLabel || card.type) + '</span>' +
         (card.value ? '<span class="card-value">+' + card.value + '</span>' : '') +
       '</div>';
-    }).join('') || '<p class="empty-hand">No cards in hand.</p>';
+    }).join('') || '<p class="empty-hand">' + t('game.hand.empty') + '</p>';
 
-    // Attach click handlers
     el.querySelectorAll('.card.playable').forEach(function (cardEl) {
       cardEl.addEventListener('click', function () {
         handleCardClick(cardEl.dataset.cardId, gs);
@@ -141,32 +147,29 @@ var UI = (function () {
 
     var html = '';
 
-    // Draw
     if (isMyTurn && gs.phase === 'draw') {
-      html += '<button class="btn-action btn-draw" id="btn-draw">Draw Card</button>';
+      html += '<button class="btn-action btn-draw" id="btn-draw">' + t('game.btn.draw') + '</button>';
     }
 
-    // Ability
     if (isMyTurn && gs.phase === 'ability' && !me.abilityUsed && !me.abilityBlocked) {
-      html += '<button class="btn-action btn-ability" id="btn-ability">Use Ability: ' + CHARACTERS[me.characterId].ability.name + '</button>';
+      html += '<button class="btn-action btn-ability" id="btn-ability">' +
+        t('game.btn.ability', { name: CHARACTERS[me.characterId].ability.name }) +
+      '</button>';
     }
 
-    // End turn
     if (isMyTurn && (gs.phase === 'ability' || gs.phase === 'play')) {
-      html += '<button class="btn-action btn-end" id="btn-end">End Turn</button>';
+      html += '<button class="btn-action btn-end" id="btn-end">' + t('game.btn.end') + '</button>';
     }
 
-    // Betrayal token
     if (!isMyTurn && me.betrayalToken && gs.phase === 'play') {
-      html += '<button class="btn-action btn-betray" id="btn-betray">⚔️ Betray</button>';
+      html += '<button class="btn-action btn-betray" id="btn-betray">' + t('game.btn.betray') + '</button>';
     }
 
     el.innerHTML = html;
 
     var drawBtn = document.getElementById('btn-draw');
     if (drawBtn) drawBtn.addEventListener('click', function () {
-      var res = Game.drawCard(humanPlayerId);
-      handleResult(res);
+      handleResult(Game.drawCard(humanPlayerId));
     });
 
     var abilityBtn = document.getElementById('btn-ability');
@@ -181,14 +184,12 @@ var UI = (function () {
 
     var endBtn = document.getElementById('btn-end');
     if (endBtn) endBtn.addEventListener('click', function () {
-      var res = Game.endTurn(humanPlayerId);
-      handleResult(res);
+      handleResult(Game.endTurn(humanPlayerId));
     });
 
     var betrayBtn = document.getElementById('btn-betray');
     if (betrayBtn) betrayBtn.addEventListener('click', function () {
-      var res = Game.useBetrayal(humanPlayerId);
-      handleResult(res);
+      handleResult(Game.useBetrayal(humanPlayerId));
     });
   }
 
@@ -200,13 +201,18 @@ var UI = (function () {
     var isMyTurn = gs.currentPlayerId === humanPlayerId;
     if (gs.over) { el.textContent = ''; return; }
 
-    var phases = { draw: 'Draw a card', play: 'Play a card from your hand', ability: 'Use ability or end turn' };
+    var phaseMap = {
+      draw: t('game.phase.draw'),
+      play: t('game.phase.play'),
+      ability: t('game.phase.ability')
+    };
+
     if (isMyTurn) {
-      el.textContent = '▶ Your turn — ' + (phases[gs.phase] || '');
+      el.textContent = t('game.status.myturn', { phase: phaseMap[gs.phase] || '' });
       el.className = 'status-bar my-turn';
     } else {
       var cur = gs.players[gs.currentTurnIdx];
-      el.textContent = '⏳ Waiting for ' + cur.name + '…';
+      el.textContent = t('game.status.waiting', { name: cur.name });
       el.className = 'status-bar waiting';
     }
   }
@@ -218,17 +224,11 @@ var UI = (function () {
     var card = me.hand.find(function (c) { return c.id === cardId; });
     if (!card) return;
 
-    // Cards that target a player
-    var needsTarget = (card.type === CARD_TYPES.ACTION && card.target === 'player') ||
-                      (card.type === CARD_TYPES.RISK && card.effect === 'allLose10') === false &&
-                      (card.type === CARD_TYPES.ACTION);
-
     if (card.type === CARD_TYPES.ACTION && card.target === 'player') {
       pendingCardPlay = { cardId: cardId };
       showTargetModal(gs, cardId);
     } else {
-      var res = Game.playCard(humanPlayerId, cardId, null);
-      handleResult(res);
+      handleResult(Game.playCard(humanPlayerId, cardId, null));
     }
   }
 
@@ -240,7 +240,7 @@ var UI = (function () {
     var others = gs.players.filter(function (p) { return p.id !== humanPlayerId; });
     modal.innerHTML =
       '<div class="modal-box">' +
-        '<h3>Choose a target</h3>' +
+        '<h3>' + t('game.modal.target') + '</h3>' +
         '<div class="modal-targets">' +
           others.map(function (p) {
             var chr = CHARACTERS[p.characterId];
@@ -249,7 +249,7 @@ var UI = (function () {
             '</button>';
           }).join('') +
         '</div>' +
-        '<button class="btn-cancel" id="modal-cancel">Cancel</button>' +
+        '<button class="btn-cancel" id="modal-cancel">' + t('game.modal.cancel') + '</button>' +
       '</div>';
     modal.style.display = 'flex';
 
@@ -257,9 +257,8 @@ var UI = (function () {
       btn.addEventListener('click', function () {
         var targetId = btn.dataset.pid;
         closeModal();
-        var res = Game.playCard(humanPlayerId, cardId, targetId);
+        handleResult(Game.playCard(humanPlayerId, cardId, targetId));
         pendingCardPlay = null;
-        handleResult(res);
       });
     });
 
@@ -277,7 +276,7 @@ var UI = (function () {
     var html = '<div class="modal-box">';
 
     if (action.type === 'foresight') {
-      html += '<h3>Foresight – Choose a card</h3><div class="modal-cards">';
+      html += '<h3>' + t('game.modal.foresight') + '</h3><div class="modal-cards">';
       action.cards.forEach(function (card, i) {
         html += '<div class="card card-choice" data-idx="' + i + '" style="' + cardStyle(card) + '">' +
           '<span class="card-emoji">' + card.emoji + '</span>' +
@@ -287,8 +286,7 @@ var UI = (function () {
       });
       html += '</div>';
     } else if (action.type === 'precisionSwap') {
-      html += '<h3>Precision Swap – Choose a target player</h3><div class="modal-targets">';
-      var me = gs ? gs.players.find(function (p) { return p.id === humanPlayerId; }) : null;
+      html += '<h3>' + t('game.modal.precSwap') + '</h3><div class="modal-targets">';
       action.others.forEach(function (pid) {
         var tp = gs ? gs.players.find(function (p) { return p.id === pid; }) : { name: pid, characterId: 'aura' };
         var chr = CHARACTERS[tp.characterId];
@@ -298,7 +296,7 @@ var UI = (function () {
       });
       html += '</div>';
     } else if (action.type === 'silentTheft') {
-      html += '<h3>Silent Theft – Choose a victim</h3><div class="modal-targets">';
+      html += '<h3>' + t('game.modal.theft') + '</h3><div class="modal-targets">';
       action.targets.forEach(function (pid) {
         var tp = gs ? gs.players.find(function (p) { return p.id === pid; }) : { name: pid, characterId: 'aura' };
         var chr = CHARACTERS[tp.characterId];
@@ -309,36 +307,30 @@ var UI = (function () {
       html += '</div>';
     }
 
-    html += '<button class="btn-cancel" id="modal-cancel">Cancel</button></div>';
+    html += '<button class="btn-cancel" id="modal-cancel">' + t('game.modal.cancel') + '</button></div>';
     modal.innerHTML = html;
     modal.style.display = 'flex';
 
-    // Foresight
     modal.querySelectorAll('.card-choice').forEach(function (el) {
       el.addEventListener('click', function () {
         var idx = parseInt(el.dataset.idx, 10);
         closeModal();
-        var res = Game.resolveAbility(humanPlayerId, { cardIndex: idx });
+        handleResult(Game.resolveAbility(humanPlayerId, { cardIndex: idx }));
         pendingAbilityResolve = null;
-        handleResult(res);
       });
     });
 
-    // Target-based abilities
     modal.querySelectorAll('.btn-target').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var targetId = btn.dataset.pid;
         closeModal();
-        var me2 = Game.getState().players.find(function (p) { return p.id === humanPlayerId; });
         var choice = { targetPlayerId: targetId };
         if (action.type === 'precisionSwap') {
-          // Pick random card from own hand and their hand (simplified)
           choice.myCardIndex = 0;
           choice.theirCardIndex = 0;
         }
-        var res = Game.resolveAbility(humanPlayerId, choice);
+        handleResult(Game.resolveAbility(humanPlayerId, choice));
         pendingAbilityResolve = null;
-        handleResult(res);
       });
     });
 
@@ -366,9 +358,9 @@ var UI = (function () {
     el.innerHTML =
       '<div class="game-over-box">' +
         '<div class="winner-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>' +
-        '<h2>Game Over</h2>' +
-        '<p class="winner-name">' + escHtml(winner.name) + ' wins!</p>' +
-        '<p class="winner-score">' + winner.score + ' points</p>' +
+        '<h2>' + t('game.over.title') + '</h2>' +
+        '<p class="winner-name">' + t('game.over.wins', { name: escHtml(winner.name) }) + '</p>' +
+        '<p class="winner-score">' + t('game.over.points', { n: winner.score }) + '</p>' +
         '<div class="final-scores">' +
           sorted.map(function (p, i) {
             return '<div class="final-row">' +
@@ -377,7 +369,9 @@ var UI = (function () {
             '</div>';
           }).join('') +
         '</div>' +
-        '<button class="btn-action" onclick="window.location.href=\'/five-forces\'">Play Again</button>' +
+        '<button class="btn-action" onclick="window.location.href=\'/five-forces\'">' +
+          t('game.over.again') +
+        '</button>' +
       '</div>';
     el.style.display = 'flex';
   }
@@ -386,21 +380,19 @@ var UI = (function () {
 
   function handleResult(res) {
     if (!res) return;
-    if (res.error) {
-      showToast(res.error);
-    }
+    if (res.error) showToast(res.error);
     if (res.state) render(res.state);
   }
 
   // ─── Toast ───────────────────────────────────────────────────────────────────
 
   function showToast(msg) {
-    var t = document.getElementById('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.classList.add('visible');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(function () { t.classList.remove('visible'); }, 2800);
+    var t2 = document.getElementById('toast');
+    if (!t2) return;
+    t2.textContent = msg;
+    t2.classList.add('visible');
+    clearTimeout(t2._timer);
+    t2._timer = setTimeout(function () { t2.classList.remove('visible'); }, 2800);
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────

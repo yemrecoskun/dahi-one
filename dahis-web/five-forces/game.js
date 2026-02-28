@@ -15,8 +15,7 @@ var Game = (function () {
 
   function nextTurnIndex(state) {
     var n = state.players.length;
-    var next = (state.currentTurnIdx + state.turnDirection + n) % n;
-    return next;
+    return (state.currentTurnIdx + state.turnDirection + n) % n;
   }
 
   function createPlayer(id, name, characterId, isAI) {
@@ -40,7 +39,6 @@ var Game = (function () {
   // ─── Init ────────────────────────────────────────────────────────────────────
 
   function init(playerConfigs) {
-    // playerConfigs: [{name, characterId, isAI}]
     var deck = shuffleDeck(buildDeck());
     var hands = dealCards(deck, playerConfigs.length, 5);
 
@@ -57,17 +55,17 @@ var Game = (function () {
       currentTurnIdx: 0,
       turnDirection: 1,
       round: 1,
-      phase: 'draw',   // draw → play → ability → end
+      phase: 'draw',
       scoreLocked: false,
       scoreLockTurns: 0,
-      pendingAbility: null,  // { playerId, action }
-      pendingCard: null,     // { card, needsTarget, targetType }
+      pendingAbility: null,
+      pendingCard: null,
       log: [],
       over: false,
       winner: null
     };
 
-    addLog('Game started! ' + players.length + ' players, ' + deck.length + ' cards remaining.');
+    addLog(t('log.start', { n: players.length, deck: deck.length }));
     return getPublicState();
   }
 
@@ -86,24 +84,21 @@ var Game = (function () {
 
   /** Phase 1: draw a card */
   function drawCard(playerId) {
-    if (!state || state.over) return err('Game over.');
+    if (!state || state.over) return err(t('err.gameOver'));
     var p = state.players.find(function (pl) { return pl.id === playerId; });
-    if (!p) return err('Player not found.');
-    if (state.players[state.currentTurnIdx].id !== playerId) return err('Not your turn.');
-    if (state.phase !== 'draw') return err('Not draw phase.');
+    if (!p) return err(t('err.notFound'));
+    if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
+    if (state.phase !== 'draw') return err(t('err.notDrawPhase'));
 
-    if (state.deck.length === 0) {
-      return endGame();
-    }
+    if (state.deck.length === 0) return endGame();
 
     var card = state.deck.shift();
     if (p.hand.length < HAND_LIMIT) {
       p.hand.push(card);
-      addLog(p.name + ' drew a card. (' + state.deck.length + ' left)');
+      addLog(t('log.drew', { name: p.name, deck: state.deck.length }));
     } else {
-      // Hand full: discard drawn card
       state.discardPile.push(card);
-      addLog(p.name + '\'s hand is full – drawn card discarded.');
+      addLog(t('log.handFull', { name: p.name }));
     }
 
     state.phase = 'play';
@@ -112,41 +107,37 @@ var Game = (function () {
 
   /** Phase 2: play a card from hand */
   function playCard(playerId, cardId, targetPlayerId) {
-    if (!state || state.over) return err('Game over.');
+    if (!state || state.over) return err(t('err.gameOver'));
     var p = state.players.find(function (pl) { return pl.id === playerId; });
-    if (!p) return err('Player not found.');
-    if (state.players[state.currentTurnIdx].id !== playerId) return err('Not your turn.');
-    if (state.phase !== 'play') return err('Not play phase.');
+    if (!p) return err(t('err.notFound'));
+    if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
+    if (state.phase !== 'play') return err(t('err.notPlayPhase'));
 
     var cardIdx = p.hand.findIndex(function (c) { return c.id === cardId; });
-    if (cardIdx === -1) return err('Card not in hand.');
+    if (cardIdx === -1) return err(t('err.noCard'));
 
     var card = p.hand.splice(cardIdx, 1)[0];
     state.discardPile.push(card);
 
-    // Action/chaos cards may need a target player
     var targetId = targetPlayerId || null;
 
-    // Zest double-target: store pending for second resolve
     var zestSecond = null;
     if (p.zestDoubleTarget && (card.type === CARD_TYPES.ACTION)) {
       p.zestDoubleTarget = false;
-      zestSecond = targetPlayerId; // will be applied twice below
+      zestSecond = targetPlayerId;
     }
 
     var res = applyCardEffect(card, state, p, targetId);
-    addLog(p.name + ' plays ' + card.name + '. ' + res.log);
+    addLog(t('log.plays', { name: p.name, card: card.name, effect: res.log }));
 
-    // Zest second target hit
     if (zestSecond) {
       var res2 = applyCardEffect(card, state, p, zestSecond);
-      addLog('Chaos Shift: ' + res2.log);
+      addLog(t('log.zestShift', { effect: res2.log }));
     }
 
-    // Tick score lock
     if (state.scoreLocked) {
       state.scoreLockTurns--;
-      if (state.scoreLockTurns <= 0) { state.scoreLocked = false; }
+      if (state.scoreLockTurns <= 0) state.scoreLocked = false;
     }
 
     state.phase = 'ability';
@@ -155,20 +146,20 @@ var Game = (function () {
 
   /** Phase 3 (optional): use character ability */
   function useAbility(playerId) {
-    if (!state || state.over) return err('Game over.');
+    if (!state || state.over) return err(t('err.gameOver'));
     var p = state.players.find(function (pl) { return pl.id === playerId; });
-    if (!p) return err('Player not found.');
-    if (state.players[state.currentTurnIdx].id !== playerId) return err('Not your turn.');
-    if (state.phase !== 'ability') return err('Not ability phase.');
+    if (!p) return err(t('err.notFound'));
+    if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
+    if (state.phase !== 'ability') return err(t('err.notAbilityPhase'));
     if (p.abilityBlocked) {
       p.abilityBlocked = false;
-      return err('Your ability is blocked this turn!');
+      return err(t('ability.blocked'));
     }
 
     var res = executeAbility(p.character, state, p);
     if (!res.success) return err(res.message);
 
-    addLog(p.name + ' uses ' + p.character.ability.name + '. ' + res.message);
+    addLog(t('log.abilityUsed', { name: p.name, ability: p.character.ability.name, msg: res.message }));
 
     if (res.pendingAction) {
       state.pendingAbility = { playerId: playerId, action: res.pendingAction };
@@ -180,7 +171,7 @@ var Game = (function () {
   /** Resolve pending ability choice */
   function resolveAbility(playerId, choice) {
     if (!state.pendingAbility || state.pendingAbility.playerId !== playerId) {
-      return err('No pending ability for this player.');
+      return err(t('err.noPending'));
     }
     var p = state.players.find(function (pl) { return pl.id === playerId; });
     var res = resolveAbilityChoice(p.character, state, p, choice);
@@ -189,37 +180,33 @@ var Game = (function () {
     return ok();
   }
 
-  /** Use Betrayal Token to cancel an opponent's card (called on opponent's turn) */
+  /** Use Betrayal Token to cancel an opponent's card */
   function useBetrayal(playerId) {
-    if (!state || state.over) return err('Game over.');
+    if (!state || state.over) return err(t('err.gameOver'));
     var p = state.players.find(function (pl) { return pl.id === playerId; });
-    if (!p) return err('Player not found.');
-    if (!p.betrayalToken) return err('Betrayal Token already used.');
+    if (!p) return err(t('err.notFound'));
+    if (!p.betrayalToken) return err(t('err.noBetrayal'));
     var cur = currentPlayer();
-    if (cur.id === playerId) return err('Cannot betray on your own turn.');
-    if (state.phase !== 'play') return err('Can only betray during play phase.');
+    if (cur.id === playerId) return err(t('err.selfBetray'));
+    if (state.phase !== 'play') return err(t('err.betrayPhase'));
 
     p.betrayalToken = false;
-    // Mark current player's play as cancelled → they skip playing a card
     cur.skipCardThisTurn = true;
-    addLog(p.name + ' uses Betrayal Token! ' + cur.name + '\'s card is cancelled!');
+    addLog(t('log.betray', { who: p.name, target: cur.name }));
     return ok();
   }
 
   /** Phase 4: end turn */
   function endTurn(playerId) {
-    if (!state || state.over) return err('Game over.');
+    if (!state || state.over) return err(t('err.gameOver'));
     var p = state.players.find(function (pl) { return pl.id === playerId; });
-    if (!p) return err('Player not found.');
-    if (state.players[state.currentTurnIdx].id !== playerId) return err('Not your turn.');
+    if (!p) return err(t('err.notFound'));
+    if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
 
-    // Advance
-    var n = state.players.length;
     var nextIdx = nextTurnIndex(state);
 
-    // Check skip
     if (state.players[nextIdx].skipNext) {
-      addLog(state.players[nextIdx].name + '\'s turn is skipped!');
+      addLog(t('log.skip', { name: state.players[nextIdx].name }));
       state.players[nextIdx].skipNext = false;
       state.currentTurnIdx = nextIdx;
       nextIdx = nextTurnIndex(state);
@@ -227,23 +214,16 @@ var Game = (function () {
 
     state.currentTurnIdx = nextIdx;
 
-    // Track rounds
     if (state.currentTurnIdx === 0) {
       state.round++;
-      addLog('=== Round ' + state.round + ' ===');
+      addLog(t('log.round', { n: state.round }));
     }
 
-    // End conditions
-    if (state.deck.length === 0) {
-      return endGame();
-    }
-    if (state.round > MAX_ROUNDS) {
-      return endGame();
-    }
+    if (state.deck.length === 0) return endGame();
+    if (state.round > MAX_ROUNDS) return endGame();
 
     state.phase = 'draw';
 
-    // If next player is AI, trigger AI turn
     if (state.players[state.currentTurnIdx].isAI) {
       setTimeout(aiTurn, 800);
     }
@@ -258,9 +238,7 @@ var Game = (function () {
     var p = currentPlayer();
     if (!p.isAI) return;
 
-    // Draw
     drawCard(p.id);
-    // Play best score card or random
     var best = null;
     p.hand.forEach(function (c) {
       if (c.type === CARD_TYPES.SCORE) {
@@ -269,14 +247,11 @@ var Game = (function () {
     });
     if (!best) best = p.hand[0];
     if (best) {
-      // Target: random opponent for action cards
       var opponent = state.players.find(function (pl) { return !pl.isAI || pl.id !== p.id; });
       playCard(p.id, best.id, opponent ? opponent.id : null);
     }
-    // Skip ability (simple AI)
     state.phase = 'ability';
     endTurn(p.id);
-    // Notify UI
     if (window.UI && window.UI.refresh) window.UI.refresh(getPublicState());
   }
 
@@ -286,11 +261,11 @@ var Game = (function () {
     state.over = true;
     var winner = state.players.reduce(function (a, b) { return a.score >= b.score ? a : b; });
     state.winner = winner.id;
-    addLog('🏆 Game over! Winner: ' + winner.name + ' with ' + winner.score + ' points!');
+    addLog(t('log.over', { name: winner.name, score: winner.score }));
     return { ok: true, over: true, state: getPublicState() };
   }
 
-  // ─── Public state (safe copy) ─────────────────────────────────────────────
+  // ─── Public state snapshot ────────────────────────────────────────────────
 
   function getPublicState() {
     if (!state) return null;
@@ -327,12 +302,8 @@ var Game = (function () {
     };
   }
 
-  // ─── Helpers ────────────────────────────────────────────────────────────────
-
-  function ok() { return { ok: true, over: false, state: getPublicState() }; }
-  function err(msg) { return { ok: false, error: msg, state: getPublicState() }; }
-
-  // ─── Public API ───────────────────────────────────────────────────────────────
+  function ok()    { return { ok: true,  over: false, state: getPublicState() }; }
+  function err(msg){ return { ok: false, error: msg,  state: getPublicState() }; }
 
   return {
     init: init,

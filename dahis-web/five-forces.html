@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DAHIS: Five Forces – Card Game</title>
-  <meta name="description" content="DAHIS: Five Forces – a strategic multiplayer card game. Choose your character, build your score, outsmart your rivals.">
+  <title>DAHIS: Five Forces – Kart Oyunu</title>
+  <meta name="description" content="DAHIS: Five Forces – stratejik çok oyunculu kart oyunu. Karakterini seç, puanını artır, rakiplerini alt et.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="five-forces/five-forces.css">
@@ -13,11 +13,18 @@
 
   <!-- ── Hero ───────────────────────────────────────────────── -->
   <header class="lobby-header">
-    <a href="/" class="back-home">← dahis.io</a>
+    <a href="/" class="back-home" data-i18n="lobby.back">← dahis.io</a>
+
+    <!-- Lang switcher -->
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="tr">TR</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+
     <div class="logo-block">
       <div class="logo-glyph">⚡</div>
       <h1 class="lobby-title">DAHIS<br><span>Five Forces</span></h1>
-      <p class="lobby-subtitle">Strategic · Turn-based · Card Game</p>
+      <p class="lobby-subtitle" data-i18n="lobby.subtitle">Strategic · Turn-based · Card Game</p>
     </div>
   </header>
 
@@ -26,7 +33,10 @@
 
     <!-- Step 1: Player count -->
     <section class="lobby-step" id="step-count">
-      <h2 class="step-title"><span class="step-num">01</span> How many players?</h2>
+      <h2 class="step-title">
+        <span class="step-num">01</span>
+        <span data-i18n="lobby.step1.title">How many players?</span>
+      </h2>
       <div class="count-grid">
         <button class="count-btn" data-count="1">1 + AI</button>
         <button class="count-btn" data-count="2">2 + AI</button>
@@ -34,66 +44,83 @@
         <button class="count-btn" data-count="4">4</button>
         <button class="count-btn" data-count="5">5</button>
       </div>
-      <p class="step-note">Non-human slots filled by AI.</p>
+      <p class="step-note" data-i18n="lobby.step1.note">Non-human slots filled by AI.</p>
     </section>
 
-    <!-- Step 2: Player names & character picks -->
+    <!-- Step 2: Player names -->
     <section class="lobby-step hidden" id="step-players">
-      <h2 class="step-title"><span class="step-num">02</span> Name your players</h2>
+      <h2 class="step-title">
+        <span class="step-num">02</span>
+        <span data-i18n="lobby.step2.title">Name your players</span>
+      </h2>
       <div id="player-forms"></div>
     </section>
 
     <!-- Step 3: Character selection -->
     <section class="lobby-step hidden" id="step-characters">
-      <h2 class="step-title"><span class="step-num">03</span> Choose characters</h2>
+      <h2 class="step-title">
+        <span class="step-num">03</span>
+        <span data-i18n="lobby.step3.title">Choose characters</span>
+      </h2>
       <p class="step-note" id="char-turn-label"></p>
       <div class="char-grid" id="char-grid"></div>
     </section>
 
     <!-- Step 4: Review & start -->
     <section class="lobby-step hidden" id="step-review">
-      <h2 class="step-title"><span class="step-num">04</span> Ready to play?</h2>
+      <h2 class="step-title">
+        <span class="step-num">04</span>
+        <span data-i18n="lobby.step4.title">Ready to play?</span>
+      </h2>
       <div id="review-list" class="review-list"></div>
-      <button class="btn-start" id="btn-start">Start Game →</button>
+      <button class="btn-start" id="btn-start" data-i18n="lobby.btn.start">Start Game →</button>
     </section>
 
   </main>
 
   <!-- ── Card preview ─────────────────────────────────────── -->
   <section class="deck-preview">
-    <h2 class="section-title">The 40-Card Deck</h2>
+    <h2 class="section-title" data-i18n="lobby.deck.title">The 40-Card Deck</h2>
     <div class="deck-legend">
-      <div class="legend-item legend-score">Score Cards <span>16</span></div>
-      <div class="legend-item legend-risk">Risk Cards <span>8</span></div>
-      <div class="legend-item legend-action">Action Cards <span>10</span></div>
-      <div class="legend-item legend-chaos">Chaos Cards <span>6</span></div>
+      <div class="legend-item legend-score">
+        <span data-i18n="lobby.legend.score">Score Cards</span> <span>16</span>
+      </div>
+      <div class="legend-item legend-risk">
+        <span data-i18n="lobby.legend.risk">Risk Cards</span> <span>8</span>
+      </div>
+      <div class="legend-item legend-action">
+        <span data-i18n="lobby.legend.action">Action Cards</span> <span>10</span>
+      </div>
+      <div class="legend-item legend-chaos">
+        <span data-i18n="lobby.legend.chaos">Chaos Cards</span> <span>6</span>
+      </div>
     </div>
   </section>
 
   <!-- ── Rules summary ────────────────────────────────────── -->
   <section class="rules-block">
-    <h2 class="section-title">How to Play</h2>
+    <h2 class="section-title" data-i18n="lobby.rules.title">How to Play</h2>
     <ol class="rules-list">
-      <li><strong>Draw</strong> a card from the deck.</li>
-      <li><strong>Play</strong> one card from your hand.</li>
-      <li>Optionally <strong>use your character ability</strong> (once per turn).</li>
-      <li><strong>End your turn.</strong> Hand limit: 7 cards.</li>
+      <li data-i18n="lobby.rules.1" data-i18n-html="true"><strong>Draw</strong> a card from the deck.</li>
+      <li data-i18n="lobby.rules.2" data-i18n-html="true"><strong>Play</strong> one card from your hand.</li>
+      <li data-i18n="lobby.rules.3" data-i18n-html="true">Optionally <strong>use your character ability</strong> (once per turn).</li>
+      <li data-i18n="lobby.rules.4" data-i18n-html="true"><strong>End your turn.</strong> Hand limit: 7 cards.</li>
     </ol>
-    <p class="rules-note">Game ends when the deck is empty or 12 rounds pass. Highest score wins.</p>
-    <p class="rules-note"><strong>⚔️ Betrayal Token</strong> – cancel an opponent's card instantly (once per game; you skip playing that turn).</p>
+    <p class="rules-note" data-i18n="lobby.rules.note1">Game ends when the deck is empty or 12 rounds pass. Highest score wins.</p>
+    <p class="rules-note" data-i18n="lobby.rules.note2" data-i18n-html="true"><strong>⚔️ Betrayal Token</strong> – cancel an opponent's card instantly.</p>
   </section>
 
-  <!-- Scripts -->
+  <!-- Scripts: i18n first, then game modules -->
+  <script src="five-forces/i18n.js"></script>
   <script src="five-forces/characters.js"></script>
   <script src="five-forces/deck.js"></script>
   <script>
   (function () {
     var CHAR_IDS = Object.keys(CHARACTERS);
-    var totalPlayers = 0;
     var humanCount = 0;
-    var playerDrafts = [];      // [{name, isAI}]
-    var assignments = [];       // [{name, characterId, isAI}]
-    var charPickIdx = 0;        // which human is picking
+    var playerDrafts = [];
+    var assignments = [];
+    var charPickIdx = 0;
     var takenChars = [];
 
     // ── Step 1: count ──────────────────────────────────────────
@@ -102,11 +129,18 @@
         document.querySelectorAll('.count-btn').forEach(function(b){ b.classList.remove('selected'); });
         btn.classList.add('selected');
         humanCount = parseInt(btn.dataset.count, 10);
-        totalPlayers = Math.max(3, humanCount + (humanCount < 3 ? 3 - humanCount : 0));
-        if (humanCount + (5 - humanCount) > 5) totalPlayers = 5;
         buildPlayerForms(humanCount);
         showStep('step-players');
       });
+    });
+
+    // Re-render dynamic content on language switch
+    document.addEventListener('langchange', function () {
+      // Rebuild char grid if visible (player labels / ability text update)
+      var charStep = document.getElementById('step-characters');
+      if (charStep && !charStep.classList.contains('hidden') && charPickIdx < assignments.length) {
+        buildCharGrid();
+      }
     });
 
     function buildPlayerForms(n) {
@@ -114,28 +148,24 @@
       var html = '';
       for (var i = 0; i < n; i++) {
         html += '<div class="player-form">' +
-          '<label>Player ' + (i + 1) + '</label>' +
-          '<input class="player-name-input" data-idx="' + i + '" type="text" placeholder="Enter name…" maxlength="16">' +
+          '<label>' + t('lobby.player.label', { n: i + 1 }) + '</label>' +
+          '<input class="player-name-input" data-idx="' + i + '" type="text"' +
+            ' placeholder="' + escHtml(t('lobby.player.placeholder')) + '" maxlength="16">' +
         '</div>';
       }
-      html += '<button class="btn-next" id="btn-names-next">Next →</button>';
+      html += '<button class="btn-next" id="btn-names-next">' + t('lobby.btn.next') + '</button>';
       el.innerHTML = html;
 
       document.getElementById('btn-names-next').addEventListener('click', function () {
         playerDrafts = [];
-        var inputs = document.querySelectorAll('.player-name-input');
-        var valid = true;
-        inputs.forEach(function (inp, i) {
-          var v = inp.value.trim() || ('Player ' + (i + 1));
+        document.querySelectorAll('.player-name-input').forEach(function (inp, i) {
+          var v = inp.value.trim() || t('lobby.player.label', { n: i + 1 });
           playerDrafts.push({ name: v, isAI: false });
         });
-        // Add AI players
         var aiNeeded = Math.max(0, 3 - humanCount);
         for (var a = 0; a < aiNeeded; a++) {
           playerDrafts.push({ name: 'AI-' + (a + 1), isAI: true });
         }
-        // Fill up to 5 if user wanted that many total
-        totalPlayers = playerDrafts.length;
         assignments = playerDrafts.map(function(p){ return { name: p.name, isAI: p.isAI, characterId: null }; });
         takenChars = [];
         charPickIdx = 0;
@@ -149,7 +179,6 @@
       var grid = document.getElementById('char-grid');
       var label = document.getElementById('char-turn-label');
 
-      // For AI players: auto-assign available chars
       while (charPickIdx < assignments.length && assignments[charPickIdx].isAI) {
         var available = CHAR_IDS.filter(function(id){ return takenChars.indexOf(id) === -1; });
         if (available.length === 0) break;
@@ -165,7 +194,8 @@
         return;
       }
 
-      label.textContent = assignments[charPickIdx].name + ', choose your character:';
+      label.textContent = t('lobby.step3.pick', { name: assignments[charPickIdx].name });
+
       grid.innerHTML = CHAR_IDS.map(function (cid) {
         var c = CHARACTERS[cid];
         var taken = takenChars.indexOf(cid) !== -1;
@@ -177,15 +207,14 @@
             '<span class="ability-label">' + c.ability.name + '</span>' +
             '<p>' + c.ability.desc + '</p>' +
           '</div>' +
-          (taken ? '<div class="taken-badge">Taken</div>' : '') +
+          (taken ? '<div class="taken-badge">' + t('lobby.taken') + '</div>' : '') +
         '</div>';
       }).join('');
 
       grid.querySelectorAll('.char-card:not(.taken)').forEach(function (el) {
         el.addEventListener('click', function () {
-          var cid = el.dataset.cid;
-          assignments[charPickIdx].characterId = cid;
-          takenChars.push(cid);
+          assignments[charPickIdx].characterId = el.dataset.cid;
+          takenChars.push(el.dataset.cid);
           charPickIdx++;
           buildCharGrid();
         });
@@ -195,7 +224,10 @@
     // ── Step 4: review ─────────────────────────────────────────
     function buildReview() {
       var el = document.getElementById('review-list');
-      el.innerHTML = assignments.map(function (a, i) {
+      var startBtn = document.getElementById('btn-start');
+      if (startBtn) startBtn.textContent = t('lobby.btn.start');
+
+      el.innerHTML = assignments.map(function (a) {
         var chr = CHARACTERS[a.characterId];
         return '<div class="review-row">' +
           '<div class="review-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>' +
@@ -209,34 +241,27 @@
     }
 
     document.getElementById('btn-start').addEventListener('click', function () {
-      // Determine which player index is the first non-AI (human player 0)
       var humanIdx = assignments.findIndex(function(a){ return !a.isAI; });
       if (humanIdx === -1) humanIdx = 0;
-      var session = {
+      sessionStorage.setItem('ffSession', JSON.stringify({
         players: assignments,
-        humanIdx: humanIdx
-      };
-      sessionStorage.setItem('ffSession', JSON.stringify(session));
+        humanIdx: humanIdx,
+        lang: I18n.getLang()
+      }));
       window.location.href = '/five-forces/game';
     });
 
     // ── Util ───────────────────────────────────────────────────
     function showStep(id) {
-      document.querySelectorAll('.lobby-step').forEach(function (s) {
-        s.classList.add('hidden');
-      });
+      document.querySelectorAll('.lobby-step').forEach(function (s) { s.classList.add('hidden'); });
       var el = document.getElementById(id);
-      if (el) {
-        el.classList.remove('hidden');
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (el) { el.classList.remove('hidden'); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     }
 
     function escHtml(s) {
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    // Show first step
     showStep('step-count');
   })();
   </script>

@@ -873,6 +873,38 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   transform: translateX(-50%) translateY(0);
 }
 
+/* ── Lang switcher ───────────────────────────────────────── */
+.lang-switcher {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.lang-btn {
+  padding: 4px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  transition: all .15s;
+}
+.lang-btn:hover { border-color: var(--accent); color: var(--text); }
+.lang-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(102,126,234,.12); }
+
+/* Game header right slot */
+.game-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lang-switcher-sm {
+  position: static;
+}
+
 /* ── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
