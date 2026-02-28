@@ -25,6 +25,7 @@ window.__TRANSLATIONS__ = {
         'footer.creative': 'En yaratıcı',
         'footer.funniest': 'En komik',
         'footer.strategic': 'En stratejik',
+        'footer.fiveforces': 'Five Forces',
         'theme.dark': 'Koyu mod',
         'theme.light': 'Açık mod',
 
@@ -114,6 +115,9 @@ window.__TRANSLATIONS__ = {
         'eglence.memory_title': 'One hafıza kartları',
         'eglence.memory_desc': 'Aynı One çiftini bul. Kartları çevir, eşleştir!',
         'eglence.memory_cta': 'Oyna →',
+        'eglence.fiveforces_title': 'DAHIS: Five Forces',
+        'eglence.fiveforces_desc': '3–5 oyunculu stratejik kart oyunu. Karakter seç, puanını yükselt, kazan.',
+        'eglence.fiveforces_cta': 'Oyna →',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -274,6 +278,7 @@ window.__TRANSLATIONS__ = {
         'footer.creative': 'Most creative',
         'footer.funniest': 'Funniest',
         'footer.strategic': 'Best strategic',
+        'footer.fiveforces': 'Five Forces',
         'theme.dark': 'Dark mode',
         'theme.light': 'Light mode',
 
@@ -361,6 +366,9 @@ window.__TRANSLATIONS__ = {
         'eglence.memory_title': 'One Memory Cards',
         'eglence.memory_desc': 'Find the matching One pairs. Flip and match!',
         'eglence.memory_cta': 'Play →',
+        'eglence.fiveforces_title': 'DAHIS: Five Forces',
+        'eglence.fiveforces_desc': 'Strategic card game for 3–5 players. Pick a character, raise your score, win.',
+        'eglence.fiveforces_cta': 'Play →',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",
