@@ -75,8 +75,6 @@
         <input type="text" id="online-create-name" class="player-name-input" maxlength="20" placeholder="" data-i18n-placeholder="lobby.player.placeholder">
         <label class="online-label" data-i18n="lobby.online.room_password_optional">Room password (optional)</label>
         <input type="password" id="online-create-password" class="player-name-input" maxlength="20" placeholder="" data-i18n-placeholder="lobby.online.room_password_placeholder" autocomplete="off">
-        <label class="online-label" data-i18n="lobby.step3.pick">Choose your character</label>
-        <div class="char-grid char-grid-inline" id="online-create-char-grid"></div>
         <button type="button" class="btn-start" id="btn-do-create-room" data-i18n="lobby.online.do_create">Create room</button>
       </div>
 
@@ -94,8 +92,6 @@
         <div id="online-join-after" class="hidden">
           <label class="online-label" data-i18n="lobby.online.your_name">Your name</label>
           <input type="text" id="online-join-name" class="player-name-input" maxlength="20">
-          <label class="online-label" data-i18n="lobby.step3.pick">Choose your character</label>
-          <div class="char-grid char-grid-inline" id="online-join-char-grid"></div>
           <button type="button" class="btn-start" id="btn-do-join-room" data-i18n="lobby.online.do_join">Join room</button>
         </div>
       </div>
@@ -465,14 +461,9 @@
     function showJoinNameAndChar(code) {
       document.getElementById('online-join-after').classList.remove('hidden');
       document.getElementById('online-join-name').value = '';
-      var joinChar = CHAR_IDS[0];
-      buildSingleCharGrid('online-join-char-grid', joinChar, function () {});
       document.getElementById('btn-do-join-room').onclick = function () {
         var name = (document.getElementById('online-join-name').value || '').trim() || 'Player';
-        var grid = document.getElementById('online-join-char-grid');
-        var sel = grid && grid.querySelector('.char-card.selected');
-        var cid = sel ? sel.dataset.cid : CHAR_IDS[0];
-        window.FFRooms.joinRoom(code, name, cid, pendingJoinPassword).then(function (res) {
+        window.FFRooms.joinRoom(code, name, pendingJoinPassword).then(function (res) {
           onlineRoomId = res.roomId;
           onlineIsHost = false;
           onlineMySlotIndex = res.mySlotIndex;
@@ -484,7 +475,7 @@
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
             if (!data) return;
             var list = document.getElementById('room-players-list');
-            if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + ' – ' + (CHARACTERS[p.characterId] ? CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
+            if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
             if (data.status === 'playing' && data.gameState) goToGameWithRoom(onlineRoomId, data.gameState, onlineMySlotIndex);
           });
         }).catch(function (err) { alert(err.message || 'Join failed'); });
@@ -544,15 +535,10 @@
       showOnlineView('create');
       document.getElementById('online-create-name').value = '';
       document.getElementById('online-create-password').value = '';
-      var createChar = CHAR_IDS[0];
-      buildSingleCharGrid('online-create-char-grid', createChar, function (cid) { createChar = cid; });
       document.getElementById('btn-do-create-room').onclick = function () {
         var name = (document.getElementById('online-create-name').value || '').trim() || 'Host';
-        var grid = document.getElementById('online-create-char-grid');
-        var sel = grid && grid.querySelector('.char-card.selected');
-        var cid = sel ? sel.dataset.cid : CHAR_IDS[0];
         var pwd = (document.getElementById('online-create-password').value || '').trim() || null;
-        window.FFRooms.createRoom(name, cid, pwd).then(function (res) {
+        window.FFRooms.createRoom(name, pwd).then(function (res) {
           onlineRoomId = res.roomId;
           onlineIsHost = true;
           onlineMySlotIndex = 0;
@@ -564,7 +550,7 @@
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
             if (!data) return;
             var list = document.getElementById('room-players-list');
-            if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + ' – ' + (CHARACTERS[p.characterId] ? CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
+            if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
             if (data.status === 'playing' && data.gameState) goToGameWithRoom(res.roomId, data.gameState, 0);
           });
         }).catch(function (err) { alert(err.message || 'Failed to create room'); });
@@ -604,7 +590,7 @@
             alert(t('lobby.online.min_players') || 'At least 2 players to start.');
             return;
           }
-          var players = data.players.map(function (p) { return { name: (p.name || '').trim() || ('Player'), characterId: p.characterId, isAI: false }; });
+          var players = data.players.map(function (p) { return { name: (p.name || '').trim() || ('Player'), characterId: p.characterId || null, isAI: false }; });
           Game.init(players);
           var full = Game.getFullState && Game.getFullState();
           if (!full) return;

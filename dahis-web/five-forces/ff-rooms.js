@@ -50,15 +50,15 @@
     }
   }
 
-  /** Create room; returns { roomId, code, hostId }. password optional. */
-  function createRoom(hostName, hostCharacterId, password) {
+  /** Create room; returns { roomId, code, hostId }. password optional. Karakter oyunda seçilir. */
+  function createRoom(hostName, password) {
     return init().then(function () {
       var code = randomCode();
       var hostId = clientId();
       var roomData = {
         code: code,
         hostId: hostId,
-        players: [{ id: 'p0', name: hostName, characterId: hostCharacterId, clientId: hostId }],
+        players: [{ id: 'p0', name: hostName, characterId: null, clientId: hostId }],
         status: 'waiting',
         gameState: null,
         roomPassword: (password && String(password).trim()) || null,
@@ -112,8 +112,8 @@
     });
   }
 
-  /** Join room by code. Returns { roomId, mySlotIndex } or rejects. password required if room has one. */
-  function joinRoom(code, playerName, characterId, password) {
+  /** Join room by code. Returns { roomId, mySlotIndex } or rejects. password required if room has one. Karakter oyunda seçilir. */
+  function joinRoom(code, playerName, password) {
     return init().then(function () {
       code = String(code).toUpperCase().replace(/\s/g, '');
       if (code.length !== 6) return Promise.reject(new Error('Invalid code'));
@@ -134,7 +134,7 @@
         }
         if (data.players.length >= 5) return Promise.reject(new Error('Room full'));
         var slotIndex = data.players.length;
-        var newPlayer = { id: 'p' + slotIndex, name: playerName, characterId: characterId, clientId: me };
+        var newPlayer = { id: 'p' + slotIndex, name: playerName, characterId: null, clientId: me };
         var updated = data.players.slice();
         updated.push(newPlayer);
         return ref.update({

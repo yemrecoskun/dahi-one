@@ -23,7 +23,7 @@ var Game = (function () {
       id: id,
       name: name,
       characterId: characterId,
-      character: CHARACTERS[characterId],
+      character: characterId != null && CHARACTERS[characterId] ? CHARACTERS[characterId] : null,
       isAI: !!isAI,
       hand: [],
       score: 0,
@@ -151,6 +151,7 @@ var Game = (function () {
     if (!p) return err(t('err.notFound'));
     if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
     if (state.phase !== 'ability') return err(t('err.notAbilityPhase'));
+    if (!p.character) return err(t('err.pickCharacter') || 'Pick your character first');
     if (p.abilityBlocked) {
       p.abilityBlocked = false;
       return err(t('ability.blocked'));
@@ -174,6 +175,7 @@ var Game = (function () {
       return err(t('err.noPending'));
     }
     var p = state.players.find(function (pl) { return pl.id === playerId; });
+    if (!p || !p.character) return err(t('err.pickCharacter') || 'Pick your character first');
     var res = resolveAbilityChoice(p.character, state, p, choice);
     state.pendingAbility = null;
     addLog(res.message);
@@ -348,7 +350,7 @@ var Game = (function () {
           id: p.id,
           name: p.name,
           characterId: charId,
-          character: CHARACTERS[charId],
+          character: charId != null && CHARACTERS[charId] ? CHARACTERS[charId] : null,
           isAI: !!p.isAI,
           hand: (p.hand || []).slice(),
           score: p.score || 0,
@@ -380,6 +382,14 @@ var Game = (function () {
   function ok()    { return { ok: true,  over: false, state: getPublicState() }; }
   function err(msg){ return { ok: false, error: msg,  state: getPublicState() }; }
 
+  /** Online: set one player's character (oyunda karakter seçimi). */
+  function setPlayerCharacter(playerIndex, characterId) {
+    if (!state || !state.players[playerIndex]) return false;
+    state.players[playerIndex].characterId = characterId;
+    state.players[playerIndex].character = characterId != null && CHARACTERS[characterId] ? CHARACTERS[characterId] : null;
+    return true;
+  }
+
   return {
     init: init,
     drawCard: drawCard,
@@ -390,6 +400,7 @@ var Game = (function () {
     endTurn: endTurn,
     getState: getPublicState,
     getFullState: getFullState,
-    restoreState: restoreState
+    restoreState: restoreState,
+    setPlayerCharacter: setPlayerCharacter
   };
 })();

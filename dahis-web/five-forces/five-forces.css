@@ -745,6 +745,12 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   object-fit: contain;
   border-radius: 50%;
 }
+.score-avatar-pick {
+  background: var(--bg3);
+  border: 1px dashed var(--muted);
+  color: var(--muted);
+  font-size: 1rem;
+}
 .score-info {
   flex: 1;
   display: flex;
@@ -1124,6 +1130,32 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   padding: 12px 32px;
   border-radius: 10px;
   font-size: .95rem;
+}
+
+/* ── Online: oyunda karakter seçimi overlay ─────────────────── */
+.online-char-pick-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,7,13,.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 250;
+  padding: 20px;
+}
+.online-char-pick-box {
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 100%;
+}
+.online-char-pick-title {
+  font-family: var(--ff-mono);
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--text);
 }
 
 /* ── Toast ───────────────────────────────────────────────── */

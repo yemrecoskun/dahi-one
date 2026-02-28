@@ -40,6 +40,46 @@ var UI = (function () {
       window.ffIsOnline = true;
       setTimeout(function () { setupOnlineSync(sessionData.roomId); }, 0);
     }
+    var myIdx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
+    var me = gs && gs.players[myIdx];
+    if (sessionData.isOnline && me && me.characterId == null) {
+      showOnlineCharPick(myIdx);
+    }
+  }
+
+  /** Online: oyuna başladıktan sonra karakter seçimi overlay. */
+  function showOnlineCharPick(myIdx) {
+    var overlay = document.getElementById('online-char-pick');
+    var gridEl = document.getElementById('online-char-pick-grid');
+    if (!overlay || !gridEl) return;
+    var charIds = Object.keys(CHARACTERS);
+    gridEl.innerHTML = charIds.map(function (cid) {
+      var c = CHARACTERS[cid];
+      var avatarHtml = c.image
+        ? '<div class="char-avatar"><img src="' + c.image + '" alt=""></div>'
+        : '<div class="char-avatar" style="background:' + c.gradient + '">' + c.emoji + '</div>';
+      return '<div class="char-card" data-cid="' + cid + '">' + avatarHtml + '<h3>' + c.name + '</h3></div>';
+    }).join('');
+    gridEl.querySelectorAll('.char-card').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var cid = el.dataset.cid;
+        if (!cid) return;
+        Game.setPlayerCharacter(myIdx, cid);
+        if (window.ffOnlineRoomId && window.FFRooms && window.FFRooms.updateGameState && Game.getFullState) {
+          window.FFRooms.updateGameState(window.ffOnlineRoomId, Game.getFullState()).then(function () {
+            overlay.style.display = 'none';
+            render(Game.getState());
+          }).catch(function () {
+            overlay.style.display = 'none';
+            render(Game.getState());
+          });
+        } else {
+          overlay.style.display = 'none';
+          render(Game.getState());
+        }
+      });
+    });
+    overlay.style.display = 'flex';
   }
 
   // ─── Master render ───────────────────────────────────────────────────────────
@@ -96,12 +136,15 @@ var UI = (function () {
     if (!el) return;
     var curHuman = currentPlayerIsHuman(gs) ? gs.currentPlayerId : null;
     el.innerHTML = gs.players.map(function (p) {
-      var chr = CHARACTERS[p.characterId];
+      var chr = p.characterId ? CHARACTERS[p.characterId] : null;
       var active = p.id === gs.currentPlayerId ? ' active' : '';
       var you = p.id === curHuman ? ' you' : '';
-      var avatarHtml = chr.image
-        ? '<span class="score-avatar"><img src="' + chr.image + '" alt=""></span>'
-        : '<span class="score-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</span>';
+      var avatarHtml = chr
+        ? (chr.image
+          ? '<span class="score-avatar"><img src="' + chr.image + '" alt=""></span>'
+          : '<span class="score-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</span>')
+        : '<span class="score-avatar score-avatar-pick">?</span>';
+      var charLine = chr ? (chr.name + ' · ' + chr.ability.name) : (t('game.pick_character') || 'Pick character');
       return '<div class="score-entry' + active + you + '">' +
         avatarHtml +
         '<div class="score-info">' +
@@ -109,14 +152,14 @@ var UI = (function () {
             (p.id === curHuman ? ' <em>(' + t('game.you') + ')</em>' : '') +
             (p.isAI ? ' 🤖' : '') +
           '</span>' +
-          '<span class="score-char">' + chr.name + ' · ' + chr.ability.name + '</span>' +
+          '<span class="score-char">' + escHtml(charLine) + '</span>' +
         '</div>' +
         '<div class="score-right">' +
           '<span class="score-val">' + p.score + '</span>' +
           (p.betrayalToken ? '<span class="btray-token" title="Betrayal Token">⚔️</span>' : '') +
-          (p.abilityUsed
+          (chr && (p.abilityUsed
             ? '<span class="ability-tag used">' + t('game.score.used') + '</span>'
-            : '<span class="ability-tag avail">' + t('game.score.avail') + '</span>') +
+            : '<span class="ability-tag avail">' + t('game.score.avail') + '</span>')) +
         '</div>' +
       '</div>';
     }).join('');
@@ -234,10 +277,13 @@ var UI = (function () {
       html += '<button class="btn-action btn-draw" id="btn-draw">' + t('game.btn.draw') + '</button>';
     }
 
-    if (isCurrentHuman && gs.phase === 'ability' && !cur.abilityUsed && !cur.abilityBlocked) {
-      html += '<button class="btn-action btn-ability" id="btn-ability">' +
-        t('game.btn.ability', { name: CHARACTERS[cur.characterId].ability.name }) +
-      '</button>';
+    if (isCurrentHuman && gs.phase === 'ability' && cur.characterId && !cur.abilityUsed && !cur.abilityBlocked) {
+      var chr = CHARACTERS[cur.characterId];
+      if (chr && chr.ability) {
+        html += '<button class="btn-action btn-ability" id="btn-ability">' +
+          t('game.btn.ability', { name: chr.ability.name }) +
+        '</button>';
+      }
     }
 
     if (isCurrentHuman && (gs.phase === 'ability' || gs.phase === 'play')) {
@@ -339,9 +385,11 @@ var UI = (function () {
         '<h3>' + t('game.modal.target') + '</h3>' +
         '<div class="modal-targets">' +
           others.map(function (p) {
-            var chr = CHARACTERS[p.characterId];
-            return '<button class="btn-target" data-pid="' + p.id + '" style="border-color:' + chr.color + '">' +
-              chr.emoji + ' ' + escHtml(p.name) +
+            var chr = p.characterId ? CHARACTERS[p.characterId] : null;
+            var style = chr ? 'border-color:' + chr.color : '';
+            var label = chr ? chr.emoji + ' ' : '';
+            return '<button class="btn-target" data-pid="' + p.id + '" style="' + style + '">' +
+              label + escHtml(p.name) +
             '</button>';
           }).join('') +
         '</div>' +
@@ -385,9 +433,11 @@ var UI = (function () {
       html += '<h3>' + t('game.modal.precSwap') + '</h3><div class="modal-targets">';
       action.others.forEach(function (pid) {
         var tp = gs ? gs.players.find(function (p) { return p.id === pid; }) : { name: pid, characterId: 'aura' };
-        var chr = CHARACTERS[tp.characterId];
-        html += '<button class="btn-target" data-pid="' + pid + '" style="border-color:' + chr.color + '">' +
-          chr.emoji + ' ' + escHtml(tp.name) +
+        var chr = tp && tp.characterId ? CHARACTERS[tp.characterId] : null;
+        var style = chr ? 'border-color:' + chr.color : '';
+        var label = chr ? chr.emoji + ' ' : '';
+        html += '<button class="btn-target" data-pid="' + pid + '" style="' + style + '">' +
+          label + escHtml(tp.name) +
         '</button>';
       });
       html += '</div>';
@@ -395,9 +445,11 @@ var UI = (function () {
       html += '<h3>' + t('game.modal.theft') + '</h3><div class="modal-targets">';
       action.targets.forEach(function (pid) {
         var tp = gs ? gs.players.find(function (p) { return p.id === pid; }) : { name: pid, characterId: 'aura' };
-        var chr = CHARACTERS[tp.characterId];
-        html += '<button class="btn-target" data-pid="' + pid + '" style="border-color:' + chr.color + '">' +
-          chr.emoji + ' ' + escHtml(tp.name) +
+        var chr = tp && tp.characterId ? CHARACTERS[tp.characterId] : null;
+        var style = chr ? 'border-color:' + chr.color : '';
+        var label = chr ? chr.emoji + ' ' : '';
+        html += '<button class="btn-target" data-pid="' + pid + '" style="' + style + '">' +
+          label + escHtml(tp.name) +
         '</button>';
       });
       html += '</div>';
@@ -449,12 +501,15 @@ var UI = (function () {
     var el = document.getElementById('game-over');
     if (!el) return;
     var winner = gs.players.find(function (p) { return p.id === gs.winner; });
-    var chr = CHARACTERS[winner.characterId];
+    if (!winner) return;
+    var chr = winner.characterId ? CHARACTERS[winner.characterId] : null;
     var sorted = gs.players.slice().sort(function (a, b) { return b.score - a.score; });
 
-    var winnerAvatar = chr.image
-      ? '<div class="winner-avatar"><img src="' + chr.image + '" alt=""></div>'
-      : '<div class="winner-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>';
+    var winnerAvatar = chr
+      ? (chr.image
+        ? '<div class="winner-avatar"><img src="' + chr.image + '" alt=""></div>'
+        : '<div class="winner-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>')
+      : '<div class="winner-avatar">' + escHtml(winner.name) + '</div>';
     el.innerHTML =
       '<div class="game-over-box">' +
         winnerAvatar +
