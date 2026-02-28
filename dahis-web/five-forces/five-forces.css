@@ -106,6 +106,7 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   padding: 32px;
   transition: opacity .3s;
 }
+.hidden { display: none !important; }
 .lobby-step.hidden { display: none; }
 
 .step-title {
