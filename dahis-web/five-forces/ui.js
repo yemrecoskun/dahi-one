@@ -6,17 +6,25 @@
 
 var UI = (function () {
 
-  var humanPlayerId = null;
+  var humanPlayerIds = [];  // Tüm insan oyuncu id'leri (sıra kimdeyse o oynar)
   var pendingCardPlay = null;
   var pendingAbilityResolve = null;
+
+  function currentPlayer(gs) {
+    return gs && gs.players[gs.currentTurnIdx];
+  }
+
+  function currentPlayerIsHuman(gs) {
+    var cur = currentPlayer(gs);
+    return cur && !cur.isAI;
+  }
 
   // ─── Bootstrap ───────────────────────────────────────────────────────────────
 
   function boot(sessionData) {
     var gs = Game.init(sessionData.players);
-    humanPlayerId = gs.players[sessionData.humanIdx].id;
+    humanPlayerIds = gs.players.filter(function (p) { return !p.isAI; }).map(function (p) { return p.id; });
     render(gs);
-    // Re-render on language change so dynamic content updates instantly
     document.addEventListener('langchange', function () { render(Game.getState()); });
   }
 
@@ -40,15 +48,16 @@ var UI = (function () {
   function renderScoreboard(gs) {
     var el = document.getElementById('scoreboard');
     if (!el) return;
+    var curHuman = currentPlayerIsHuman(gs) ? gs.currentPlayerId : null;
     el.innerHTML = gs.players.map(function (p) {
       var chr = CHARACTERS[p.characterId];
       var active = p.id === gs.currentPlayerId ? ' active' : '';
-      var you = p.id === humanPlayerId ? ' you' : '';
+      var you = p.id === curHuman ? ' you' : '';
       return '<div class="score-entry' + active + you + '">' +
         '<span class="score-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</span>' +
         '<div class="score-info">' +
           '<span class="score-name">' + escHtml(p.name) +
-            (p.id === humanPlayerId ? ' <em>(' + t('game.you') + ')</em>' : '') +
+            (p.id === curHuman ? ' <em>(' + t('game.you') + ')</em>' : '') +
             (p.isAI ? ' 🤖' : '') +
           '</span>' +
           '<span class="score-char">' + chr.name + ' · ' + chr.ability.name + '</span>' +
@@ -99,15 +108,19 @@ var UI = (function () {
   function renderHand(gs) {
     var el = document.getElementById('hand-area');
     if (!el) return;
-    var me = gs.players.find(function (p) { return p.id === humanPlayerId; });
-    if (!me) return;
-
-    // Update static hand title
+    var cur = currentPlayer(gs);
     var titleEl = document.querySelector('.hand-title');
     if (titleEl) titleEl.textContent = t('game.hand.title');
 
-    var isMyTurn = gs.currentPlayerId === humanPlayerId;
-    var canPlay = isMyTurn && (gs.phase === 'play') && !pendingAbilityResolve;
+    // Sıradaki oyuncu insansa onun elini göster; AI ise "X oynuyor..." mesajı
+    if (!cur) return;
+    if (cur.isAI) {
+      el.innerHTML = '<p class="empty-hand">' + cur.name + ' ' + (gs.phase === 'draw' ? '' : '') + '…</p>';
+      return;
+    }
+
+    var me = cur;
+    var canPlay = (gs.phase === 'play') && !pendingAbilityResolve;
 
     el.innerHTML = me.hand.map(function (card) {
       var cls = 'card' + (canPlay ? ' playable' : '');
@@ -141,40 +154,44 @@ var UI = (function () {
   function renderActions(gs) {
     var el = document.getElementById('action-btns');
     if (!el) return;
-    var isMyTurn = gs.currentPlayerId === humanPlayerId;
-    var me = gs.players.find(function (p) { return p.id === humanPlayerId; });
-    if (!me) return;
+    var cur = currentPlayer(gs);
+    var isCurrentHuman = cur && !cur.isAI;
+    var currentId = cur ? cur.id : null;
 
     var html = '';
 
-    if (isMyTurn && gs.phase === 'draw') {
+    if (isCurrentHuman && gs.phase === 'draw') {
       html += '<button class="btn-action btn-draw" id="btn-draw">' + t('game.btn.draw') + '</button>';
     }
 
-    if (isMyTurn && gs.phase === 'ability' && !me.abilityUsed && !me.abilityBlocked) {
+    if (isCurrentHuman && gs.phase === 'ability' && !cur.abilityUsed && !cur.abilityBlocked) {
       html += '<button class="btn-action btn-ability" id="btn-ability">' +
-        t('game.btn.ability', { name: CHARACTERS[me.characterId].ability.name }) +
+        t('game.btn.ability', { name: CHARACTERS[cur.characterId].ability.name }) +
       '</button>';
     }
 
-    if (isMyTurn && (gs.phase === 'ability' || gs.phase === 'play')) {
+    if (isCurrentHuman && (gs.phase === 'ability' || gs.phase === 'play')) {
       html += '<button class="btn-action btn-end" id="btn-end">' + t('game.btn.end') + '</button>';
     }
 
-    if (!isMyTurn && me.betrayalToken && gs.phase === 'play') {
-      html += '<button class="btn-action btn-betray" id="btn-betray">' + t('game.btn.betray') + '</button>';
+    // İhanet: sıra AI'daysa ve elinde jetonu olan bir insan varsa (cihazı tutan kişi o insan adına basar)
+    if (cur && cur.isAI && gs.phase === 'play') {
+      var betrayer = gs.players.find(function (p) { return humanPlayerIds.indexOf(p.id) !== -1 && p.betrayalToken; });
+      if (betrayer) {
+        html += '<button class="btn-action btn-betray" id="btn-betray" data-pid="' + betrayer.id + '">' + t('game.btn.betray') + '</button>';
+      }
     }
 
     el.innerHTML = html;
 
     var drawBtn = document.getElementById('btn-draw');
     if (drawBtn) drawBtn.addEventListener('click', function () {
-      handleResult(Game.drawCard(humanPlayerId));
+      handleResult(Game.drawCard(currentId));
     });
 
     var abilityBtn = document.getElementById('btn-ability');
     if (abilityBtn) abilityBtn.addEventListener('click', function () {
-      var res = Game.useAbility(humanPlayerId);
+      var res = Game.useAbility(currentId);
       if (res.pending) {
         pendingAbilityResolve = res.pendingAction;
         showAbilityModal(res.pendingAction, res.state);
@@ -184,12 +201,13 @@ var UI = (function () {
 
     var endBtn = document.getElementById('btn-end');
     if (endBtn) endBtn.addEventListener('click', function () {
-      handleResult(Game.endTurn(humanPlayerId));
+      handleResult(Game.endTurn(currentId));
     });
 
     var betrayBtn = document.getElementById('btn-betray');
     if (betrayBtn) betrayBtn.addEventListener('click', function () {
-      handleResult(Game.useBetrayal(humanPlayerId));
+      var pid = betrayBtn.getAttribute('data-pid');
+      handleResult(Game.useBetrayal(pid));
     });
   }
 
@@ -198,7 +216,7 @@ var UI = (function () {
   function renderStatus(gs) {
     var el = document.getElementById('status-bar');
     if (!el) return;
-    var isMyTurn = gs.currentPlayerId === humanPlayerId;
+    var isCurrentHuman = currentPlayerIsHuman(gs);
     if (gs.over) { el.textContent = ''; return; }
 
     var phaseMap = {
@@ -207,12 +225,12 @@ var UI = (function () {
       ability: t('game.phase.ability')
     };
 
-    if (isMyTurn) {
+    if (isCurrentHuman) {
       el.textContent = t('game.status.myturn', { phase: phaseMap[gs.phase] || '' });
       el.className = 'status-bar my-turn';
     } else {
-      var cur = gs.players[gs.currentTurnIdx];
-      el.textContent = t('game.status.waiting', { name: cur.name });
+      var cur = currentPlayer(gs);
+      el.textContent = t('game.status.waiting', { name: cur ? cur.name : '' });
       el.className = 'status-bar waiting';
     }
   }
@@ -220,15 +238,16 @@ var UI = (function () {
   // ─── Card click → play flow ───────────────────────────────────────────────
 
   function handleCardClick(cardId, gs) {
-    var me = gs.players.find(function (p) { return p.id === humanPlayerId; });
-    var card = me.hand.find(function (c) { return c.id === cardId; });
+    var cur = currentPlayer(gs);
+    if (!cur || cur.isAI) return;
+    var card = cur.hand.find(function (c) { return c.id === cardId; });
     if (!card) return;
 
     if (card.type === CARD_TYPES.ACTION && card.target === 'player') {
       pendingCardPlay = { cardId: cardId };
       showTargetModal(gs, cardId);
     } else {
-      handleResult(Game.playCard(humanPlayerId, cardId, null));
+      handleResult(Game.playCard(cur.id, cardId, null));
     }
   }
 
@@ -237,7 +256,8 @@ var UI = (function () {
   function showTargetModal(gs, cardId) {
     var modal = document.getElementById('modal');
     if (!modal) return;
-    var others = gs.players.filter(function (p) { return p.id !== humanPlayerId; });
+    var currentId = gs.currentPlayerId;
+    var others = gs.players.filter(function (p) { return p.id !== currentId; });
     modal.innerHTML =
       '<div class="modal-box">' +
         '<h3>' + t('game.modal.target') + '</h3>' +
@@ -257,7 +277,7 @@ var UI = (function () {
       btn.addEventListener('click', function () {
         var targetId = btn.dataset.pid;
         closeModal();
-        handleResult(Game.playCard(humanPlayerId, cardId, targetId));
+        handleResult(Game.playCard(currentId, cardId, targetId));
         pendingCardPlay = null;
       });
     });
@@ -311,11 +331,12 @@ var UI = (function () {
     modal.innerHTML = html;
     modal.style.display = 'flex';
 
+    var currentId = gs ? gs.currentPlayerId : (Game.getState() && Game.getState().currentPlayerId);
     modal.querySelectorAll('.card-choice').forEach(function (el) {
       el.addEventListener('click', function () {
         var idx = parseInt(el.dataset.idx, 10);
         closeModal();
-        handleResult(Game.resolveAbility(humanPlayerId, { cardIndex: idx }));
+        handleResult(Game.resolveAbility(currentId, { cardIndex: idx }));
         pendingAbilityResolve = null;
       });
     });
@@ -329,7 +350,7 @@ var UI = (function () {
           choice.myCardIndex = 0;
           choice.theirCardIndex = 0;
         }
-        handleResult(Game.resolveAbility(humanPlayerId, choice));
+        handleResult(Game.resolveAbility(currentId, choice));
         pendingAbilityResolve = null;
       });
     });
