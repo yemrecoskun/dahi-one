@@ -40,7 +40,7 @@
     RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
 
     # Five Forces oyunu – sadece lobi ve oyun sayfası; diğer yollar 404
-    RewriteRule ^five-forces/?$ five-forces.html [L]
+    RewriteRule ^five-forces five-forces.html [L]
     RewriteRule ^five-forces/game/?$ five-forces/game.html [L]
     RewriteRule ^five-forces/ - [R=404,L]
 
