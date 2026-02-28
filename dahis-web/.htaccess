@@ -39,10 +39,12 @@
     RewriteRule ^funniest-dahis-characters/?$ funniest-dahis-characters.html [L]
     RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
 
-    # Five Forces oyunu – sadece lobi ve oyun sayfası; diğer yollar 404
-    RewriteRule ^five-forces five-forces.html [L]
+    # Five Forces oyunu – lobi, oyun sayfası ve statik dosyalar (css/js) geçerli; diğer yollar 404
+    RewriteRule ^five-forces/?$ five-forces.html [L]
     RewriteRule ^five-forces/game/?$ five-forces/game.html [L]
-    RewriteRule ^five-forces/ - [R=404,L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^five-forces/.+ - [R=404,L]
 
     # Karakter: /character/puls -> character/puls.html (tanımlı karakterler)
     RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
