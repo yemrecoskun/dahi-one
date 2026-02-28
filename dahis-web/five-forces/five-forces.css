@@ -302,45 +302,47 @@ button { cursor: pointer; font-family: var(--ff-sans); }
 }
 
 /* Nav buttons */
-/* Mode selection (Local / Online) */
-.mode-grid {
+/* Mode tabs (Yerel | Çevrimiçi) */
+.mode-tabs {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 24px 0;
+  gap: 0;
+  margin: 20px 0 0;
+  border-bottom: 2px solid var(--border);
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.mode-btn {
+.mode-tab {
+  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 24px 32px;
-  border: 2px solid var(--border);
-  border-radius: 14px;
-  background: var(--bg2);
-  color: var(--text);
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .2s;
-}
-.mode-btn:hover {
-  border-color: var(--accent);
-  background: rgba(102,126,234,.1);
-  transform: translateY(-2px);
-}
-.mode-btn.selected {
-  border-color: var(--accent);
-  background: rgba(102,126,234,.15);
-  box-shadow: 0 0 0 2px var(--accent);
-}
-.mode-icon { font-size: 2rem; }
-.mode-desc {
-  font-size: .8rem;
-  font-weight: 400;
+  padding: 14px 20px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  background: transparent;
   color: var(--muted);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s;
 }
+.mode-tab:hover {
+  color: var(--text);
+  background: rgba(102,126,234,.06);
+}
+.mode-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(102,126,234,.08);
+}
+.mode-tab-icon { font-size: 1.25rem; }
+.mode-tab-panel {
+  margin-top: 24px;
+}
+.mode-tab-panel[hidden] { display: none !important; }
 
 /* Online: create / join */
 .online-choice-row {
