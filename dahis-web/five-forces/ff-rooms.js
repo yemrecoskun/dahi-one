@@ -50,8 +50,8 @@
     }
   }
 
-  /** Create room; returns { roomId, code, hostId }. */
-  function createRoom(hostName, hostCharacterId) {
+  /** Create room; returns { roomId, code, hostId }. password optional. */
+  function createRoom(hostName, hostCharacterId, password) {
     return init().then(function () {
       var code = randomCode();
       var hostId = clientId();
@@ -61,6 +61,7 @@
         players: [{ id: 'p0', name: hostName, characterId: hostCharacterId, clientId: hostId }],
         status: 'waiting',
         gameState: null,
+        roomPassword: (password && String(password).trim()) || null,
         createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
       };
@@ -87,6 +88,7 @@
               code: d.code || doc.id,
               players: d.players || [],
               hostName: host ? host.name : '',
+              hasPassword: !!(d.roomPassword),
               updatedAt: d.updatedAt && d.updatedAt.toMillis ? d.updatedAt.toMillis() : 0
             });
           });
@@ -105,13 +107,13 @@
         if (!snap.exists) return null;
         var d = snap.data();
         if (d.status !== 'waiting') return null;
-        return { roomId: code, players: d.players || [], hostId: d.hostId };
+        return { roomId: code, players: d.players || [], hostId: d.hostId, hasPassword: !!(d.roomPassword) };
       });
     });
   }
 
-  /** Join room by code. Returns { roomId, mySlotIndex } or rejects. */
-  function joinRoom(code, playerName, characterId) {
+  /** Join room by code. Returns { roomId, mySlotIndex } or rejects. password required if room has one. */
+  function joinRoom(code, playerName, characterId, password) {
     return init().then(function () {
       code = String(code).toUpperCase().replace(/\s/g, '');
       if (code.length !== 6) return Promise.reject(new Error('Invalid code'));
@@ -120,6 +122,11 @@
         if (!snap.exists) return Promise.reject(new Error('Room not found'));
         var data = snap.data();
         if (data.status !== 'waiting') return Promise.reject(new Error('Game already started'));
+        if (data.roomPassword) {
+          if (String(password || '').trim() !== String(data.roomPassword).trim()) {
+            return Promise.reject(new Error('Wrong password'));
+          }
+        }
         var me = clientId();
         if (data.players.some(function (p) { return p.clientId === me; })) {
           var idx = data.players.findIndex(function (p) { return p.clientId === me; });

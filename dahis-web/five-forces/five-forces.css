@@ -492,6 +492,11 @@ button { cursor: pointer; font-family: var(--ff-sans); }
 }
 .room-code-input { max-width: 120px; display: inline-block; margin-right: 8px; }
 
+#online-join-password { margin: 16px 0; }
+#online-join-password .online-label { margin-top: 0; }
+#online-join-password .player-name-input { max-width: 200px; margin-right: 8px; }
+.room-list-lock { opacity: .85; font-size: .9em; }
+
 .btn-next, .btn-start {
   display: block;
   padding: 14px 36px;

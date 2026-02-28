@@ -69,6 +69,11 @@ var I18n = (function () {
       'lobby.online.refresh': 'Refresh',
       'lobby.online.no_rooms': 'No rooms yet. Create one!',
       'lobby.online.or_enter_code': 'Or enter room code',
+      'lobby.online.room_password_optional': 'Room password (optional)',
+      'lobby.online.room_password_placeholder': 'Leave empty for no password',
+      'lobby.online.room_password_required': 'Room password',
+      'lobby.online.continue': 'Continue',
+      'lobby.online.room_has_password': 'Password protected',
 
       // ── Game UI ──────────────────────────────────────────────
       'game.back':            '← Lobby',
@@ -276,6 +281,11 @@ var I18n = (function () {
       'lobby.online.refresh': 'Yenile',
       'lobby.online.no_rooms': 'Henüz oda yok. Bir tane oluştur!',
       'lobby.online.or_enter_code': 'Veya oda kodunu gir',
+      'lobby.online.room_password_optional': 'Oda şifresi (isteğe bağlı)',
+      'lobby.online.room_password_placeholder': 'Şifresiz bırakmak için boş bırak',
+      'lobby.online.room_password_required': 'Oda şifresi',
+      'lobby.online.continue': 'Devam',
+      'lobby.online.room_has_password': 'Şifre korumalı',
 
       // ── Oyun arayüzü ─────────────────────────────────────────
       'game.back':            '← Lobi',

@@ -87,20 +87,7 @@
         return;
       }
       if (session.lang) I18n.setLang(session.lang);
-      if (session.isOnline && session.roomId) {
-        window.ffOnlineRoomId = session.roomId;
-        window.ffIsOnline = true;
-      }
       UI.boot(session);
-      if (session.isOnline && session.roomId && window.FFRooms && window.FFRooms.subscribeRoom) {
-        window.FFRooms.subscribeRoom(session.roomId, function (data) {
-          if (!data || !data.gameState) return;
-          if (Game.restoreState && Game.getState) {
-            Game.restoreState(data.gameState);
-            if (window.UI && window.UI.refresh) window.UI.refresh(Game.getState());
-          }
-        });
-      }
     })();
   </script>
 </body>

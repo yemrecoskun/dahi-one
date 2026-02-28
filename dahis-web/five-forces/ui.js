@@ -35,11 +35,48 @@ var UI = (function () {
     }
     render(gs);
     document.addEventListener('langchange', function () { render(Game.getState()); });
+    if (sessionData.isOnline && sessionData.roomId && window.FFRooms) {
+      window.ffOnlineRoomId = sessionData.roomId;
+      window.ffIsOnline = true;
+      setTimeout(function () { setupOnlineSync(sessionData.roomId); }, 0);
+    }
   }
 
   // ─── Master render ───────────────────────────────────────────────────────────
 
   function refresh(gs) { render(gs); }
+
+  /** Online: tek kaynak – uzaktan gelen state'i karşılaştır, gerekirse restore + render. */
+  function applyRemoteState(remote) {
+    if (!remote || !Game.restoreState || !Game.getFullState) return;
+    function fp(s) {
+      if (!s) return '';
+      return [s.round, s.phase, s.currentTurnIdx, (s.deck || []).length, !!s.over, s.winner || '', (s.log || []).length].join('|');
+    }
+    var cur = Game.getFullState();
+    if (cur && fp(remote) === fp(cur)) return;
+    Game.restoreState(remote);
+    render(Game.getState());
+  }
+
+  /** Online: Firestore dinle; gelen state'i debounce ile applyRemoteState'e ver. */
+  var _remoteDebounce = null;
+  var _pendingRemote = null;
+  function setupOnlineSync(roomId) {
+    if (!window.FFRooms || !window.FFRooms.subscribeRoom || !roomId) return;
+    window.FFRooms.subscribeRoom(roomId, function (data) {
+      if (!data || !data.gameState) return;
+      _pendingRemote = data.gameState;
+      if (_remoteDebounce) return;
+      _remoteDebounce = setTimeout(function () {
+        _remoteDebounce = null;
+        if (_pendingRemote) {
+          applyRemoteState(_pendingRemote);
+          _pendingRemote = null;
+        }
+      }, 120);
+    });
+  }
 
   function render(gs) {
     if (!gs) return;
@@ -450,6 +487,8 @@ var UI = (function () {
     }
   }
 
+  function isOnline() { return !!(window.ffIsOnline && window.ffOnlineRoomId); }
+
   // ─── Toast ───────────────────────────────────────────────────────────────────
 
   function showToast(msg) {
@@ -471,5 +510,5 @@ var UI = (function () {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  return { boot: boot, refresh: refresh };
+  return { boot: boot, refresh: refresh, setupOnlineSync: setupOnlineSync, applyRemoteState: applyRemoteState, isOnline: isOnline };
 })();
