@@ -7,8 +7,10 @@
   var db = null;
   var unsubscribes = {};
 
+  /** Çevrimiçi kullanılabilir mi? Config (apiKey + projectId) doluysa evet; db init() ile sonra set edilir. */
   function isAvailable() {
-    return window.firebase && window.firebase.firestore && db;
+    var config = window.FF_FIREBASE_CONFIG;
+    return !!(config && config.apiKey && config.projectId);
   }
 
   function randomCode() {
