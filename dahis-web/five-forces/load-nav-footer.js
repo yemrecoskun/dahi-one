@@ -1,9 +1,24 @@
 /**
  * Nav ve footer HTML'ini yükler; site çevirileri (nav/footer) ve tema ile uyumlu.
- * Dil: five-forces I18n.getLang() ile senkron (nav/footer sadece bu alanlarda çevrilir).
+ * Dil: five-forces I18n.getLang() ile senkron.
  * #nav-placeholder ve #footer-placeholder gerekli.
  */
 (function () {
+  var NAV_FOOTER_STRINGS = {
+    tr: {
+      'nav.home': 'Ana Sayfa', 'nav.characters': 'Onelar', 'nav.seasons': 'Sezonlar', 'nav.fun': 'Eğlence', 'nav.dahios': 'dahiOS', 'nav.store': 'Mağaza',
+      'nav.app_download': "dahi's Uygulamayı indir",
+      'footer.copyright': "© 2025 dahi's One - Harmonya'nın Kahramanları", 'footer.privacy': 'Gizlilik Politikası', 'footer.cookie': 'Çerez Politikası', 'footer.about': 'Hakkımızda', 'footer.contact': 'İletişim', 'footer.kvkk': 'Aydınlatma Metni', 'footer.top': 'En popüler', 'footer.smartest': 'En zeki', 'footer.dangerous': 'En tehlikeli', 'footer.powerful': 'En güçlü', 'footer.creative': 'En yaratıcı', 'footer.funniest': 'En komik', 'footer.strategic': 'En stratejik', 'footer.fiveforces': 'Five Forces',
+      'theme.dark': 'Koyu mod', 'theme.light': 'Açık mod'
+    },
+    en: {
+      'nav.home': 'Home', 'nav.characters': 'Characters', 'nav.seasons': 'Seasons', 'nav.fun': 'Fun', 'nav.dahios': 'dahiOS', 'nav.store': 'Store',
+      'nav.app_download': "Download dahi's App",
+      'footer.copyright': "© 2025 dahi's One - Heroes of Harmonya", 'footer.privacy': 'Privacy Policy', 'footer.cookie': 'Cookie Policy', 'footer.about': 'About', 'footer.contact': 'Contact', 'footer.kvkk': 'Legal Notice', 'footer.top': 'Top characters', 'footer.smartest': 'Smartest', 'footer.dangerous': 'Most dangerous', 'footer.powerful': 'Most powerful', 'footer.creative': 'Most creative', 'footer.funniest': 'Funniest', 'footer.strategic': 'Best strategic', 'footer.fiveforces': 'Five Forces',
+      'theme.dark': 'Dark mode', 'theme.light': 'Light mode'
+    }
+  };
+
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
       if (document.querySelector('script[src="' + src + '"]')) {
@@ -56,10 +71,9 @@
   }
 
   function applyNavFooterI18n() {
-    var T = window.__TRANSLATIONS__;
-    if (!T) return;
+    var T = window.__TRANSLATIONS__ || NAV_FOOTER_STRINGS;
     var lang = getSiteLang();
-    var map = T[lang] || T.en || {};
+    var map = (T[lang] || T.en || T.tr) || {};
     var roots = [];
     var nav = document.getElementById('nav-placeholder');
     var footer = document.getElementById('footer-placeholder');
@@ -84,6 +98,8 @@
     }
   }
 
+  window.applyNavFooterI18n = applyNavFooterI18n;
+
   function wireNavLang() {
     document.querySelectorAll('.nav-lang-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -99,7 +115,7 @@
   function run() {
     if (!window.getI18n) {
       window.getI18n = function (key) {
-        var T = window.__TRANSLATIONS__;
+        var T = window.__TRANSLATIONS__ || NAV_FOOTER_STRINGS;
         var lang = getSiteLang();
         var map = (T && T[lang]) || (T && T.en) || {};
         return map[key] != null ? map[key] : key;
@@ -109,6 +125,7 @@
     applyNavFooterI18n();
     wireNavLang();
     document.addEventListener('langchange', function () { applyNavFooterI18n(); });
+    setTimeout(applyNavFooterI18n, 0);
   }
 
   loadScript('/js/translations.js')
@@ -126,6 +143,9 @@
         inject('footer-placeholder', '/includes/footer.html')
       ]).then(function () {
         if (window.applyTheme) window.applyTheme();
+        applyNavFooterI18n();
+        wireNavLang();
+        document.addEventListener('langchange', function () { applyNavFooterI18n(); });
       });
     });
 })();

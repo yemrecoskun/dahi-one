@@ -439,6 +439,7 @@ var I18n = (function () {
 
   document.addEventListener('DOMContentLoaded', function () {
     applyDOM();
+    if (window.applyNavFooterI18n) window.applyNavFooterI18n();
     // Wire up any .lang-btn buttons already in the DOM
     document.querySelectorAll('.lang-btn').forEach(function (btn) {
       btn.addEventListener('click', function () { setLang(btn.dataset.lang); });
