@@ -344,7 +344,53 @@ button { cursor: pointer; font-family: var(--ff-sans); }
 }
 .mode-tab-panel[hidden] { display: none !important; }
 
-/* Online: create / join */
+/* Online: üst butonlar + oda listesi */
+.online-top-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.btn-online-top {
+  padding: 12px 24px;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+}
+.btn-online-top:hover { opacity: .9; transform: translateY(-1px); }
+.btn-online-top:last-child {
+  background: transparent;
+  color: var(--accent);
+}
+.btn-online-top:last-child:hover { background: rgba(102,126,234,.1); }
+.btn-back {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: .9rem;
+  cursor: pointer;
+}
+.btn-back:hover { color: var(--text); }
+.btn-refresh-rooms {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg3);
+  color: var(--text);
+  font-size: .85rem;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.btn-refresh-rooms:hover { border-color: var(--accent); color: var(--accent); }
+#online-rooms-view .room-list-actions { margin-bottom: 8px; }
 .online-choice-row {
   display: flex;
   gap: 12px;

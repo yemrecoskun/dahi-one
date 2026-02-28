@@ -52,18 +52,25 @@
       </div>
       <p class="step-note" id="online-config-note" style="display:none;" data-i18n="lobby.mode.online_config">Configure Firebase in ff-config.js to play online.</p>
 
-      <!-- Online panel (sekme içeriği) -->
+      <!-- Online panel: üstte butonlar, altta sadece odalar -->
       <div class="mode-tab-panel" id="mode-panel-online" role="tabpanel" hidden>
-      <!-- Online: Create or Join – seçenekler her zaman görünür -->
-      <div id="online-choices" class="hidden">
-        <div class="online-choice-row">
-          <button type="button" class="btn-online-choice" id="btn-create-room" data-i18n="lobby.online.create">Create room</button>
-          <button type="button" class="btn-online-choice" id="btn-join-room" data-i18n="lobby.online.join">Join room</button>
-        </div>
+      <div class="online-top-actions">
+        <button type="button" class="btn-online-top" id="btn-new-room" data-i18n="lobby.online.new_room">New room</button>
+        <button type="button" class="btn-online-top" id="btn-search-code" data-i18n="lobby.online.search_code">Search by code</button>
       </div>
 
-      <!-- Create room: name + character + optional password → Create -->
+      <!-- Ana görünüm: sadece oda listesi -->
+      <div id="online-rooms-view">
+        <div class="room-list-actions">
+          <button type="button" class="btn-refresh-rooms" id="btn-refresh-rooms" data-i18n="lobby.online.refresh">Refresh</button>
+        </div>
+        <ul id="room-list" class="room-list"></ul>
+        <p class="room-list-empty hidden" id="room-list-empty" data-i18n="lobby.online.no_rooms">No rooms yet. Create one!</p>
+      </div>
+
+      <!-- Yeni oda oluştur formu (gizli) -->
       <div id="online-create-block" class="hidden">
+        <button type="button" class="btn-back" id="btn-create-back" data-i18n="lobby.online.back">← Back</button>
         <label class="online-label" data-i18n="lobby.online.your_name">Your name</label>
         <input type="text" id="online-create-name" class="player-name-input" maxlength="20" placeholder="" data-i18n-placeholder="lobby.player.placeholder">
         <label class="online-label" data-i18n="lobby.online.room_password_optional">Room password (optional)</label>
@@ -73,15 +80,10 @@
         <button type="button" class="btn-start" id="btn-do-create-room" data-i18n="lobby.online.do_create">Create room</button>
       </div>
 
-      <!-- Join room: oda listesi + veya kodu gir -->
-      <div id="online-join-block" class="hidden">
-        <h3 class="room-list-title" data-i18n="lobby.online.available_rooms">Available rooms</h3>
-        <div class="room-list-actions">
-          <button type="button" class="btn-online-choice" id="btn-refresh-rooms" data-i18n="lobby.online.refresh">Refresh</button>
-        </div>
-        <ul id="room-list" class="room-list"></ul>
-        <p class="room-list-empty hidden" id="room-list-empty" data-i18n="lobby.online.no_rooms">No rooms yet. Create one!</p>
-        <div class="room-join-divider" data-i18n="lobby.online.or_enter_code">Or enter room code</div>
+      <!-- Oda kodu arat (gizli) -->
+      <div id="online-join-by-code" class="hidden">
+        <button type="button" class="btn-back" id="btn-join-back" data-i18n="lobby.online.back">← Back</button>
+        <label class="online-label" data-i18n="lobby.online.room_code">Room code (6 characters)</label>
         <input type="text" id="online-join-code" class="player-name-input room-code-input" maxlength="6" placeholder="ABC123" style="text-transform:uppercase;">
         <button type="button" class="btn-online-choice" id="btn-do-join-fetch">OK</button>
         <div id="online-join-password" class="hidden">
@@ -386,33 +388,24 @@
     var onlineIsHost = false;
     var onlineMySlotIndex = 0;
 
-    /** Çevrimiçi içinde hangi akış görünsün: online-create-block | online-join-block | online-room-waiting. Diğerleri hidden. */
-    function showOnlineScreen(which) {
-      var choices = document.getElementById('online-choices');
+    /** Çevrimiçi panelde hangi görünüm: rooms | create | join-by-code | room-waiting */
+    function showOnlineView(which) {
+      var roomsView = document.getElementById('online-rooms-view');
       var create = document.getElementById('online-create-block');
-      var join = document.getElementById('online-join-block');
+      var joinCode = document.getElementById('online-join-by-code');
       var waiting = document.getElementById('online-room-waiting');
-      if (choices) choices.classList.remove('hidden');
+      if (roomsView) roomsView.classList.add('hidden');
       if (create) create.classList.add('hidden');
-      if (join) join.classList.add('hidden');
+      if (joinCode) joinCode.classList.add('hidden');
       if (waiting) waiting.classList.add('hidden');
-      if (which === 'online-create-block' && create) create.classList.remove('hidden');
-      if (which === 'online-join-block' && join) join.classList.remove('hidden');
-      if (which === 'online-room-waiting' && waiting) waiting.classList.remove('hidden');
-      document.querySelectorAll('#online-choices .btn-online-choice').forEach(function (btn) {
-        btn.classList.remove('selected');
-      });
-      if (which === 'online-create-block') {
-        var bc = document.getElementById('btn-create-room');
-        if (bc) bc.classList.add('selected');
-      }
-      if (which === 'online-join-block') {
-        var bj = document.getElementById('btn-join-room');
-        if (bj) bj.classList.add('selected');
+      if (which === 'rooms' && roomsView) { roomsView.classList.remove('hidden'); refreshRoomList(); }
+      if (which === 'create' && create) create.classList.remove('hidden');
+      if (which === 'join-by-code' && joinCode) {
+        joinCode.classList.remove('hidden');
         document.getElementById('online-join-after').classList.add('hidden');
         document.getElementById('online-join-password').classList.add('hidden');
-        refreshRoomList();
       }
+      if (which === 'room-waiting' && waiting) waiting.classList.remove('hidden');
     }
 
     function refreshRoomList() {
@@ -485,7 +478,7 @@
           onlineMySlotIndex = res.mySlotIndex;
           document.getElementById('room-code-display').textContent = code;
           document.getElementById('room-link-input').value = '';
-          showOnlineScreen('online-room-waiting');
+          showOnlineView('room-waiting');
           document.getElementById('btn-online-start').classList.add('hidden');
           document.getElementById('room-waiting-msg').classList.remove('hidden');
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
@@ -530,7 +523,7 @@
     document.getElementById('btn-mode-local').addEventListener('click', function () {
       setModeTab('local');
       document.getElementById('online-config-note').style.display = 'none';
-      ['online-choices', 'online-create-block', 'online-join-block', 'online-room-waiting'].forEach(function (id) {
+      ['online-rooms-view', 'online-create-block', 'online-join-by-code', 'online-room-waiting'].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) el.classList.add('hidden');
       });
@@ -544,12 +537,13 @@
         return;
       }
       document.getElementById('online-config-note').style.display = 'none';
-      showOnlineScreen('online-create-block');
+      showOnlineView('rooms');
     });
 
-    document.getElementById('btn-create-room').addEventListener('click', function () {
-      showOnlineScreen('online-create-block');
+    document.getElementById('btn-new-room').addEventListener('click', function () {
+      showOnlineView('create');
       document.getElementById('online-create-name').value = '';
+      document.getElementById('online-create-password').value = '';
       var createChar = CHAR_IDS[0];
       buildSingleCharGrid('online-create-char-grid', createChar, function (cid) { createChar = cid; });
       document.getElementById('btn-do-create-room').onclick = function () {
@@ -564,9 +558,9 @@
           onlineMySlotIndex = 0;
           document.getElementById('room-code-display').textContent = res.code;
           document.getElementById('room-link-input').value = window.location.origin + '/five-forces/?join=' + res.code;
-          showOnlineScreen('online-room-waiting');
+          showOnlineView('room-waiting');
           document.getElementById('btn-online-start').classList.remove('hidden');
-          document.getElementById('room-waiting-msg').classList.add('hidden');
+          document.getElementById('room-waiting-msg').classList.remove('hidden');
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
             if (!data) return;
             var list = document.getElementById('room-players-list');
@@ -577,10 +571,17 @@
       };
     });
 
-    document.getElementById('btn-join-room').addEventListener('click', function () {
-      showOnlineScreen('online-join-block');
+    document.getElementById('btn-create-back').addEventListener('click', function () {
+      showOnlineView('rooms');
+    });
+
+    document.getElementById('btn-search-code').addEventListener('click', function () {
+      showOnlineView('join-by-code');
       document.getElementById('online-join-code').value = '';
-      document.getElementById('online-join-after').classList.add('hidden');
+    });
+
+    document.getElementById('btn-join-back').addEventListener('click', function () {
+      showOnlineView('rooms');
     });
 
     document.getElementById('btn-refresh-rooms').addEventListener('click', function () {
@@ -615,7 +616,7 @@
     document.getElementById('btn-leave-room').addEventListener('click', function () {
       if (onlineRoomId && window.FFRooms) window.FFRooms.leaveRoom(onlineRoomId);
       onlineRoomId = null;
-      showOnlineScreen('online-create-block');
+      showOnlineView('rooms');
       document.getElementById('btn-online-start').classList.add('hidden');
       document.getElementById('room-waiting-msg').classList.remove('hidden');
     });

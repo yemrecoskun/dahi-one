@@ -74,6 +74,9 @@ var I18n = (function () {
       'lobby.online.room_password_required': 'Room password',
       'lobby.online.continue': 'Continue',
       'lobby.online.room_has_password': 'Password protected',
+      'lobby.online.new_room': 'New room',
+      'lobby.online.search_code': 'Search by code',
+      'lobby.online.back': '← Back',
 
       // ── Game UI ──────────────────────────────────────────────
       'game.back':            '← Lobby',
@@ -286,6 +289,9 @@ var I18n = (function () {
       'lobby.online.room_password_required': 'Oda şifresi',
       'lobby.online.continue': 'Devam',
       'lobby.online.room_has_password': 'Şifre korumalı',
+      'lobby.online.new_room': 'Yeni oda oluştur',
+      'lobby.online.search_code': 'Oda kodu arat',
+      'lobby.online.back': '← Geri',
 
       // ── Oyun arayüzü ─────────────────────────────────────────
       'game.back':            '← Lobi',
