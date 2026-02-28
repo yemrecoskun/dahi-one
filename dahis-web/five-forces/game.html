@@ -67,11 +67,15 @@
 
   <div id="footer-placeholder"></div>
 
-  <!-- Scripts: nav/footer (site ile aynı), then game -->
+  <!-- Scripts: nav/footer, then game; Firebase for online sync -->
   <script src="load-nav-footer.js"></script>
   <script src="i18n.js"></script>
   <script src="characters.js"></script>
   <script src="deck.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="ff-config.js"></script>
+  <script src="ff-rooms.js"></script>
   <script src="game.js"></script>
   <script src="ui.js"></script>
   <script>
@@ -82,9 +86,21 @@
         window.location.href = '/five-forces';
         return;
       }
-      // Restore language from lobby selection if present
       if (session.lang) I18n.setLang(session.lang);
+      if (session.isOnline && session.roomId) {
+        window.ffOnlineRoomId = session.roomId;
+        window.ffIsOnline = true;
+      }
       UI.boot(session);
+      if (session.isOnline && session.roomId && window.FFRooms && window.FFRooms.subscribeRoom) {
+        window.FFRooms.subscribeRoom(session.roomId, function (data) {
+          if (!data || !data.gameState) return;
+          if (Game.restoreState && Game.getState) {
+            Game.restoreState(data.gameState);
+            if (window.UI && window.UI.refresh) window.UI.refresh(Game.getState());
+          }
+        });
+      }
     })();
   </script>
 </body>

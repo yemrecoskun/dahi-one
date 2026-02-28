@@ -26,7 +26,7 @@
 
     <div class="logo-block">
       <div class="logo-glyph">⚡</div>
-      <h1 class="lobby-title">DAHIS<br><span>Five Forces</span></h1>
+      <h1 class="lobby-title"><span>Five Forces</span></h1>
       <p class="lobby-subtitle" data-i18n="lobby.subtitle">Strategic · Turn-based · Card Game</p>
     </div>
   </header>
@@ -34,8 +34,71 @@
   <!-- ── Steps ─────────────────────────────────────────────── -->
   <main class="lobby-main">
 
-    <!-- Step 1: Player count -->
-    <section class="lobby-step" id="step-count">
+    <!-- Step 0: Play mode (Local vs Online) -->
+    <section class="lobby-step" id="step-mode">
+      <h2 class="step-title">
+        <span class="step-num">00</span>
+        <span data-i18n="lobby.mode.title">How do you want to play?</span>
+      </h2>
+      <div class="mode-grid">
+        <button type="button" class="mode-btn" id="btn-mode-local" data-mode="local">
+          <span class="mode-icon">📱</span>
+          <span data-i18n="lobby.mode.local">Local</span>
+          <span class="mode-desc" data-i18n="lobby.mode.local_desc">Same device</span>
+        </button>
+        <button type="button" class="mode-btn" id="btn-mode-online" data-mode="online">
+          <span class="mode-icon">🌐</span>
+          <span data-i18n="lobby.mode.online">Online</span>
+          <span class="mode-desc" data-i18n="lobby.mode.online_desc">Create or join a room</span>
+        </button>
+      </div>
+      <p class="step-note" id="online-config-note" style="display:none;" data-i18n="lobby.mode.online_config">Configure Firebase in ff-config.js to play online.</p>
+
+      <!-- Online: Create or Join -->
+      <div id="online-choices" class="hidden">
+        <div class="online-choice-row">
+          <button type="button" class="btn-online-choice" id="btn-create-room" data-i18n="lobby.online.create">Create room</button>
+          <button type="button" class="btn-online-choice" id="btn-join-room" data-i18n="lobby.online.join">Join with code</button>
+        </div>
+      </div>
+
+      <!-- Create room: name + character → Create -->
+      <div id="online-create-block" class="hidden">
+        <label class="online-label" data-i18n="lobby.online.your_name">Your name</label>
+        <input type="text" id="online-create-name" class="player-name-input" maxlength="20" placeholder="" data-i18n-placeholder="lobby.player.placeholder">
+        <label class="online-label" data-i18n="lobby.step3.pick">Choose your character</label>
+        <div class="char-grid char-grid-inline" id="online-create-char-grid"></div>
+        <button type="button" class="btn-start" id="btn-do-create-room" data-i18n="lobby.online.do_create">Create room</button>
+      </div>
+
+      <!-- Join room: code → name + character → Join -->
+      <div id="online-join-block" class="hidden">
+        <label class="online-label" data-i18n="lobby.online.room_code">Room code (6 characters)</label>
+        <input type="text" id="online-join-code" class="player-name-input" maxlength="6" placeholder="ABC123" style="text-transform:uppercase;">
+        <button type="button" class="btn-online-choice" id="btn-do-join-fetch">OK</button>
+        <div id="online-join-after" class="hidden">
+          <label class="online-label" data-i18n="lobby.online.your_name">Your name</label>
+          <input type="text" id="online-join-name" class="player-name-input" maxlength="20">
+          <label class="online-label" data-i18n="lobby.step3.pick">Choose your character</label>
+          <div class="char-grid char-grid-inline" id="online-join-char-grid"></div>
+          <button type="button" class="btn-start" id="btn-do-join-room" data-i18n="lobby.online.do_join">Join room</button>
+        </div>
+      </div>
+
+      <!-- Room waiting: code + link + players + Start (host only) -->
+      <div id="online-room-waiting" class="hidden">
+        <p class="room-code-line"><span data-i18n="lobby.online.room_code">Room code</span>: <strong id="room-code-display"></strong></p>
+        <p class="room-link-line"><span data-i18n="lobby.online.share">Share link</span>: <input type="text" id="room-link-input" readonly class="room-link-input"> <button type="button" class="btn-copy-link" id="btn-copy-link" data-i18n="lobby.online.copy">Copy</button></p>
+        <h3 class="room-players-title" data-i18n="lobby.online.players">Players in room</h3>
+        <ul id="room-players-list" class="room-players-list"></ul>
+        <p class="room-waiting-msg" id="room-waiting-msg" data-i18n="lobby.online.waiting">Waiting for host to start…</p>
+        <button type="button" class="btn-start hidden" id="btn-online-start" data-i18n="lobby.btn.start">Start Game →</button>
+        <button type="button" class="btn-leave-room" id="btn-leave-room" data-i18n="lobby.online.leave">Leave room</button>
+      </div>
+    </section>
+
+    <!-- Step 1: Player count (local only) -->
+    <section class="lobby-step hidden" id="step-count">
       <h2 class="step-title">
         <span class="step-num">01</span>
         <span data-i18n="lobby.step1.title">How many players?</span>
@@ -116,11 +179,16 @@
 
   <div id="footer-placeholder"></div>
 
-  <!-- Scripts: i18n first, then game modules; nav/footer (site ile aynı) -->
+  <!-- Scripts: i18n first, then game modules; Firebase for online rooms -->
   <script src="load-nav-footer.js"></script>
   <script src="i18n.js"></script>
   <script src="characters.js"></script>
   <script src="deck.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="ff-config.js"></script>
+  <script src="ff-rooms.js"></script>
+  <script src="game.js"></script>
   <script>
   (function () {
     var CHAR_IDS = Object.keys(CHARACTERS);
@@ -275,7 +343,168 @@
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    showStep('step-count');
+    // ── Play mode: Local vs Online ─────────────────────────────────
+    var onlineRoomId = null;
+    var onlineIsHost = false;
+    var onlineMySlotIndex = 0;
+
+    function showOnlineScreen(which) {
+      ['online-choices', 'online-create-block', 'online-join-block', 'online-room-waiting'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== which);
+      });
+      if (which === 'online-join-block') {
+        document.getElementById('online-join-after').classList.add('hidden');
+      }
+    }
+
+    function goToGameWithRoom(roomId, gameState, humanIdx) {
+      sessionStorage.setItem('ffSession', JSON.stringify({
+        roomId: roomId,
+        gameState: gameState,
+        humanIdx: humanIdx,
+        lang: I18n.getLang(),
+        isOnline: true
+      }));
+      window.location.href = '/five-forces/game';
+    }
+
+    function buildSingleCharGrid(containerId, selectedCid, onSelect) {
+      var container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = CHAR_IDS.map(function (cid) {
+        var c = CHARACTERS[cid];
+        var sel = selectedCid === cid ? ' selected' : '';
+        var avatarHtml = c.image ? '<div class="char-avatar"><img src="' + c.image + '" alt=""></div>' : '<div class="char-avatar" style="background:' + c.gradient + '">' + c.emoji + '</div>';
+        return '<div class="char-card' + sel + '" data-cid="' + cid + '">' + avatarHtml + '<h3>' + c.name + '</h3></div>';
+      }).join('');
+      container.querySelectorAll('.char-card').forEach(function (el) {
+        el.addEventListener('click', function () {
+          container.querySelectorAll('.char-card').forEach(function (c) { c.classList.remove('selected'); });
+          el.classList.add('selected');
+          if (onSelect) onSelect(el.dataset.cid);
+        });
+      });
+    }
+
+    document.getElementById('btn-mode-local').addEventListener('click', function () {
+      document.getElementById('step-mode').querySelector('.mode-grid').style.display = '';
+      document.getElementById('online-choices').classList.add('hidden');
+      showStep('step-count');
+    });
+
+    document.getElementById('btn-mode-online').addEventListener('click', function () {
+      if (!window.FFRooms || !window.FFRooms.isAvailable()) {
+        document.getElementById('online-config-note').style.display = 'block';
+        return;
+      }
+      document.getElementById('online-config-note').style.display = 'none';
+      document.getElementById('step-mode').querySelector('.mode-grid').style.display = 'none';
+      showOnlineScreen('online-choices');
+    });
+
+    document.getElementById('btn-create-room').addEventListener('click', function () {
+      showOnlineScreen('online-create-block');
+      document.getElementById('online-create-name').value = '';
+      var createChar = CHAR_IDS[0];
+      buildSingleCharGrid('online-create-char-grid', createChar, function (cid) { createChar = cid; });
+      document.getElementById('btn-do-create-room').onclick = function () {
+        var name = (document.getElementById('online-create-name').value || '').trim() || 'Host';
+        var grid = document.getElementById('online-create-char-grid');
+        var sel = grid && grid.querySelector('.char-card.selected');
+        var cid = sel ? sel.dataset.cid : CHAR_IDS[0];
+        window.FFRooms.createRoom(name, cid).then(function (res) {
+          onlineRoomId = res.roomId;
+          onlineIsHost = true;
+          onlineMySlotIndex = 0;
+          document.getElementById('room-code-display').textContent = res.code;
+          document.getElementById('room-link-input').value = window.location.origin + '/five-forces/?join=' + res.code;
+          showOnlineScreen('online-room-waiting');
+          document.getElementById('btn-online-start').classList.remove('hidden');
+          document.getElementById('room-waiting-msg').classList.add('hidden');
+          window.FFRooms.subscribeRoom(res.roomId, function (data) {
+            if (!data) return;
+            var list = document.getElementById('room-players-list');
+            if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + ' – ' + (CHARACTERS[p.characterId] ? CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
+            if (data.status === 'playing' && data.gameState) goToGameWithRoom(res.roomId, data.gameState, 0);
+          });
+        }).catch(function (err) { alert(err.message || 'Failed to create room'); });
+      };
+    });
+
+    document.getElementById('btn-join-room').addEventListener('click', function () {
+      showOnlineScreen('online-join-block');
+      document.getElementById('online-join-code').value = '';
+      document.getElementById('online-join-after').classList.add('hidden');
+    });
+
+    document.getElementById('btn-do-join-fetch').addEventListener('click', function () {
+      var code = (document.getElementById('online-join-code').value || '').toUpperCase().replace(/\s/g, '');
+      if (code.length !== 6) { alert(t('lobby.online.invalid_code') || 'Enter 6-character code'); return; }
+      window.FFRooms.getRoom(code).then(function (room) {
+        if (!room) { alert(t('lobby.online.room_not_found') || 'Room not found'); return; }
+        document.getElementById('online-join-after').classList.remove('hidden');
+        document.getElementById('online-join-name').value = '';
+        var joinChar = CHAR_IDS[0];
+        buildSingleCharGrid('online-join-char-grid', joinChar, function (cid) { joinChar = cid; });
+        document.getElementById('btn-do-join-room').onclick = function () {
+          var name = (document.getElementById('online-join-name').value || '').trim() || 'Player';
+          var grid = document.getElementById('online-join-char-grid');
+          var sel = grid && grid.querySelector('.char-card.selected');
+          var cid = sel ? sel.dataset.cid : CHAR_IDS[0];
+          window.FFRooms.joinRoom(code, name, cid).then(function (res) {
+            onlineRoomId = res.roomId;
+            onlineIsHost = false;
+            onlineMySlotIndex = res.mySlotIndex;
+            document.getElementById('room-code-display').textContent = code;
+            document.getElementById('room-link-input').value = '';
+            showOnlineScreen('online-room-waiting');
+            document.getElementById('btn-online-start').classList.add('hidden');
+            document.getElementById('room-waiting-msg').classList.remove('hidden');
+            window.FFRooms.subscribeRoom(res.roomId, function (data) {
+              if (!data) return;
+              var list = document.getElementById('room-players-list');
+              if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + ' – ' + (CHARACTERS[p.characterId] ? CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
+              if (data.status === 'playing' && data.gameState) goToGameWithRoom(onlineRoomId, data.gameState, onlineMySlotIndex);
+            });
+          }).catch(function (err) { alert(err.message || 'Join failed'); });
+        };
+      });
+    });
+
+    document.getElementById('btn-online-start').addEventListener('click', function () {
+      if (!onlineRoomId || !onlineIsHost || !window.FFRooms) return;
+      window.FFRooms.init().then(function () {
+        var ref = window.firebase.firestore().collection('ff_rooms').doc(onlineRoomId);
+        ref.get().then(function (snap) {
+          var data = snap.exists ? snap.data() : null;
+          if (!data || !data.players || data.players.length < 2) {
+            alert(t('lobby.online.min_players') || 'At least 2 players to start.');
+            return;
+          }
+          var players = data.players.map(function (p) { return { name: (p.name || '').trim() || ('Player'), characterId: p.characterId, isAI: false }; });
+          Game.init(players);
+          var full = Game.getFullState && Game.getFullState();
+          if (!full) return;
+          window.FFRooms.startGame(onlineRoomId, full).then(function () { goToGameWithRoom(onlineRoomId, full, 0); });
+        });
+      });
+    });
+
+    document.getElementById('btn-leave-room').addEventListener('click', function () {
+      if (onlineRoomId && window.FFRooms) window.FFRooms.leaveRoom(onlineRoomId);
+      onlineRoomId = null;
+      showOnlineScreen('online-choices');
+      document.getElementById('btn-online-start').classList.add('hidden');
+      document.getElementById('room-waiting-msg').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-copy-link').addEventListener('click', function () {
+      var input = document.getElementById('room-link-input');
+      if (input) { input.select(); try { document.execCommand('copy'); } catch (e) {} }
+    });
+
+    showStep('step-mode');
   })();
   </script>
 </body>

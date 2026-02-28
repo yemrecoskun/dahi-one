@@ -302,6 +302,81 @@ var Game = (function () {
     };
   }
 
+  /** Full state for online sync (includes deck + discardPile). */
+  function getFullState() {
+    if (!state) return null;
+    return {
+      players: state.players.map(function (p) {
+        return {
+          id: p.id,
+          name: p.name,
+          characterId: p.characterId,
+          isAI: p.isAI,
+          hand: p.hand.slice(),
+          score: p.score,
+          betrayalToken: p.betrayalToken,
+          abilityUsed: p.abilityUsed,
+          abilityBlocked: p.abilityBlocked,
+          skipNext: p.skipNext,
+          lumoBonus: p.lumoBonus,
+          zestDoubleTarget: p.zestDoubleTarget
+        };
+      }),
+      deck: state.deck.slice(),
+      discardPile: state.discardPile.slice(),
+      currentTurnIdx: state.currentTurnIdx,
+      turnDirection: state.turnDirection,
+      round: state.round,
+      phase: state.phase,
+      scoreLocked: state.scoreLocked,
+      scoreLockTurns: state.scoreLockTurns,
+      pendingAbility: state.pendingAbility ? { playerId: state.pendingAbility.playerId, action: state.pendingAbility.action } : null,
+      pendingCard: state.pendingCard,
+      log: state.log.slice(),
+      over: state.over,
+      winner: state.winner
+    };
+  }
+
+  /** Restore state from getFullState() (e.g. after receiving from server). */
+  function restoreState(full) {
+    if (!full || !full.players || !full.deck) return false;
+    state = {
+      players: full.players.map(function (p) {
+        var charId = p.characterId;
+        return {
+          id: p.id,
+          name: p.name,
+          characterId: charId,
+          character: CHARACTERS[charId],
+          isAI: !!p.isAI,
+          hand: (p.hand || []).slice(),
+          score: p.score || 0,
+          betrayalToken: p.betrayalToken !== false,
+          abilityUsed: !!p.abilityUsed,
+          abilityBlocked: !!p.abilityBlocked,
+          skipNext: !!p.skipNext,
+          lumoBonus: !!p.lumoBonus,
+          zestDoubleTarget: !!p.zestDoubleTarget
+        };
+      }),
+      deck: (full.deck || []).slice(),
+      discardPile: (full.discardPile || []).slice(),
+      currentTurnIdx: full.currentTurnIdx || 0,
+      turnDirection: full.turnDirection !== undefined ? full.turnDirection : 1,
+      round: full.round || 1,
+      phase: full.phase || 'draw',
+      scoreLocked: !!full.scoreLocked,
+      scoreLockTurns: full.scoreLockTurns || 0,
+      pendingAbility: full.pendingAbility || null,
+      pendingCard: full.pendingCard || null,
+      log: (full.log || []).slice(),
+      over: !!full.over,
+      winner: full.winner || null
+    };
+    return true;
+  }
+
   function ok()    { return { ok: true,  over: false, state: getPublicState() }; }
   function err(msg){ return { ok: false, error: msg,  state: getPublicState() }; }
 
@@ -313,6 +388,8 @@ var Game = (function () {
     resolveAbility: resolveAbility,
     useBetrayal: useBetrayal,
     endTurn: endTurn,
-    getState: getPublicState
+    getState: getPublicState,
+    getFullState: getFullState,
+    restoreState: restoreState
   };
 })();

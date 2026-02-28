@@ -23,8 +23,16 @@ var UI = (function () {
   // ─── Bootstrap ───────────────────────────────────────────────────────────────
 
   function boot(sessionData) {
-    var gs = Game.init(sessionData.players);
-    humanPlayerIds = gs.players.filter(function (p) { return !p.isAI; }).map(function (p) { return p.id; });
+    var gs;
+    if (sessionData.gameState && sessionData.roomId && Game.restoreState) {
+      Game.restoreState(sessionData.gameState);
+      gs = Game.getState();
+      var idx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
+      humanPlayerIds = gs.players[idx] ? [gs.players[idx].id] : [];
+    } else {
+      gs = Game.init(sessionData.players);
+      humanPlayerIds = gs.players.filter(function (p) { return !p.isAI; }).map(function (p) { return p.id; });
+    }
     render(gs);
     document.addEventListener('langchange', function () { render(Game.getState()); });
   }
@@ -437,6 +445,9 @@ var UI = (function () {
     if (!res) return;
     if (res.error) showToast(res.error);
     if (res.state) render(res.state);
+    if (res.ok && window.ffIsOnline && window.ffOnlineRoomId && window.FFRooms && window.FFRooms.updateGameState && Game.getFullState) {
+      window.FFRooms.updateGameState(window.ffOnlineRoomId, Game.getFullState()).catch(function () {});
+    }
   }
 
   // ─── Toast ───────────────────────────────────────────────────────────────────

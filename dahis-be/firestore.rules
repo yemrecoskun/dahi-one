@@ -35,6 +35,11 @@ service cloud.firestore {
       allow write: if false; // Sadece admin scriptinden yazılabilir
     }
 
+    // Five Forces online rooms (lobby + game state sync)
+    match /ff_rooms/{roomId} {
+      allow read, write: if true;
+    }
+
     // Seasons - Public read (herkes okuyabilir)
     match /seasons/{seasonId} {
       allow read: if true;
