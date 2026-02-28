@@ -6,9 +6,10 @@
 
 var UI = (function () {
 
-  var humanPlayerIds = [];  // Tüm insan oyuncu id'leri (sıra kimdeyse o oynar)
+  var humanPlayerIds = [];
   var pendingCardPlay = null;
   var pendingAbilityResolve = null;
+  var handoffPending = false;  // "Turu bitir" tıklandı, kartlar gizli; "Sıradaki oyuncuya geç" bekleniyor
 
   function currentPlayer(gs) {
     return gs && gs.players[gs.currentTurnIdx];
@@ -108,14 +109,19 @@ var UI = (function () {
   function renderHand(gs) {
     var el = document.getElementById('hand-area');
     if (!el) return;
-    var cur = currentPlayer(gs);
     var titleEl = document.querySelector('.hand-title');
     if (titleEl) titleEl.textContent = t('game.hand.title');
 
-    // Sıradaki oyuncu insansa onun elini göster; AI ise "X oynuyor..." mesajı
+    // Cihaz devri bekleniyorsa kartları gösterme
+    if (handoffPending) {
+      el.innerHTML = '<p class="empty-hand handoff-msg">' + t('game.passDevice') + '</p>';
+      return;
+    }
+
+    var cur = currentPlayer(gs);
     if (!cur) return;
     if (cur.isAI) {
-      el.innerHTML = '<p class="empty-hand">' + cur.name + ' ' + (gs.phase === 'draw' ? '' : '') + '…</p>';
+      el.innerHTML = '<p class="empty-hand">' + cur.name + ' …</p>';
       return;
     }
 
@@ -160,6 +166,22 @@ var UI = (function () {
 
     var html = '';
 
+    // Cihaz devri: sadece "Sıradaki oyuncuya geç" butonu
+    if (handoffPending) {
+      var n = gs.players.length;
+      var nextIdx = (gs.currentTurnIdx + (gs.turnDirection || 1) + n) % n;
+      var nextPl = gs.players[nextIdx];
+      var nextName = nextPl ? nextPl.name : '';
+      html += '<button class="btn-action btn-pass-device" id="btn-pass-device">' +
+        t('game.passDeviceBtn', { name: nextName }) + '</button>';
+      el.innerHTML = html;
+      document.getElementById('btn-pass-device').addEventListener('click', function () {
+        handoffPending = false;
+        handleResult(Game.endTurn(gs.currentPlayerId));
+      });
+      return;
+    }
+
     if (isCurrentHuman && gs.phase === 'draw') {
       html += '<button class="btn-action btn-draw" id="btn-draw">' + t('game.btn.draw') + '</button>';
     }
@@ -174,7 +196,6 @@ var UI = (function () {
       html += '<button class="btn-action btn-end" id="btn-end">' + t('game.btn.end') + '</button>';
     }
 
-    // İhanet: sıra AI'daysa ve elinde jetonu olan bir insan varsa (cihazı tutan kişi o insan adına basar)
     if (cur && cur.isAI && gs.phase === 'play') {
       var betrayer = gs.players.find(function (p) { return humanPlayerIds.indexOf(p.id) !== -1 && p.betrayalToken; });
       if (betrayer) {
@@ -201,7 +222,8 @@ var UI = (function () {
 
     var endBtn = document.getElementById('btn-end');
     if (endBtn) endBtn.addEventListener('click', function () {
-      handleResult(Game.endTurn(currentId));
+      handoffPending = true;
+      render(Game.getState());
     });
 
     var betrayBtn = document.getElementById('btn-betray');
@@ -216,9 +238,15 @@ var UI = (function () {
   function renderStatus(gs) {
     var el = document.getElementById('status-bar');
     if (!el) return;
-    var isCurrentHuman = currentPlayerIsHuman(gs);
     if (gs.over) { el.textContent = ''; return; }
 
+    if (handoffPending) {
+      el.textContent = t('game.passDevice');
+      el.className = 'status-bar waiting';
+      return;
+    }
+
+    var isCurrentHuman = currentPlayerIsHuman(gs);
     var phaseMap = {
       draw: t('game.phase.draw'),
       play: t('game.phase.play'),

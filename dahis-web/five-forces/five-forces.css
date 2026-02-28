@@ -612,6 +612,13 @@ button { cursor: pointer; font-family: var(--ff-sans); }
 .btn-end:hover { border-color: var(--muted); }
 .btn-betray  { background: linear-gradient(135deg, #f5576c, #f093fb); color: #fff; }
 .btn-betray:hover { opacity: .9; transform: translateY(-1px); }
+.btn-pass-device {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: #07070d;
+  font-size: 1rem;
+  padding: 14px 28px;
+}
+.btn-pass-device:hover { opacity: .95; transform: translateY(-2px); }
 
 /* Hand area */
 .hand-wrapper {
@@ -637,6 +644,12 @@ button { cursor: pointer; font-family: var(--ff-sans); }
 .empty-hand {
   color: var(--muted);
   font-size: .85rem;
+}
+.empty-hand.handoff-msg {
+  font-size: 1rem;
+  color: var(--text);
+  padding: 1rem;
+  text-align: center;
   align-self: center;
 }
 
