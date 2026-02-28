@@ -15,6 +15,7 @@ var CHARACTERS = {
     color: '#4facfe',
     gradient: 'linear-gradient(135deg,#4facfe,#00f2fe)',
     emoji: '🔵',
+    image: '/mavi.png',
     ability: {
       get name() { return t('char.aura.ability'); },
       get desc() { return t('char.aura.desc'); },
@@ -28,6 +29,7 @@ var CHARACTERS = {
     color: '#fee140',
     gradient: 'linear-gradient(135deg,#f9d423,#f83600)',
     emoji: '🟡',
+    image: '/sari.png',
     ability: {
       get name() { return t('char.lumo.ability'); },
       get desc() { return t('char.lumo.desc'); },
@@ -41,6 +43,7 @@ var CHARACTERS = {
     color: '#fa709a',
     gradient: 'linear-gradient(135deg,#fa709a,#fee140)',
     emoji: '🟠',
+    image: '/turuncu.png',
     ability: {
       get name() { return t('char.zest.ability'); },
       get desc() { return t('char.zest.desc'); },
@@ -54,6 +57,7 @@ var CHARACTERS = {
     color: '#ff4444',
     gradient: 'linear-gradient(135deg,#ff4444,#ff9944)',
     emoji: '🔴',
+    image: '/kirmizi.png',
     ability: {
       get name() { return t('char.puls.ability'); },
       get desc() { return t('char.puls.desc'); },
@@ -67,6 +71,7 @@ var CHARACTERS = {
     color: '#43e97b',
     gradient: 'linear-gradient(135deg,#43e97b,#38f9d7)',
     emoji: '🟢',
+    image: '/yesil.png',
     ability: {
       get name() { return t('char.vigo.ability'); },
       get desc() { return t('char.vigo.desc'); },

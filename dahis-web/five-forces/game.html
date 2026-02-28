@@ -6,9 +6,11 @@
   <title>DAHIS: Five Forces – Oyun</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="five-forces.css">
 </head>
 <body class="game-page">
+  <div id="nav-placeholder"></div>
 
   <!-- Status bar -->
   <div id="status-bar" class="status-bar"></div>
@@ -63,7 +65,10 @@
   <!-- Toast -->
   <div id="toast" class="toast"></div>
 
-  <!-- Scripts: i18n first, then game modules -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts: nav/footer (site ile aynı), then game -->
+  <script src="load-nav-footer.js"></script>
   <script src="i18n.js"></script>
   <script src="characters.js"></script>
   <script src="deck.js"></script>

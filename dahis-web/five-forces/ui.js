@@ -54,8 +54,11 @@ var UI = (function () {
       var chr = CHARACTERS[p.characterId];
       var active = p.id === gs.currentPlayerId ? ' active' : '';
       var you = p.id === curHuman ? ' you' : '';
+      var avatarHtml = chr.image
+        ? '<span class="score-avatar"><img src="' + chr.image + '" alt=""></span>'
+        : '<span class="score-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</span>';
       return '<div class="score-entry' + active + you + '">' +
-        '<span class="score-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</span>' +
+        avatarHtml +
         '<div class="score-info">' +
           '<span class="score-name">' + escHtml(p.name) +
             (p.id === curHuman ? ' <em>(' + t('game.you') + ')</em>' : '') +
@@ -404,9 +407,12 @@ var UI = (function () {
     var chr = CHARACTERS[winner.characterId];
     var sorted = gs.players.slice().sort(function (a, b) { return b.score - a.score; });
 
+    var winnerAvatar = chr.image
+      ? '<div class="winner-avatar"><img src="' + chr.image + '" alt=""></div>'
+      : '<div class="winner-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>';
     el.innerHTML =
       '<div class="game-over-box">' +
-        '<div class="winner-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>' +
+        winnerAvatar +
         '<h2>' + t('game.over.title') + '</h2>' +
         '<p class="winner-name">' + t('game.over.wins', { name: escHtml(winner.name) }) + '</p>' +
         '<p class="winner-score">' + t('game.over.points', { n: winner.score }) + '</p>' +

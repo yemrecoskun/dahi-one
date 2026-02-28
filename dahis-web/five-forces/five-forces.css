@@ -214,6 +214,12 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   font-size: 1.6rem;
   margin: 0 auto 10px;
   box-shadow: 0 0 20px rgba(255,255,255,.15);
+  overflow: hidden;
+}
+.char-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .char-card h3 {
   font-size: 1rem;
@@ -268,6 +274,12 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   display: flex; align-items: center; justify-content: center;
   font-size: 1.3rem;
   flex-shrink: 0;
+  overflow: hidden;
+}
+.review-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .review-info {
   display: flex;
@@ -484,6 +496,12 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   display: flex; align-items: center; justify-content: center;
   font-size: 1.1rem;
   flex-shrink: 0;
+  overflow: hidden;
+}
+.score-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .score-info {
   flex: 1;
@@ -823,6 +841,12 @@ button { cursor: pointer; font-family: var(--ff-sans); }
   display: flex; align-items: center; justify-content: center;
   font-size: 2.5rem;
   box-shadow: 0 0 30px rgba(255,255,255,.2);
+  overflow: hidden;
+}
+.winner-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .game-over-box h2 {
   font-family: var(--ff-mono);

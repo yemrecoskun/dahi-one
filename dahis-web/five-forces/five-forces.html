@@ -8,9 +8,11 @@
   <meta name="description" content="DAHIS: Five Forces – stratejik çok oyunculu kart oyunu. Karakterini seç, puanını artır, rakiplerini alt et.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="five-forces.css">
 </head>
 <body class="lobby-page">
+  <div id="nav-placeholder"></div>
 
   <!-- ── Hero ───────────────────────────────────────────────── -->
   <header class="lobby-header">
@@ -112,7 +114,10 @@
     <p class="rules-note" data-i18n="lobby.rules.note2" data-i18n-html="true"><strong>⚔️ Betrayal Token</strong> – cancel an opponent's card instantly.</p>
   </section>
 
-  <!-- Scripts: i18n first, then game modules -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts: i18n first, then game modules; nav/footer (site ile aynı) -->
+  <script src="load-nav-footer.js"></script>
   <script src="i18n.js"></script>
   <script src="characters.js"></script>
   <script src="deck.js"></script>
@@ -201,8 +206,11 @@
       grid.innerHTML = CHAR_IDS.map(function (cid) {
         var c = CHARACTERS[cid];
         var taken = takenChars.indexOf(cid) !== -1;
+        var avatarHtml = c.image
+            ? '<div class="char-avatar"><img src="' + c.image + '" alt=""></div>'
+            : '<div class="char-avatar" style="background:' + c.gradient + '">' + c.emoji + '</div>';
         return '<div class="char-card' + (taken ? ' taken' : '') + '" data-cid="' + cid + '">' +
-          '<div class="char-avatar" style="background:' + c.gradient + '">' + c.emoji + '</div>' +
+          avatarHtml +
           '<h3>' + c.name + '</h3>' +
           '<p class="char-title-sub">' + c.title + '</p>' +
           '<div class="char-ability">' +
@@ -231,8 +239,11 @@
 
       el.innerHTML = assignments.map(function (a) {
         var chr = CHARACTERS[a.characterId];
+        var reviewAvatar = chr.image
+          ? '<div class="review-avatar"><img src="' + chr.image + '" alt=""></div>'
+          : '<div class="review-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>';
         return '<div class="review-row">' +
-          '<div class="review-avatar" style="background:' + chr.gradient + '">' + chr.emoji + '</div>' +
+          reviewAvatar +
           '<div class="review-info">' +
             '<strong>' + escHtml(a.name) + '</strong>' +
             (a.isAI ? ' <span class="ai-badge">AI</span>' : '') +
