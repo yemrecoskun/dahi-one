@@ -386,16 +386,20 @@
     var onlineIsHost = false;
     var onlineMySlotIndex = 0;
 
+    /** Çevrimiçi içinde hangi akış görünsün: online-create-block | online-join-block | online-room-waiting. Diğerleri hidden. */
     function showOnlineScreen(which) {
       var choices = document.getElementById('online-choices');
       var create = document.getElementById('online-create-block');
       var join = document.getElementById('online-join-block');
       var waiting = document.getElementById('online-room-waiting');
       if (choices) choices.classList.remove('hidden');
-      if (create) create.classList.toggle('hidden', which !== 'online-create-block');
-      if (join) join.classList.toggle('hidden', which !== 'online-join-block');
-      if (waiting) waiting.classList.toggle('hidden', which !== 'online-room-waiting');
-      document.querySelectorAll('.btn-online-choice').forEach(function (btn) {
+      if (create) create.classList.add('hidden');
+      if (join) join.classList.add('hidden');
+      if (waiting) waiting.classList.add('hidden');
+      if (which === 'online-create-block' && create) create.classList.remove('hidden');
+      if (which === 'online-join-block' && join) join.classList.remove('hidden');
+      if (which === 'online-room-waiting' && waiting) waiting.classList.remove('hidden');
+      document.querySelectorAll('#online-choices .btn-online-choice').forEach(function (btn) {
         btn.classList.remove('selected');
       });
       if (which === 'online-create-block') {
@@ -526,10 +530,10 @@
     document.getElementById('btn-mode-local').addEventListener('click', function () {
       setModeTab('local');
       document.getElementById('online-config-note').style.display = 'none';
-      document.getElementById('online-choices').classList.add('hidden');
-      document.getElementById('online-create-block').classList.add('hidden');
-      document.getElementById('online-join-block').classList.add('hidden');
-      document.getElementById('online-room-waiting').classList.add('hidden');
+      ['online-choices', 'online-create-block', 'online-join-block', 'online-room-waiting'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
       showStep('step-count');
     });
 
@@ -540,8 +544,7 @@
         return;
       }
       document.getElementById('online-config-note').style.display = 'none';
-      document.getElementById('online-choices').classList.remove('hidden');
-      showOnlineScreen('online-choices');
+      showOnlineScreen('online-create-block');
     });
 
     document.getElementById('btn-create-room').addEventListener('click', function () {
@@ -612,7 +615,7 @@
     document.getElementById('btn-leave-room').addEventListener('click', function () {
       if (onlineRoomId && window.FFRooms) window.FFRooms.leaveRoom(onlineRoomId);
       onlineRoomId = null;
-      showOnlineScreen('online-choices');
+      showOnlineScreen('online-create-block');
       document.getElementById('btn-online-start').classList.add('hidden');
       document.getElementById('room-waiting-msg').classList.remove('hidden');
     });
@@ -624,7 +627,6 @@
 
     showStep('step-mode');
     setModeTab('local');
-    document.getElementById('mode-panel-online').hidden = true;
   })();
   </script>
 </body>
