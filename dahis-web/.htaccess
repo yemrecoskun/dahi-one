@@ -39,6 +39,10 @@
     RewriteRule ^funniest-dahis-characters/?$ funniest-dahis-characters.html [L]
     RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
 
+    # Five Forces oyunu
+    RewriteRule ^five-forces/?$ five-forces.html [L]
+    RewriteRule ^five-forces/game/?$ five-forces/game.html [L]
+
     # Karakter: /character/puls -> character/puls.html (tanımlı karakterler)
     RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
 

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAHIS: Five Forces – Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="five-forces.css">
+</head>
+<body class="game-page">
+
+  <!-- Status bar -->
+  <div id="status-bar" class="status-bar"></div>
+
+  <!-- Header -->
+  <header class="game-header">
+    <a href="/five-forces" class="back-link">← Lobby</a>
+    <h1 class="game-title-small">DAHIS: <span>Five Forces</span></h1>
+    <div id="round-info" class="round-info"></div>
+  </header>
+
+  <!-- Main layout -->
+  <main class="game-layout">
+
+    <!-- Left: Scoreboard -->
+    <aside class="panel panel-scores">
+      <h2 class="panel-title">Scoreboard</h2>
+      <div id="scoreboard"></div>
+    </aside>
+
+    <!-- Center: Table -->
+    <section class="game-table">
+      <!-- Deck & Discard -->
+      <div id="deck-area" class="deck-area"></div>
+
+      <!-- Action buttons -->
+      <div id="action-btns" class="action-btns"></div>
+
+      <!-- Player hand -->
+      <div class="hand-wrapper">
+        <h3 class="hand-title">Your Hand</h3>
+        <div id="hand-area" class="hand-area"></div>
+      </div>
+    </section>
+
+    <!-- Right: Log -->
+    <aside class="panel panel-log">
+      <h2 class="panel-title">Event Log</h2>
+      <div id="game-log" class="game-log"></div>
+    </aside>
+
+  </main>
+
+  <!-- Modal overlay (target/ability choices) -->
+  <div id="modal" class="modal-overlay" style="display:none"></div>
+
+  <!-- Game over overlay -->
+  <div id="game-over" class="game-over-overlay" style="display:none"></div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="characters.js"></script>
+  <script src="deck.js"></script>
+  <script src="game.js"></script>
+  <script src="ui.js"></script>
+  <script>
+    (function () {
+      var session = null;
+      try { session = JSON.parse(sessionStorage.getItem('ffSession')); } catch(e) {}
+      if (!session) {
+        window.location.href = '/five-forces';
+        return;
+      }
+      UI.boot(session);
+    })();
+  </script>
+</body>
+</html>
