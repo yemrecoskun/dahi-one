@@ -440,6 +440,7 @@
     function tryJoinWithCode(code, hasPasswordFromList) {
       code = String(code).toUpperCase().replace(/\s/g, '');
       if (!code || code.length !== 6) return;
+      showOnlineView('join-by-code');
       document.getElementById('online-join-code').value = code;
       document.getElementById('online-join-password').classList.add('hidden');
       document.getElementById('online-join-after').classList.add('hidden');
@@ -457,6 +458,8 @@
           return;
         }
         showJoinNameAndChar(code);
+      }).catch(function (err) {
+        alert(err && (err.message || String(err)) || (t('lobby.online.room_not_found') || 'Room not found'));
       });
     }
 
