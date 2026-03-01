@@ -249,10 +249,12 @@
 
       document.getElementById('btn-names-next').addEventListener('click', function () {
         playerDrafts = [];
-        document.querySelectorAll('.player-name-input').forEach(function (inp, i) {
-          var v = inp.value.trim() || t('lobby.player.label', { n: i + 1 });
+        var formContainer = document.getElementById('player-forms');
+        var inputs = formContainer ? formContainer.querySelectorAll('.player-name-input') : [];
+        for (var i = 0; i < inputs.length; i++) {
+          var v = inputs[i].value.trim() || t('lobby.player.label', { n: i + 1 });
           playerDrafts.push({ name: v, isAI: false });
-        });
+        }
         var aiNeeded = Math.max(0, 3 - humanCount);
         for (var a = 0; a < aiNeeded; a++) {
           playerDrafts.push({ name: 'AI-' + (a + 1), isAI: true });
