@@ -27,7 +27,6 @@ var UI = (function () {
     var myIdx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
     if (sessionData.gameState && sessionData.roomId && Game.restoreState) {
       Game.restoreState(sessionData.gameState);
-      if (sessionData.isOnline && Game.maskOtherHands) Game.maskOtherHands(myIdx);
       gs = Game.getState();
       humanPlayerIds = gs.players[myIdx] ? [gs.players[myIdx].id] : [];
     } else {
@@ -49,7 +48,7 @@ var UI = (function () {
 
   function refresh(gs) { render(gs); }
 
-  /** Online: uzaktan gelen state'i restore + mask + render. */
+  /** Online: uzaktan gelen state'i restore + render. State maskelenmez (yazarken tam state gitsin diye). */
   function applyRemoteState(remote) {
     if (!remote || !Game.restoreState || !Game.getFullState) return;
     function fp(s) {
@@ -59,7 +58,6 @@ var UI = (function () {
     var cur = Game.getFullState();
     if (cur && fp(remote) === fp(cur)) return;
     Game.restoreState(remote);
-    if (typeof window.ffHumanIdx === 'number' && Game.maskOtherHands) Game.maskOtherHands(window.ffHumanIdx);
     render(Game.getState());
   }
 
@@ -172,8 +170,15 @@ var UI = (function () {
       return;
     }
 
-    var myId = humanPlayerIds.length === 1 ? humanPlayerIds[0] : null;
-    var me = myId ? gs.players.find(function (p) { return p.id === myId; }) : currentPlayer(gs);
+    var me;
+    var myId;
+    if (typeof window.ffHumanIdx === 'number' && gs.players[window.ffHumanIdx]) {
+      me = gs.players[window.ffHumanIdx];
+      myId = me.id;
+    } else {
+      myId = humanPlayerIds.length === 1 ? humanPlayerIds[0] : null;
+      me = myId ? gs.players.find(function (p) { return p.id === myId; }) : currentPlayer(gs);
+    }
     if (!me) return;
     if (me.isAI) {
       el.innerHTML = '<p class="empty-hand">' + me.name + ' …</p>';
