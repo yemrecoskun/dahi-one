@@ -27,14 +27,17 @@ var UI = (function () {
     var myIdx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
     if (sessionData.gameState && sessionData.roomId && Game.restoreState) {
       Game.restoreState(sessionData.gameState);
-      if (sessionData.isOnline && Game.maskOtherHands) Game.maskOtherHands(myIdx);
+      if (sessionData.isOnline) {
+        window.ffHumanIdx = myIdx;
+        if (Game.maskOtherHands) Game.maskOtherHands(myIdx);
+      }
       gs = Game.getState();
       humanPlayerIds = gs.players[myIdx] ? [gs.players[myIdx].id] : [];
     } else {
       gs = Game.init(sessionData.players);
       humanPlayerIds = gs.players.filter(function (p) { return !p.isAI; }).map(function (p) { return p.id; });
     }
-    if (sessionData.isOnline) window.ffHumanIdx = myIdx;
+    if (sessionData.isOnline && typeof window.ffHumanIdx !== 'number') window.ffHumanIdx = myIdx;
     render(gs);
     document.addEventListener('langchange', function () { render(Game.getState()); });
     if (sessionData.isOnline && sessionData.roomId && window.FFRooms) {
@@ -172,8 +175,15 @@ var UI = (function () {
       return;
     }
 
-    var myId = humanPlayerIds.length === 1 ? humanPlayerIds[0] : null;
-    var me = myId ? gs.players.find(function (p) { return p.id === myId; }) : currentPlayer(gs);
+    var me;
+    var myId;
+    if (typeof window.ffHumanIdx === 'number' && gs.players[window.ffHumanIdx]) {
+      me = gs.players[window.ffHumanIdx];
+      myId = me.id;
+    } else {
+      myId = humanPlayerIds.length === 1 ? humanPlayerIds[0] : null;
+      me = myId ? gs.players.find(function (p) { return p.id === myId; }) : currentPlayer(gs);
+    }
     if (!me) return;
     if (me.isAI) {
       el.innerHTML = '<p class="empty-hand">' + me.name + ' …</p>';
@@ -183,6 +193,10 @@ var UI = (function () {
     var isMyTurn = myId ? (gs.players[gs.currentTurnIdx].id === myId) : true;
     var canPlay = isMyTurn && (gs.phase === 'play') && !pendingAbilityResolve;
     var hand = me.hand || [];
+    if (hand.length && hand[0] && hand[0].hidden) {
+      el.innerHTML = '<p class="empty-hand">' + t('game.hand.title') + ' (' + hand.length + ')</p>';
+      return;
+    }
 
     el.innerHTML = hand.map(function (card) {
       var cls = 'card' + (canPlay ? ' playable' : '');
