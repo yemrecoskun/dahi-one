@@ -24,15 +24,17 @@ var UI = (function () {
 
   function boot(sessionData) {
     var gs;
+    var myIdx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
     if (sessionData.gameState && sessionData.roomId && Game.restoreState) {
       Game.restoreState(sessionData.gameState);
+      if (sessionData.isOnline && Game.maskOtherHands) Game.maskOtherHands(myIdx);
       gs = Game.getState();
-      var idx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
-      humanPlayerIds = gs.players[idx] ? [gs.players[idx].id] : [];
+      humanPlayerIds = gs.players[myIdx] ? [gs.players[myIdx].id] : [];
     } else {
       gs = Game.init(sessionData.players);
       humanPlayerIds = gs.players.filter(function (p) { return !p.isAI; }).map(function (p) { return p.id; });
     }
+    if (sessionData.isOnline) window.ffHumanIdx = myIdx;
     render(gs);
     document.addEventListener('langchange', function () { render(Game.getState()); });
     if (sessionData.isOnline && sessionData.roomId && window.FFRooms) {
@@ -41,58 +43,13 @@ var UI = (function () {
       window.ffIsHost = !!sessionData.isHost;
       setTimeout(function () { setupOnlineSync(sessionData.roomId); }, 0);
     }
-    var myIdx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
-    var me = gs && gs.players[myIdx];
-    if (sessionData.isOnline && me && me.characterId == null) {
-      showOnlineCharPick(myIdx);
-    }
-  }
-
-  /** Online: oyuna başladıktan sonra karakter seçimi overlay. */
-  function showOnlineCharPick(myIdx) {
-    var overlay = document.getElementById('online-char-pick');
-    var gridEl = document.getElementById('online-char-pick-grid');
-    if (!overlay || !gridEl) return;
-    var charIds = Object.keys(CHARACTERS);
-    gridEl.innerHTML = charIds.map(function (cid) {
-      var c = CHARACTERS[cid];
-      var avatarHtml = c.image
-        ? '<div class="char-avatar"><img src="' + c.image + '" alt=""></div>'
-        : '<div class="char-avatar" style="background:' + c.gradient + '">' + c.emoji + '</div>';
-      return '<div class="char-card" data-cid="' + cid + '">' + avatarHtml + '<h3>' + c.name + '</h3></div>';
-    }).join('');
-    gridEl.querySelectorAll('.char-card').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var cid = el.dataset.cid;
-        if (!cid) return;
-        Game.setPlayerCharacter(myIdx, cid);
-        var gs = Game.getState();
-        if (window.ffIsHost && gs && gs.phase === 'picking_characters') {
-          var allPicked = gs.players.every(function (p) { return p.characterId != null; });
-          if (allPicked && Game.dealCardsAndStart) Game.dealCardsAndStart();
-        }
-        if (window.ffOnlineRoomId && window.FFRooms && window.FFRooms.updateGameState && Game.getFullState) {
-          window.FFRooms.updateGameState(window.ffOnlineRoomId, Game.getFullState()).then(function () {
-            overlay.style.display = 'none';
-            render(Game.getState());
-          }).catch(function () {
-            overlay.style.display = 'none';
-            render(Game.getState());
-          });
-        } else {
-          overlay.style.display = 'none';
-          render(Game.getState());
-        }
-      });
-    });
-    overlay.style.display = 'flex';
   }
 
   // ─── Master render ───────────────────────────────────────────────────────────
 
   function refresh(gs) { render(gs); }
 
-  /** Online: tek kaynak – uzaktan gelen state'i karşılaştır, gerekirse restore + render. Host: tüm karakterler seçildiyse kart dağıt. */
+  /** Online: uzaktan gelen state'i restore + mask + render. */
   function applyRemoteState(remote) {
     if (!remote || !Game.restoreState || !Game.getFullState) return;
     function fp(s) {
@@ -102,18 +59,8 @@ var UI = (function () {
     var cur = Game.getFullState();
     if (cur && fp(remote) === fp(cur)) return;
     Game.restoreState(remote);
-    var gs = Game.getState();
-    if (window.ffIsHost && gs && gs.phase === 'picking_characters') {
-      var allPicked = gs.players.every(function (p) { return p.characterId != null; });
-      if (allPicked && Game.dealCardsAndStart) {
-        Game.dealCardsAndStart();
-        if (window.FFRooms && window.ffOnlineRoomId) {
-          window.FFRooms.updateGameState(window.ffOnlineRoomId, Game.getFullState()).catch(function () {});
-        }
-        gs = Game.getState();
-      }
-    }
-    render(gs);
+    if (typeof window.ffHumanIdx === 'number' && Game.maskOtherHands) Game.maskOtherHands(window.ffHumanIdx);
+    render(Game.getState());
   }
 
   /** Online: Firestore dinle; gelen state'i debounce ile applyRemoteState'e ver. */
@@ -220,23 +167,24 @@ var UI = (function () {
     var titleEl = document.querySelector('.hand-title');
     if (titleEl) titleEl.textContent = t('game.hand.title');
 
-    // Cihaz devri bekleniyorsa kartları gösterme
     if (handoffPending) {
       el.innerHTML = '<p class="empty-hand handoff-msg">' + t('game.passDevice') + '</p>';
       return;
     }
 
-    var cur = currentPlayer(gs);
-    if (!cur) return;
-    if (cur.isAI) {
-      el.innerHTML = '<p class="empty-hand">' + cur.name + ' …</p>';
+    var myId = humanPlayerIds.length === 1 ? humanPlayerIds[0] : null;
+    var me = myId ? gs.players.find(function (p) { return p.id === myId; }) : currentPlayer(gs);
+    if (!me) return;
+    if (me.isAI) {
+      el.innerHTML = '<p class="empty-hand">' + me.name + ' …</p>';
       return;
     }
 
-    var me = cur;
-    var canPlay = (gs.phase === 'play') && !pendingAbilityResolve;
+    var isMyTurn = myId ? (gs.players[gs.currentTurnIdx].id === myId) : true;
+    var canPlay = isMyTurn && (gs.phase === 'play') && !pendingAbilityResolve;
+    var hand = me.hand || [];
 
-    el.innerHTML = me.hand.map(function (card) {
+    el.innerHTML = hand.map(function (card) {
       var cls = 'card' + (canPlay ? ' playable' : '');
       return '<div class="' + cls + '" data-card-id="' + card.id + '" style="' + cardStyle(card) + '">' +
         '<span class="card-emoji">' + card.emoji + '</span>' +
@@ -269,7 +217,7 @@ var UI = (function () {
     var el = document.getElementById('action-btns');
     if (!el) return;
     var cur = currentPlayer(gs);
-    var isCurrentHuman = cur && !cur.isAI;
+    var isCurrentHuman = cur && humanPlayerIds.indexOf(cur.id) !== -1;
     var currentId = cur ? cur.id : null;
 
     var html = '';
@@ -363,18 +311,18 @@ var UI = (function () {
       return;
     }
 
-    var isCurrentHuman = currentPlayerIsHuman(gs);
+    var cur = currentPlayer(gs);
+    var isMyTurn = cur && humanPlayerIds.indexOf(cur.id) !== -1;
     var phaseMap = {
       draw: t('game.phase.draw'),
       play: t('game.phase.play'),
       ability: t('game.phase.ability')
     };
 
-    if (isCurrentHuman) {
+    if (isMyTurn) {
       el.textContent = t('game.status.myturn', { phase: phaseMap[gs.phase] || '' });
       el.className = 'status-bar my-turn';
     } else {
-      var cur = currentPlayer(gs);
       el.textContent = t('game.status.waiting', { name: cur ? cur.name : '' });
       el.className = 'status-bar waiting';
     }

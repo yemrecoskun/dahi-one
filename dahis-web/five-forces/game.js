@@ -70,19 +70,28 @@ var Game = (function () {
     return getPublicState();
   }
 
-  /** Online: sadece oyuncular, phase 'picking_characters', kart dağıtılmaz. Karakterler seçildikten sonra dealCardsAndStart() çağrılır. */
-  function initPreGame(playerConfigs) {
+  /** Online: rastgele karakter ataması + kart dağıtımı, phase 'draw'. Karakter seçimi yok. */
+  function initWithRandomCharactersAndDeal(playerConfigs) {
+    var charIds = Object.keys(CHARACTERS);
+    var shuffled = shuffleDeck(charIds.slice());
+    var deck = shuffleDeck(buildDeck());
+    var hands = dealCards(deck, playerConfigs.length, 5);
+
     var players = playerConfigs.map(function (cfg, i) {
-      return createPlayer('p' + i, cfg.name, cfg.characterId || null, cfg.isAI);
+      var cid = shuffled[i] || charIds[i % charIds.length];
+      var p = createPlayer('p' + i, cfg.name, cid, cfg.isAI);
+      p.hand = hands[i];
+      return p;
     });
+
     state = {
       players: players,
-      deck: [],
+      deck: deck,
       discardPile: [],
       currentTurnIdx: 0,
       turnDirection: 1,
       round: 1,
-      phase: 'picking_characters',
+      phase: 'draw',
       scoreLocked: false,
       scoreLockTurns: 0,
       pendingAbility: null,
@@ -91,25 +100,9 @@ var Game = (function () {
       over: false,
       winner: null
     };
-    addLog(t('log.waitingCharacters') || 'Waiting for everyone to pick a character…');
-    return getPublicState();
-  }
 
-  /** Online: tüm oyuncular karakter seçtiyse kartları dağıt ve phase'i 'draw' yap. Sadece host çağırmalı. */
-  function dealCardsAndStart() {
-    if (!state || state.phase !== 'picking_characters') return false;
-    for (var i = 0; i < state.players.length; i++) {
-      if (state.players[i].characterId == null) return false;
-    }
-    var deck = shuffleDeck(buildDeck());
-    var hands = dealCards(deck, state.players.length, 5);
-    for (var j = 0; j < state.players.length; j++) state.players[j].hand = hands[j];
-    state.deck = deck;
-    state.discardPile = [];
-    state.phase = 'draw';
-    state.log = [];
-    addLog(t('log.start', { n: state.players.length, deck: deck.length }));
-    return true;
+    addLog(t('log.start', { n: players.length, deck: deck.length }));
+    return getPublicState();
   }
 
   // ─── Logging ────────────────────────────────────────────────────────────────
@@ -440,10 +433,21 @@ var Game = (function () {
     return true;
   }
 
+  /** Online: diğer oyuncuların kartlarını bu cihazda gizle (sadece sayı kalsın). viewerPlayerIndex = bu cihazdaki oyuncunun indexi. */
+  function maskOtherHands(viewerPlayerIndex) {
+    if (!state || !state.players || typeof viewerPlayerIndex !== 'number') return;
+    for (var i = 0; i < state.players.length; i++) {
+      if (i === viewerPlayerIndex) continue;
+      var h = state.players[i].hand;
+      if (h && h.length) {
+        state.players[i].hand = h.map(function () { return { id: 'hidden', hidden: true, name: '?', type: 'score', value: 0, emoji: '?' }; });
+      }
+    }
+  }
+
   return {
     init: init,
-    initPreGame: initPreGame,
-    dealCardsAndStart: dealCardsAndStart,
+    initWithRandomCharactersAndDeal: initWithRandomCharactersAndDeal,
     drawCard: drawCard,
     playCard: playCard,
     useAbility: useAbility,
@@ -453,6 +457,7 @@ var Game = (function () {
     getState: getPublicState,
     getFullState: getFullState,
     restoreState: restoreState,
-    setPlayerCharacter: setPlayerCharacter
+    setPlayerCharacter: setPlayerCharacter,
+    maskOtherHands: maskOtherHands
   };
 })();

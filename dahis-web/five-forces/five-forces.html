@@ -104,7 +104,10 @@
         <ul id="room-players-list" class="room-players-list"></ul>
         <p class="room-waiting-msg" id="room-waiting-msg" data-i18n="lobby.online.waiting">Waiting for host to start…</p>
         <button type="button" class="btn-start hidden" id="btn-online-start" data-i18n="lobby.btn.start">Start Game →</button>
-        <button type="button" class="btn-leave-room" id="btn-leave-room" data-i18n="lobby.online.leave">Leave room</button>
+        <div class="room-waiting-actions">
+          <button type="button" class="btn-leave-room" id="btn-leave-room" data-i18n="lobby.online.leave">Leave room</button>
+          <button type="button" class="btn-delete-room hidden" id="btn-delete-room" data-i18n="lobby.online.delete_room">Delete room</button>
+        </div>
       </div>
       </div><!-- /mode-panel-online -->
 
@@ -491,7 +494,13 @@
             return false;
           }
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
-            if (!data) return;
+            if (!data) {
+              if (redirectPollId) { clearInterval(redirectPollId); redirectPollId = null; }
+              onlineRoomId = null;
+              showOnlineView('rooms');
+              alert(t('lobby.online.room_deleted') || 'Room was deleted.');
+              return;
+            }
             var list = document.getElementById('room-players-list');
             if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
             if (checkAndRedirect(data)) return;
@@ -581,9 +590,15 @@
           document.getElementById('room-link-input').value = window.location.origin + '/five-forces/?join=' + res.code;
           showOnlineView('room-waiting');
           document.getElementById('btn-online-start').classList.remove('hidden');
+          document.getElementById('btn-delete-room').classList.remove('hidden');
           document.getElementById('room-waiting-msg').classList.remove('hidden');
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
-            if (!data) return;
+            if (!data) {
+              onlineRoomId = null;
+              showOnlineView('rooms');
+              document.getElementById('btn-delete-room').classList.add('hidden');
+              return;
+            }
             var list = document.getElementById('room-players-list');
             if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
             if (data.status === 'playing' && data.gameState) goToGameWithRoom(res.roomId, data.gameState, 0);
@@ -626,7 +641,7 @@
             return;
           }
           var players = data.players.map(function (p) { return { name: (p.name || '').trim() || ('Player'), characterId: p.characterId || null, isAI: false }; });
-          Game.initPreGame(players);
+          Game.initWithRandomCharactersAndDeal(players);
           var full = Game.getFullState && Game.getFullState();
           if (!full) return;
           window.FFRooms.startGame(onlineRoomId, full).then(function () { goToGameWithRoom(onlineRoomId, full, 0, true); });
@@ -640,7 +655,21 @@
       onlineRoomId = null;
       showOnlineView('rooms');
       document.getElementById('btn-online-start').classList.add('hidden');
+      document.getElementById('btn-delete-room').classList.add('hidden');
       document.getElementById('room-waiting-msg').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-delete-room').addEventListener('click', function () {
+      if (!onlineRoomId || !onlineIsHost || !window.FFRooms || !window.FFRooms.deleteRoom) return;
+      if (!confirm(t('lobby.online.delete_room_confirm') || 'Delete this room? All players will be removed.')) return;
+      if (redirectPollId) { clearInterval(redirectPollId); redirectPollId = null; }
+      window.FFRooms.deleteRoom(onlineRoomId).then(function () {
+        onlineRoomId = null;
+        showOnlineView('rooms');
+        document.getElementById('btn-online-start').classList.add('hidden');
+        document.getElementById('btn-delete-room').classList.add('hidden');
+        document.getElementById('room-waiting-msg').classList.remove('hidden');
+      }).catch(function (err) { alert(err.message || 'Could not delete room'); });
     });
 
     document.getElementById('btn-copy-link').addEventListener('click', function () {

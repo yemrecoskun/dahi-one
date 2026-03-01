@@ -72,16 +72,25 @@
     });
   }
 
-  /** List waiting rooms (status === 'waiting'). Returns [{ roomId, code, players, hostName, updatedAt }]. */
+  var ROOM_MAX_AGE_MS = 30 * 60 * 1000;
+
+  /** List waiting rooms (status === 'waiting', createdAt son 30 dk). Eski odalar listeden çıkarılır ve silinir. */
   function listRooms() {
     return init().then(function () {
       return db.collection(COLLECTION)
         .where('status', '==', 'waiting')
         .get()
         .then(function (snap) {
+          var now = Date.now();
           var list = [];
+          var deletes = [];
           snap.forEach(function (doc) {
             var d = doc.data();
+            var created = d.createdAt && d.createdAt.toMillis ? d.createdAt.toMillis() : 0;
+            if (now - created > ROOM_MAX_AGE_MS) {
+              deletes.push(doc.ref.delete());
+              return;
+            }
             var host = (d.players && d.players[0]) ? d.players[0] : null;
             list.push({
               roomId: doc.id,
@@ -89,12 +98,28 @@
               players: d.players || [],
               hostName: host ? host.name : '',
               hasPassword: !!(d.roomPassword),
+              createdAt: created,
               updatedAt: d.updatedAt && d.updatedAt.toMillis ? d.updatedAt.toMillis() : 0
             });
           });
+          Promise.all(deletes).catch(function () {});
           list.sort(function (a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0); });
           return list;
         });
+    });
+  }
+
+  /** Oda sahibi odayı siler. Sadece host çağırmalı (UI’da host’a göster). */
+  function deleteRoom(roomId) {
+    return init().then(function () {
+      var ref = db.collection(COLLECTION).doc(roomId);
+      return ref.get().then(function (snap) {
+        if (!snap.exists) return;
+        var data = snap.data();
+        var me = clientId();
+        if (data.hostId !== me) return Promise.reject(new Error('Only the room host can delete the room'));
+        return ref.delete();
+      });
     });
   }
 
@@ -212,6 +237,7 @@
     createRoom: createRoom,
     joinRoom: joinRoom,
     leaveRoom: leaveRoom,
+    deleteRoom: deleteRoom,
     subscribeRoom: subscribeRoom,
     startGame: startGame,
     updateGameState: updateGameState
