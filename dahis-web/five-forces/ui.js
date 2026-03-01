@@ -48,12 +48,13 @@ var UI = (function () {
 
   function refresh(gs) { render(gs); }
 
-  /** Online: uzaktan gelen state'i restore + render. State maskelenmez (yazarken tam state gitsin diye). */
+  /** Online: uzaktan gelen state'i restore + render. Eller değişince de güncelle (fingerprint'e hand length ekli). */
   function applyRemoteState(remote) {
     if (!remote || !Game.restoreState || !Game.getFullState) return;
     function fp(s) {
-      if (!s) return '';
-      return [s.round, s.phase, s.currentTurnIdx, (s.deck || []).length, !!s.over, s.winner || '', (s.log || []).length].join('|');
+      if (!s || !s.players) return '';
+      var handLen = s.players.map(function (p) { return (p.hand && p.hand.length) || 0; }).join(',');
+      return [s.round, s.phase, s.currentTurnIdx, (s.deck || []).length, !!s.over, s.winner || '', (s.log || []).length, handLen].join('|');
     }
     var cur = Game.getFullState();
     if (cur && fp(remote) === fp(cur)) return;
@@ -187,17 +188,19 @@ var UI = (function () {
 
     var isMyTurn = myId ? (gs.players[gs.currentTurnIdx].id === myId) : true;
     var canPlay = isMyTurn && (gs.phase === 'play') && !pendingAbilityResolve;
-    var hand = me.hand || [];
+    var hand = Array.isArray(me.hand) ? me.hand : [];
 
     el.innerHTML = hand.map(function (card) {
+      if (!card || card.hidden) return '';
       var cls = 'card' + (canPlay ? ' playable' : '');
-      return '<div class="' + cls + '" data-card-id="' + card.id + '" style="' + cardStyle(card) + '">' +
-        '<span class="card-emoji">' + card.emoji + '</span>' +
-        '<span class="card-name">' + escHtml(card.name) + '</span>' +
-        '<span class="card-type">' + (card.typeLabel || card.type) + '</span>' +
+      var style = card.color ? cardStyle(card) : '';
+      return '<div class="' + cls + '" data-card-id="' + (card.id || '') + '" style="' + style + '">' +
+        '<span class="card-emoji">' + (card.emoji || '?') + '</span>' +
+        '<span class="card-name">' + escHtml(card.name || '') + '</span>' +
+        '<span class="card-type">' + (card.typeLabel || card.type || '') + '</span>' +
         (card.value ? '<span class="card-value">+' + card.value + '</span>' : '') +
       '</div>';
-    }).join('') || '<p class="empty-hand">' + t('game.hand.empty') + '</p>';
+    }).filter(Boolean).join('') || '<p class="empty-hand">' + t('game.hand.empty') + '</p>';
 
     el.querySelectorAll('.card.playable').forEach(function (cardEl) {
       cardEl.addEventListener('click', function () {
