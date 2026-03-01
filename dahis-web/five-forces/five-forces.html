@@ -71,6 +71,8 @@
         <button type="button" class="btn-back" id="btn-create-back" data-i18n="lobby.online.back">← Back</button>
         <label class="online-label" data-i18n="lobby.online.your_name">Your name</label>
         <input type="text" id="online-create-name" class="player-name-input" maxlength="20" placeholder="" data-i18n-placeholder="lobby.player.placeholder">
+        <label class="online-label" data-i18n="lobby.online.room_name">Room name</label>
+        <input type="text" id="online-create-room-name" class="player-name-input" maxlength="30" placeholder="" data-i18n-placeholder="lobby.online.room_name_placeholder">
         <label class="online-label" data-i18n="lobby.online.room_password_optional">Room password (optional)</label>
         <input type="password" id="online-create-password" class="player-name-input" maxlength="20" placeholder="" data-i18n-placeholder="lobby.online.room_password_placeholder" autocomplete="off">
         <button type="button" class="btn-start" id="btn-do-create-room" data-i18n="lobby.online.do_create">Create room</button>
@@ -96,6 +98,7 @@
 
       <!-- Room waiting: code + link + players + Start (host only) -->
       <div id="online-room-waiting" class="hidden">
+        <p class="room-name-line hidden" id="room-name-line"><span data-i18n="lobby.online.room_name">Room name</span>: <strong id="room-name-display"></strong></p>
         <p class="room-code-line"><span data-i18n="lobby.online.room_code">Room code</span>: <strong id="room-code-display"></strong></p>
         <p class="room-link-line"><span data-i18n="lobby.online.share">Share link</span>: <input type="text" id="room-link-input" readonly class="room-link-input"> <button type="button" class="btn-copy-link" id="btn-copy-link" data-i18n="lobby.online.copy">Copy</button></p>
         <h3 class="room-players-title" data-i18n="lobby.online.players">Players in room</h3>
@@ -420,10 +423,11 @@
         rooms.forEach(function (r) {
           var li = document.createElement('li');
           li.className = 'room-list-item';
+          var displayName = escHtml(r.roomName || r.code || '');
           var hostName = escHtml(r.hostName || '');
           var count = (r.players && r.players.length) || 0;
           var lock = r.hasPassword ? ' <span class="room-list-lock" title="' + (t('lobby.online.room_has_password') || 'Password protected') + '">🔒</span>' : '';
-          li.innerHTML = '<span class="room-list-code">' + escHtml(r.code) + lock + '</span>' +
+          li.innerHTML = '<span class="room-list-code">' + displayName + lock + '</span>' +
             '<span class="room-list-meta">' + hostName + ' · ' + count + '/5</span>' +
             '<button type="button" class="btn-join-room-item" data-code="' + escHtml(r.code) + '">' + (t('lobby.online.do_join') || 'Join') + '</button>';
           listEl.appendChild(li);
@@ -498,6 +502,10 @@
               showOnlineView('rooms');
               alert(t('lobby.online.room_deleted') || 'Room was deleted.');
               return;
+            }
+            if (data.roomName && document.getElementById('room-name-display')) {
+              document.getElementById('room-name-display').textContent = data.roomName;
+              if (document.getElementById('room-name-line')) document.getElementById('room-name-line').classList.remove('hidden');
             }
             var list = document.getElementById('room-players-list');
             if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
@@ -576,15 +584,21 @@
     document.getElementById('btn-new-room').addEventListener('click', function () {
       showOnlineView('create');
       document.getElementById('online-create-name').value = '';
+      document.getElementById('online-create-room-name').value = '';
       document.getElementById('online-create-password').value = '';
       document.getElementById('btn-do-create-room').onclick = function () {
         var name = (document.getElementById('online-create-name').value || '').trim() || 'Host';
+        var roomName = (document.getElementById('online-create-room-name').value || '').trim() || null;
         var pwd = (document.getElementById('online-create-password').value || '').trim() || null;
-        window.FFRooms.createRoom(name, pwd).then(function (res) {
+        window.FFRooms.createRoom(name, roomName, pwd).then(function (res) {
           onlineRoomId = res.roomId;
           onlineIsHost = true;
           onlineMySlotIndex = 0;
           document.getElementById('room-code-display').textContent = res.code;
+          var nameEl = document.getElementById('room-name-display');
+          var nameLine = document.getElementById('room-name-line');
+          if (nameEl) nameEl.textContent = roomName || res.code;
+          if (nameLine) nameLine.classList.toggle('hidden', !roomName);
           document.getElementById('room-link-input').value = window.location.origin + '/five-forces/?join=' + res.code;
           showOnlineView('room-waiting');
           document.getElementById('btn-online-start').classList.remove('hidden');
@@ -596,6 +610,10 @@
               showOnlineView('rooms');
               document.getElementById('btn-delete-room').classList.add('hidden');
               return;
+            }
+            if (data.roomName && document.getElementById('room-name-display')) {
+              document.getElementById('room-name-display').textContent = data.roomName;
+              if (document.getElementById('room-name-line')) document.getElementById('room-name-line').classList.remove('hidden');
             }
             var list = document.getElementById('room-players-list');
             if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
@@ -687,6 +705,23 @@
 
     showStep('step-mode');
     setModeTab('local');
+
+    // Link ile geldiyse (?join=CODE) çevrimiçi sekmesine geç ve odaya katılma ekranını aç
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var joinCode = (params.get('join') || '').toUpperCase().replace(/\s/g, '');
+      if (joinCode.length !== 6) return;
+      setModeTab('online');
+      showOnlineView('join-by-code');
+      document.getElementById('online-join-code').value = joinCode;
+      document.getElementById('online-join-password').classList.add('hidden');
+      document.getElementById('online-join-after').classList.add('hidden');
+      document.getElementById('online-join-password-input').value = '';
+      pendingJoinPassword = '';
+      if (window.FFRooms && window.FFRooms.isAvailable()) {
+        tryJoinWithCode(joinCode, false);
+      }
+    })();
   })();
   </script>
 </body>

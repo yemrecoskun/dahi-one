@@ -50,14 +50,16 @@
     }
   }
 
-  /** Create room; returns { roomId, code, hostId }. password optional. Karakter oyunda seçilir. */
-  function createRoom(hostName, password) {
+  /** Create room; returns { roomId, code, hostId }. roomName + password optional. */
+  function createRoom(hostName, roomName, password) {
+    if (typeof roomName === 'string' && typeof password !== 'string') { password = roomName; roomName = ''; }
     return init().then(function () {
       var code = randomCode();
       var hostId = clientId();
       var roomData = {
         code: code,
         hostId: hostId,
+        roomName: (roomName && String(roomName).trim()) || null,
         players: [{ id: 'p0', name: hostName, characterId: null, clientId: hostId }],
         status: 'waiting',
         gameState: null,
@@ -95,6 +97,7 @@
             list.push({
               roomId: doc.id,
               code: d.code || doc.id,
+              roomName: (d.roomName && String(d.roomName).trim()) || null,
               players: d.players || [],
               hostName: host ? host.name : '',
               hasPassword: !!(d.roomPassword),
@@ -132,7 +135,7 @@
         if (!snap.exists) return null;
         var d = snap.data();
         if (d.status !== 'waiting') return null;
-        return { roomId: code, players: d.players || [], hostId: d.hostId, hasPassword: !!(d.roomPassword) };
+        return { roomId: code, roomName: (d.roomName && String(d.roomName).trim()) || null, players: d.players || [], hostId: d.hostId, hasPassword: !!(d.roomPassword) };
       });
     });
   }
