@@ -61,6 +61,7 @@ var I18n = (function () {
       'lobby.online.copy':    'Copy',
       'lobby.online.players': 'Players in room',
       'lobby.online.waiting': 'Waiting for host to start…',
+      'lobby.online.redirecting': 'Game started! Redirecting…',
       'lobby.online.leave':   'Leave room',
       'lobby.online.min_players': 'At least 2 players to start.',
       'lobby.online.invalid_code': 'Enter 6-character code',
@@ -91,6 +92,7 @@ var I18n = (function () {
       'game.round.lock':      '  🔒 Score Lock',
       'game.status.myturn':   '▶ Your turn — {phase}',
       'game.status.waiting':  '⏳ Waiting for {name}…',
+      'game.status.waitingCharacters': 'Waiting for everyone to pick a character…',
       'game.phase.draw':      'Draw a card',
       'game.phase.play':      'Play a card from your hand',
       'game.phase.ability':   'Use ability or end turn',
@@ -165,6 +167,7 @@ var I18n = (function () {
 
       // ── Game log messages ────────────────────────────────────
       'log.start':             'Game started! {n} players, {deck} cards remaining.',
+      'log.waitingCharacters': 'Waiting for everyone to pick a character…',
       'log.drew':              '{name} drew a card. ({deck} left)',
       'log.handFull':          '{name}\'s hand is full – drawn card discarded.',
       'log.round':             '=== Round {n} ===',
@@ -277,6 +280,7 @@ var I18n = (function () {
       'lobby.online.copy':    'Kopyala',
       'lobby.online.players': 'Odadaki oyuncular',
       'lobby.online.waiting': 'Oyun başlaması bekleniyor…',
+      'lobby.online.redirecting': 'Oyun başladı! Yönlendiriliyorsunuz…',
       'lobby.online.leave':   'Odadan ayrıl',
       'lobby.online.min_players': 'Başlamak için en az 2 oyuncu gerekli.',
       'lobby.online.invalid_code': '6 karakterlik kodu girin',
@@ -307,6 +311,7 @@ var I18n = (function () {
       'game.round.lock':      '  🔒 Puan Kilidi',
       'game.status.myturn':   '▶ Senin turun — {phase}',
       'game.status.waiting':  '⏳ {name} bekleniyor…',
+      'game.status.waitingCharacters': 'Herkesin karakter seçmesi bekleniyor…',
       'game.phase.draw':      'Desteden kart çek',
       'game.phase.play':      'Elindeki bir kartı oyna',
       'game.phase.ability':   'Yetenek kullan ya da turu bitir',
@@ -381,6 +386,7 @@ var I18n = (function () {
 
       // ── Oyun günlüğü mesajları ───────────────────────────────
       'log.start':             'Oyun başladı! {n} oyuncu, {deck} kart kaldı.',
+      'log.waitingCharacters': 'Herkesin karakter seçmesi bekleniyor…',
       'log.drew':              '{name} kart çekti. ({deck} kaldı)',
       'log.handFull':          '{name}\'nin eli dolu – çekilen kart atıldı.',
       'log.round':             '=== Tur {n} ===',

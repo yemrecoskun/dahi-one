@@ -385,6 +385,7 @@
     var onlineRoomId = null;
     var onlineIsHost = false;
     var onlineMySlotIndex = 0;
+    var redirectPollId = null;
 
     /** Çevrimiçi panelde hangi görünüm: rooms | create | join-by-code | room-waiting */
     function showOnlineView(which) {
@@ -477,23 +478,52 @@
           showOnlineView('room-waiting');
           document.getElementById('btn-online-start').classList.add('hidden');
           document.getElementById('room-waiting-msg').classList.remove('hidden');
+          function checkAndRedirect(data) {
+            if (!data || data.status !== 'playing') return false;
+            var gs = data.gameState;
+            if (gs && gs.players && gs.players.length) {
+              if (redirectPollId) { clearInterval(redirectPollId); redirectPollId = null; }
+              var msg = document.getElementById('room-waiting-msg');
+              if (msg) { msg.textContent = t('lobby.online.redirecting') || 'Game started! Redirecting…'; msg.classList.remove('hidden'); }
+              setTimeout(function () { goToGameWithRoom(onlineRoomId, gs, onlineMySlotIndex); }, 150);
+              return true;
+            }
+            return false;
+          }
           window.FFRooms.subscribeRoom(res.roomId, function (data) {
             if (!data) return;
             var list = document.getElementById('room-players-list');
             if (list) list.innerHTML = (data.players || []).map(function (p) { return '<li>' + escHtml(p.name) + (p.characterId && CHARACTERS[p.characterId] ? ' – ' + CHARACTERS[p.characterId].name : '') + '</li>'; }).join('');
-            if (data.status === 'playing' && data.gameState) goToGameWithRoom(onlineRoomId, data.gameState, onlineMySlotIndex);
+            if (checkAndRedirect(data)) return;
+            if (data.status === 'playing' && window.FFRooms && window.FFRooms.init) {
+              window.FFRooms.init().then(function () {
+                return window.firebase.firestore().collection('ff_rooms').doc(onlineRoomId).get();
+              }).then(function (snap) {
+                if (snap.exists) checkAndRedirect(snap.data());
+              }).catch(function () {});
+            }
           });
+          if (redirectPollId) clearInterval(redirectPollId);
+          redirectPollId = setInterval(function () {
+            if (!onlineRoomId || onlineIsHost) return;
+            window.FFRooms.init().then(function () {
+              return window.firebase.firestore().collection('ff_rooms').doc(onlineRoomId).get();
+            }).then(function (snap) {
+              if (snap.exists && checkAndRedirect(snap.data())) { clearInterval(redirectPollId); redirectPollId = null; }
+            }).catch(function () {});
+          }, 2000);
         }).catch(function (err) { alert(err.message || 'Join failed'); });
       };
     }
 
-    function goToGameWithRoom(roomId, gameState, humanIdx) {
+    function goToGameWithRoom(roomId, gameState, humanIdx, isHost) {
       sessionStorage.setItem('ffSession', JSON.stringify({
         roomId: roomId,
         gameState: gameState,
         humanIdx: humanIdx,
         lang: I18n.getLang(),
-        isOnline: true
+        isOnline: true,
+        isHost: !!isHost
       }));
       window.location.href = '/five-forces/game';
     }
@@ -596,15 +626,16 @@
             return;
           }
           var players = data.players.map(function (p) { return { name: (p.name || '').trim() || ('Player'), characterId: p.characterId || null, isAI: false }; });
-          Game.init(players);
+          Game.initPreGame(players);
           var full = Game.getFullState && Game.getFullState();
           if (!full) return;
-          window.FFRooms.startGame(onlineRoomId, full).then(function () { goToGameWithRoom(onlineRoomId, full, 0); });
+          window.FFRooms.startGame(onlineRoomId, full).then(function () { goToGameWithRoom(onlineRoomId, full, 0, true); });
         });
       });
     });
 
     document.getElementById('btn-leave-room').addEventListener('click', function () {
+      if (redirectPollId) { clearInterval(redirectPollId); redirectPollId = null; }
       if (onlineRoomId && window.FFRooms) window.FFRooms.leaveRoom(onlineRoomId);
       onlineRoomId = null;
       showOnlineView('rooms');

@@ -38,6 +38,7 @@ var UI = (function () {
     if (sessionData.isOnline && sessionData.roomId && window.FFRooms) {
       window.ffOnlineRoomId = sessionData.roomId;
       window.ffIsOnline = true;
+      window.ffIsHost = !!sessionData.isHost;
       setTimeout(function () { setupOnlineSync(sessionData.roomId); }, 0);
     }
     var myIdx = typeof sessionData.humanIdx === 'number' ? sessionData.humanIdx : 0;
@@ -65,6 +66,11 @@ var UI = (function () {
         var cid = el.dataset.cid;
         if (!cid) return;
         Game.setPlayerCharacter(myIdx, cid);
+        var gs = Game.getState();
+        if (window.ffIsHost && gs && gs.phase === 'picking_characters') {
+          var allPicked = gs.players.every(function (p) { return p.characterId != null; });
+          if (allPicked && Game.dealCardsAndStart) Game.dealCardsAndStart();
+        }
         if (window.ffOnlineRoomId && window.FFRooms && window.FFRooms.updateGameState && Game.getFullState) {
           window.FFRooms.updateGameState(window.ffOnlineRoomId, Game.getFullState()).then(function () {
             overlay.style.display = 'none';
@@ -86,7 +92,7 @@ var UI = (function () {
 
   function refresh(gs) { render(gs); }
 
-  /** Online: tek kaynak – uzaktan gelen state'i karşılaştır, gerekirse restore + render. */
+  /** Online: tek kaynak – uzaktan gelen state'i karşılaştır, gerekirse restore + render. Host: tüm karakterler seçildiyse kart dağıt. */
   function applyRemoteState(remote) {
     if (!remote || !Game.restoreState || !Game.getFullState) return;
     function fp(s) {
@@ -96,7 +102,18 @@ var UI = (function () {
     var cur = Game.getFullState();
     if (cur && fp(remote) === fp(cur)) return;
     Game.restoreState(remote);
-    render(Game.getState());
+    var gs = Game.getState();
+    if (window.ffIsHost && gs && gs.phase === 'picking_characters') {
+      var allPicked = gs.players.every(function (p) { return p.characterId != null; });
+      if (allPicked && Game.dealCardsAndStart) {
+        Game.dealCardsAndStart();
+        if (window.FFRooms && window.ffOnlineRoomId) {
+          window.FFRooms.updateGameState(window.ffOnlineRoomId, Game.getFullState()).catch(function () {});
+        }
+        gs = Game.getState();
+      }
+    }
+    render(gs);
   }
 
   /** Online: Firestore dinle; gelen state'i debounce ile applyRemoteState'e ver. */
@@ -333,6 +350,12 @@ var UI = (function () {
     var el = document.getElementById('status-bar');
     if (!el) return;
     if (gs.over) { el.textContent = ''; return; }
+
+    if (gs.phase === 'picking_characters') {
+      el.textContent = t('game.status.waitingCharacters') || 'Waiting for everyone to pick a character…';
+      el.className = 'status-bar waiting';
+      return;
+    }
 
     if (handoffPending) {
       el.textContent = t('game.passDevice');

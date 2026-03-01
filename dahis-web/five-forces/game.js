@@ -38,6 +38,7 @@ var Game = (function () {
 
   // ─── Init ────────────────────────────────────────────────────────────────────
 
+  /** Normal init (yerel oyun): kartlar dağıtılır, phase 'draw'. */
   function init(playerConfigs) {
     var deck = shuffleDeck(buildDeck());
     var hands = dealCards(deck, playerConfigs.length, 5);
@@ -69,6 +70,48 @@ var Game = (function () {
     return getPublicState();
   }
 
+  /** Online: sadece oyuncular, phase 'picking_characters', kart dağıtılmaz. Karakterler seçildikten sonra dealCardsAndStart() çağrılır. */
+  function initPreGame(playerConfigs) {
+    var players = playerConfigs.map(function (cfg, i) {
+      return createPlayer('p' + i, cfg.name, cfg.characterId || null, cfg.isAI);
+    });
+    state = {
+      players: players,
+      deck: [],
+      discardPile: [],
+      currentTurnIdx: 0,
+      turnDirection: 1,
+      round: 1,
+      phase: 'picking_characters',
+      scoreLocked: false,
+      scoreLockTurns: 0,
+      pendingAbility: null,
+      pendingCard: null,
+      log: [],
+      over: false,
+      winner: null
+    };
+    addLog(t('log.waitingCharacters') || 'Waiting for everyone to pick a character…');
+    return getPublicState();
+  }
+
+  /** Online: tüm oyuncular karakter seçtiyse kartları dağıt ve phase'i 'draw' yap. Sadece host çağırmalı. */
+  function dealCardsAndStart() {
+    if (!state || state.phase !== 'picking_characters') return false;
+    for (var i = 0; i < state.players.length; i++) {
+      if (state.players[i].characterId == null) return false;
+    }
+    var deck = shuffleDeck(buildDeck());
+    var hands = dealCards(deck, state.players.length, 5);
+    for (var j = 0; j < state.players.length; j++) state.players[j].hand = hands[j];
+    state.deck = deck;
+    state.discardPile = [];
+    state.phase = 'draw';
+    state.log = [];
+    addLog(t('log.start', { n: state.players.length, deck: deck.length }));
+    return true;
+  }
+
   // ─── Logging ────────────────────────────────────────────────────────────────
 
   function addLog(msg) {
@@ -85,6 +128,7 @@ var Game = (function () {
   /** Phase 1: draw a card */
   function drawCard(playerId) {
     if (!state || state.over) return err(t('err.gameOver'));
+    if (state.phase === 'picking_characters') return err(t('err.pickCharacter') || 'Pick your character first');
     var p = state.players.find(function (pl) { return pl.id === playerId; });
     if (!p) return err(t('err.notFound'));
     if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
@@ -108,6 +152,7 @@ var Game = (function () {
   /** Phase 2: play a card from hand */
   function playCard(playerId, cardId, targetPlayerId) {
     if (!state || state.over) return err(t('err.gameOver'));
+    if (state.phase === 'picking_characters') return err(t('err.pickCharacter') || 'Pick your character first');
     var p = state.players.find(function (pl) { return pl.id === playerId; });
     if (!p) return err(t('err.notFound'));
     if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
@@ -147,6 +192,7 @@ var Game = (function () {
   /** Phase 3 (optional): use character ability */
   function useAbility(playerId) {
     if (!state || state.over) return err(t('err.gameOver'));
+    if (state.phase === 'picking_characters') return err(t('err.pickCharacter') || 'Pick your character first');
     var p = state.players.find(function (pl) { return pl.id === playerId; });
     if (!p) return err(t('err.notFound'));
     if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
@@ -185,6 +231,7 @@ var Game = (function () {
   /** Use Betrayal Token to cancel an opponent's card */
   function useBetrayal(playerId) {
     if (!state || state.over) return err(t('err.gameOver'));
+    if (state.phase === 'picking_characters') return err(t('err.pickCharacter') || 'Pick your character first');
     var p = state.players.find(function (pl) { return pl.id === playerId; });
     if (!p) return err(t('err.notFound'));
     if (!p.betrayalToken) return err(t('err.noBetrayal'));
@@ -201,6 +248,7 @@ var Game = (function () {
   /** Phase 4: end turn */
   function endTurn(playerId) {
     if (!state || state.over) return err(t('err.gameOver'));
+    if (state.phase === 'picking_characters') return err(t('err.pickCharacter') || 'Pick your character first');
     var p = state.players.find(function (pl) { return pl.id === playerId; });
     if (!p) return err(t('err.notFound'));
     if (state.players[state.currentTurnIdx].id !== playerId) return err(t('err.notYourTurn'));
@@ -342,7 +390,9 @@ var Game = (function () {
 
   /** Restore state from getFullState() (e.g. after receiving from server). */
   function restoreState(full) {
-    if (!full || !full.players || !full.deck) return false;
+    if (!full || !full.players) return false;
+    var deck = full.deck && full.deck.length ? full.deck.slice() : [];
+    var discardPile = full.discardPile && full.discardPile.length ? full.discardPile.slice() : [];
     state = {
       players: full.players.map(function (p) {
         var charId = p.characterId;
@@ -362,8 +412,8 @@ var Game = (function () {
           zestDoubleTarget: !!p.zestDoubleTarget
         };
       }),
-      deck: (full.deck || []).slice(),
-      discardPile: (full.discardPile || []).slice(),
+      deck: deck,
+      discardPile: discardPile,
       currentTurnIdx: full.currentTurnIdx || 0,
       turnDirection: full.turnDirection !== undefined ? full.turnDirection : 1,
       round: full.round || 1,
@@ -392,6 +442,8 @@ var Game = (function () {
 
   return {
     init: init,
+    initPreGame: initPreGame,
+    dealCardsAndStart: dealCardsAndStart,
     drawCard: drawCard,
     playCard: playCard,
     useAbility: useAbility,
