@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/number-link/">
+  <title>Noktaları Birleştir – dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="number-link.css">
+</head>
+<body class="number-link-page">
+  <div id="nav-placeholder"></div>
+
+  <header class="nl-header">
+    <a href="/eglence" class="nl-back" data-i18n="nl.back">← Eğlence</a>
+    <h1 class="nl-title" data-i18n="nl.title">Noktaları Birleştir</h1>
+    <p class="nl-subtitle" data-i18n="nl.subtitle">Noktaları sırayla birleştir, tüm hücreleri doldur.</p>
+  </header>
+
+  <main class="nl-main">
+    <div class="nl-game-wrap">
+      <div class="nl-grid-wrap" id="gridWrap">
+        <div class="nl-grid" id="grid" role="grid" aria-label="Oyun alanı"></div>
+      </div>
+
+      <div class="nl-actions">
+        <button type="button" class="nl-btn nl-btn-undo" id="btnUndo" disabled data-i18n="nl.undo">Geri Al</button>
+        <button type="button" class="nl-btn nl-btn-hint" id="btnHint" data-i18n="nl.hint">İpucu</button>
+      </div>
+
+      <section class="nl-how-to" aria-label="Nasıl oynanır">
+        <h2 class="nl-how-title" data-i18n="nl.how_title">Nasıl oynanır?</h2>
+        <div class="nl-how-items">
+          <div class="nl-how-item">
+            <div class="nl-how-icon nl-how-icon-connect" aria-hidden="true">
+              <span class="nl-dot nl-dot-1">1</span>
+              <span class="nl-dot nl-dot-2">2</span>
+              <span class="nl-dot nl-dot-3">3</span>
+            </div>
+            <p data-i18n="nl.how_connect">Noktaları sırayla birleştirin</p>
+          </div>
+          <div class="nl-how-item">
+            <div class="nl-how-icon nl-how-icon-fill" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
+            </div>
+            <p data-i18n="nl.how_fill">Her hücreyi doldurun</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/includes/load-common.js"></script>
+  <script src="number-link.js"></script>
+</body>
+</html>

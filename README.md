@@ -2,6 +2,10 @@
 
 Harmonya'nın Ritmini Koruyan Kahramanlar - dahi's One projesi.
 
+## ⌚ Ürün Konsepti
+
+dahi's One karakterleri **Casio F91W** tarzı dijital saatler olarak somutlaşıyor. Her karakter için saat özel renklerle tasarlanıyor; içine yerleştirilen **NFC çipi** sayesinde saat dokunulduğunda ilgili karakterin dijital dünyasına (karakter sayfası, mağaza, kampanya vb.) yönlendiriyor. Yani hem giyilebilir ürün hem de fizikselden dijitale köprü.
+
 ## 📁 Proje Yapısı
 
 ```
@@ -36,6 +40,7 @@ firebase deploy --only functions:dahisio
 
 ## 📚 Dokümantasyon
 
+- [Pazarlama rehberi (aşama aşama)](PAZARLAMA.md)
 - [Backend README](dahis-be/README.md)
 - [API Request Kılavuzu](dahis-be/REQUEST-README.md)
 - [Web Deployment](dahis-web/DEPLOYMENT.md)

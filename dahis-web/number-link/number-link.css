@@ -1,0 +1,289 @@
+/* Noktaları Birleştir – grid puzzle */
+
+.number-link-page {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-dark, #0a0a0f);
+  color: var(--text-primary, #fff);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.nl-header {
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.nl-back {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #b0b0b8);
+  text-decoration: none;
+}
+
+.nl-back:hover { color: var(--text-primary); }
+
+.nl-title {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.nl-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.nl-main {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.nl-game-wrap {
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.nl-grid-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.nl-grid {
+  display: grid;
+  gap: 0;
+  background: #1a1a24;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.nl-cell {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  position: relative;
+  border-radius: 6px;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.nl-cell:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.nl-cell:hover:not(.nl-cell-blocked):not(.nl-cell-path) {
+  background: rgba(102, 126, 234, 0.2);
+}
+
+.nl-cell-blocked {
+  background: #2a2a35;
+  cursor: default;
+  border-radius: 4px;
+}
+
+.nl-cell-blocked::after {
+  content: '';
+  position: absolute;
+  inset: 20%;
+  background: #444;
+  border-radius: 2px;
+}
+
+.nl-cell-path {
+  background: rgba(67, 233, 123, 0.25);
+  cursor: pointer;
+}
+
+.nl-cell-path.nl-cell-current {
+  background: rgba(67, 233, 123, 0.5);
+  box-shadow: 0 0 0 2px #43e97b;
+}
+
+.nl-cell-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2a2a35;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.nl-cell-number.nl-cell-number-current {
+  background: #43e97b;
+  color: #0a0a0f;
+  box-shadow: 0 0 0 2px #43e97b;
+}
+
+.nl-cell-path .nl-cell-number { background: #2d5a3a; color: #43e97b; }
+.nl-cell-path.nl-cell-current .nl-cell-number { background: #43e97b; color: #0a0a0f; }
+
+.nl-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.nl-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.nl-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nl-btn-undo {
+  background: #2a2a35;
+  color: #b0b0b8;
+}
+
+.nl-btn-undo:not(:disabled):hover { background: #3a3a48; }
+
+.nl-btn-hint {
+  background: #fff;
+  color: #1a1a24;
+  border: 2px solid #444;
+}
+
+.nl-btn-hint:hover:not(:disabled) { background: #e8e8f0; }
+
+.nl-how-to {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.nl-how-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.nl-how-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.nl-how-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nl-how-icon {
+  flex-shrink: 0;
+}
+
+.nl-how-icon-connect {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nl-how-icon-connect .nl-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.nl-dot-1 { background: #43e97b; color: #0a0a0f; }
+.nl-dot-2 { background: #2a2a35; color: #fff; }
+.nl-dot-3 { background: #667eea; color: #fff; }
+
+.nl-how-icon-fill svg {
+  width: 28px;
+  height: 28px;
+  stroke: #43e97b;
+}
+
+.nl-how-item p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Win overlay */
+.nl-win {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.nl-win.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nl-win-box {
+  background: #1a1a24;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 320px;
+  border: 1px solid rgba(67, 233, 123, 0.3);
+}
+
+.nl-win-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #43e97b;
+}
+
+.nl-win-msg {
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.nl-win-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  background: #43e97b;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+}
+
+.nl-win-btn:hover { filter: brightness(1.1); }
+
+/* Hint pulse */
+.nl-cell-hint {
+  animation: nl-pulse 0.8s ease-in-out 2;
+}
+
+@keyframes nl-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(102, 126, 234, 0); }
+}
