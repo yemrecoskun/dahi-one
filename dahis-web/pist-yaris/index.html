@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/pist-yaris/">
+  <title>Pist Çiz &amp; Yarış – dahi's One</title>
+  <meta name="description" content="Pist Çiz ve Yarış: Kendi yarış pistini çiz, ardından arabayı sürerek turları tamamla!">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="pist-yaris.css">
+</head>
+<body class="py-page">
+  <div id="nav-placeholder"></div>
+
+  <header class="py-header">
+    <a href="/eglence" class="py-back" data-i18n="py.back">← Eğlence</a>
+    <h1 class="py-title" data-i18n="py.title">Pist Çiz &amp; Yarış</h1>
+    <p class="py-subtitle" data-i18n="py.subtitle">Pistini çiz, arabayı sür!</p>
+  </header>
+
+  <main class="py-main">
+    <!-- Draw UI -->
+    <div class="py-draw-ui" id="drawUI">
+      <div class="py-draw-info">
+        <p class="py-draw-hint" data-i18n="py.draw_hint">🖊️ Fare veya parmakla pistin yolunu çiz</p>
+        <div class="py-draw-actions">
+          <button type="button" class="py-btn py-btn--reset" id="resetBtn" data-i18n="py.reset">🔄 Yeniden Çiz</button>
+          <button type="button" class="py-btn py-btn--start" id="startRaceBtn" disabled data-i18n="py.start_race">🏁 Yarışa Başla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="py-canvas-wrap">
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- Race HUD (hidden until race starts) -->
+      <div class="py-hud hidden" id="raceUI">
+        <div class="py-hud-row">
+          <div class="py-hud-item">
+            <span class="py-hud-label" data-i18n="py.laps">Tur</span>
+            <span class="py-hud-value" id="lapCount">0</span>
+          </div>
+          <div class="py-hud-item">
+            <span class="py-hud-label" data-i18n="py.best">En İyi</span>
+            <span class="py-hud-value" id="bestLap">–</span>
+          </div>
+          <div class="py-hud-item">
+            <span class="py-hud-label" data-i18n="py.last">Son Tur</span>
+            <span class="py-hud-value" id="lastLap">–</span>
+          </div>
+          <div class="py-hud-item">
+            <span class="py-hud-label" data-i18n="py.current">Süre</span>
+            <span class="py-hud-value" id="currentTime">0.0s</span>
+          </div>
+        </div>
+        <div class="py-speed-row">
+          <span class="py-speed-label" data-i18n="py.speed">Hız</span>
+          <div class="py-speed-bar-wrap">
+            <div class="py-speed-bar" id="speedBar"></div>
+          </div>
+          <span class="py-speed-num" id="speedNum">0</span>
+        </div>
+        <button type="button" class="py-btn py-btn--redraw" id="redrawBtn" data-i18n="py.redraw">🔄 Pisti Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Race controls hint -->
+    <div class="py-controls-hint hidden" id="controlsHint">
+      <p class="py-controls-text" data-i18n="py.controls_hint">
+        ⌨️ ← → veya A / D &nbsp;|&nbsp; 📱 Sol yarı = sola, sağ yarı = sağa
+      </p>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="pist-yaris.js"></script>
+</body>
+</html>
