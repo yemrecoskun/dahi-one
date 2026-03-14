@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/dahis-path/">
+  <title>Dahis Path: Harmonya Labirenti | dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="dahis-path.css">
+</head>
+<body class="dahispath-page">
+  <div id="nav-placeholder"></div>
+  <header class="dahispath-header">
+    <a href="/eglence" class="dahispath-back" data-i18n="dahispath.back">← Eğlence</a>
+    <h1 class="dahispath-title" data-i18n="dahispath.title">Dahis Path</h1>
+    <p class="dahispath-subtitle" data-i18n="dahispath.subtitle">Yolu kaydırarak karakteri portala ulaştır.</p>
+  </header>
+  <main class="dahispath-main">
+    <div class="dahispath-game-wrap">
+      <div class="dahispath-grid" id="grid"></div>
+      <div class="dahispath-actions">
+        <button type="button" class="dahispath-btn" id="btnUndo" disabled data-i18n="dahispath.undo">Geri al</button>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="dahis-path.js"></script>
+</body>
+</html>

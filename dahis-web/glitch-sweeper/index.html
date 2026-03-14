@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/glitch-sweeper/">
+  <title>Glitch Minesweeper | dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="glitch-sweeper.css">
+</head>
+<body class="glitch-page">
+  <div id="nav-placeholder"></div>
+  <header class="glitch-header">
+    <a href="/eglence" class="glitch-back" data-i18n="glitch.back">← Eğlence</a>
+    <h1 class="glitch-title" data-i18n="glitch.title">Glitch Minesweeper</h1>
+    <p class="glitch-subtitle" data-i18n="glitch.subtitle">Virüslü hücreleri işaretle, temiz hücreleri aç.</p>
+    <p class="glitch-meta">Virüs: <strong id="mineCount">10</strong> · Bayrak: <strong id="flagCount">0</strong></p>
+  </header>
+  <main class="glitch-main">
+    <div class="glitch-game-wrap">
+      <div class="glitch-grid" id="grid"></div>
+      <p class="glitch-hint" data-i18n="glitch.hint">Sol tık: aç · Sağ tık: Dahis bayrağı</p>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="glitch-sweeper.js"></script>
+</body>
+</html>

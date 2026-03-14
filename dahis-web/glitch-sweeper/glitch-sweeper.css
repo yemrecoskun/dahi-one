@@ -1,0 +1,27 @@
+.glitch-page { font-family: 'Poppins', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; padding-bottom: 2rem; }
+.glitch-header { text-align: center; padding: 1rem; }
+.glitch-back { display: inline-block; margin-bottom: .5rem; font-size: .9rem; color: #888; text-decoration: none; }
+.glitch-title { font-size: clamp(1.3rem,4vw,1.6rem); font-weight: 700; margin-bottom: .25rem; }
+.glitch-subtitle { font-size: .85rem; color: #888; }
+.glitch-meta { margin-top: .5rem; font-size: .9rem; }
+.glitch-main { max-width: 400px; margin: 0 auto; padding: 0 1rem; }
+.glitch-game-wrap { background: rgba(255,255,255,.04); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255,255,255,.08); }
+.glitch-grid { display: grid; gap: 2px; width: min(320px,92vw); margin: 0 auto; background: #1a1a24; padding: 8px; border-radius: 10px; }
+.glitch-cell { width: 100%; aspect-ratio: 1; background: #252532; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: clamp(0.75rem,2.5vw,1rem); cursor: pointer; user-select: none; transition: background .15s; }
+.glitch-cell:hover { background: #2a2a38; }
+.glitch-cell.revealed { background: #1e1e2a; cursor: default; color: #4facfe; }
+.glitch-cell.revealed.mine { background: #3a1a1a; color: #f5576c; }
+.glitch-cell.flagged { background: #2a2a4a; color: #667eea; }
+.glitch-cell.n1 { color: #4facfe; }
+.glitch-cell.n2 { color: #43e97b; }
+.glitch-cell.n3 { color: #f5576c; }
+.glitch-cell.n4 { color: #764ba2; }
+.glitch-cell.n5 { color: #ff8844; }
+.glitch-hint { text-align: center; font-size: .8rem; color: #666; margin-top: .75rem; }
+.glitch-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.glitch-overlay-box { background: #1a1a24; border-radius: 16px; padding: 2rem; text-align: center; max-width: 320px; }
+.glitch-overlay h2 { margin-bottom: .5rem; }
+.glitch-overlay button { padding: .65rem 1.5rem; border-radius: 10px; font-weight: 600; background: #43e97b; color: #0a0a0f; border: none; cursor: pointer; margin-top: 1rem; }
+.glitch-gameover { animation: glitch-shake 0.5s ease; }
+@keyframes glitch-shake { 0%,100% { filter: hue-rotate(0deg); } 25% { filter: hue-rotate(90deg) saturate(2); } 50% { filter: hue-rotate(180deg); } 75% { filter: hue-rotate(270deg); } }
+.glitch-win .glitch-grid { box-shadow: 0 0 40px rgba(79,172,254,.4); }

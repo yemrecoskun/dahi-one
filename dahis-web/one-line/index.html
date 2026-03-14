@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/one-line/">
+  <title>Tek Hat – One-Line Link | dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="one-line.css">
+</head>
+<body class="oneline-page">
+  <div id="nav-placeholder"></div>
+  <header class="oneline-header">
+    <a href="/eglence" class="oneline-back" data-i18n="oneline.back">← Eğlence</a>
+    <h1 class="oneline-title" data-i18n="oneline.title">Tek Hat</h1>
+    <p class="oneline-subtitle" data-i18n="oneline.subtitle">Tüm hücrelerden tek çizgide geç. Elini kaldırma.</p>
+  </header>
+  <main class="oneline-main">
+    <div class="oneline-char-pick" id="charPick">
+      <p data-i18n="oneline.pick_char">Karakter rengini seç (neon iz):</p>
+      <div class="oneline-char-btns" id="charBtns"></div>
+    </div>
+    <div class="oneline-game-wrap">
+      <div class="oneline-grid" id="grid"></div>
+      <div class="oneline-actions">
+        <button type="button" class="oneline-btn" id="btnUndo" disabled data-i18n="oneline.undo">Geri al</button>
+        <button type="button" class="oneline-btn" id="btnClear" data-i18n="oneline.clear">Temizle</button>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="one-line.js"></script>
+</body>
+</html>

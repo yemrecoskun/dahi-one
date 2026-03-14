@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/crystal-merge/">
+  <title>Crystal Merge: 2048 Dahis Edition | dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="crystal-merge.css">
+</head>
+<body class="crystal-page">
+  <div id="nav-placeholder"></div>
+  <header class="crystal-header">
+    <a href="/eglence" class="crystal-back" data-i18n="crystal.back">← Eğlence</a>
+    <h1 class="crystal-title" data-i18n="crystal.title">Crystal Merge</h1>
+    <p class="crystal-subtitle" data-i18n="crystal.subtitle">Kristalleri birleştir, Dahi's One'a ulaş.</p>
+    <p class="crystal-score">Skor: <strong id="score">0</strong></p>
+  </header>
+  <main class="crystal-main">
+    <div class="crystal-game-wrap">
+      <div class="crystal-grid" id="grid"></div>
+      <p class="crystal-hint" data-i18n="crystal.hint">Ok tuşları veya kaydır</p>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="crystal-merge.js"></script>
+</body>
+</html>
