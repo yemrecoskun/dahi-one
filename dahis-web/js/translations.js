@@ -130,6 +130,9 @@ window.__TRANSLATIONS__ = {
         'eglence.crown_title': 'Taç Yerleştir',
         'eglence.crown_desc': '8x8 bölgeli bulmaca. Her satır, sütun ve bölgede bir taç. İki taç temas etmesin.',
         'eglence.crown_cta': 'Oyna →',
+        'eglence.yapboz_title': 'Karakter Yapbozu',
+        'eglence.yapboz_desc': 'Karakter resmini parçalara böl, kaydırarak tamamla.',
+        'eglence.yapboz_cta': 'Oyna →',
 
         // --- Noktaları Birleştir (number-link) ---
         'nl.back': '← Eğlence',
@@ -188,6 +191,18 @@ window.__TRANSLATIONS__ = {
         'crown.win_title': 'Tebrikler!',
         'crown.win_msg': 'Tüm taçları doğru yerleştirdin.',
         'crown.play_again': 'Tekrar Oyna',
+
+        // --- Karakter Yapbozu ---
+        'yapboz.back': '← Eğlence',
+        'yapboz.title': 'Karakter Yapbozu',
+        'yapboz.subtitle': 'Parçaları kaydırarak resmi tamamla.',
+        'yapboz.undo': 'Geri al',
+        'yapboz.shuffle': 'Karıştır',
+        'yapboz.how_title': 'Nasıl oynanır?',
+        'yapboz.how_text': 'Boş kareye bitişik parçaya tıklayarak parçayı kaydır. Tüm parçaları sıraya getirerek resmi tamamla.',
+        'yapboz.win_title': 'Tebrikler!',
+        'yapboz.win_msg': 'Yapbozu tamamladın.',
+        'yapboz.play_again': 'Tekrar Oyna',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -451,6 +466,9 @@ window.__TRANSLATIONS__ = {
         'eglence.crown_title': 'Crown Puzzle',
         'eglence.crown_desc': '8x8 grid with regions. One crown per row, column and region. No two crowns touch.',
         'eglence.crown_cta': 'Play →',
+        'eglence.yapboz_title': 'Character Jigsaw',
+        'eglence.yapboz_desc': 'Slide the pieces to complete the character image.',
+        'eglence.yapboz_cta': 'Play →',
 
         'nl.back': '← Fun',
         'nl.title': 'Connect the Dots',
@@ -505,6 +523,17 @@ window.__TRANSLATIONS__ = {
         'crown.win_title': 'Well done!',
         'crown.win_msg': 'You placed all crowns correctly.',
         'crown.play_again': 'Play Again',
+
+        'yapboz.back': '← Fun',
+        'yapboz.title': 'Character Jigsaw',
+        'yapboz.subtitle': 'Slide the pieces to complete the image.',
+        'yapboz.undo': 'Undo',
+        'yapboz.shuffle': 'Shuffle',
+        'yapboz.how_title': 'How to play?',
+        'yapboz.how_text': 'Tap a piece next to the empty square to slide it. Complete the image by putting all pieces in order.',
+        'yapboz.win_title': 'Well done!',
+        'yapboz.win_msg': 'You completed the puzzle.',
+        'yapboz.play_again': 'Play Again',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",

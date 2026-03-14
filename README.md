@@ -41,6 +41,7 @@ firebase deploy --only functions:dahisio
 ## 📚 Dokümantasyon
 
 - [Pazarlama rehberi (aşama aşama)](PAZARLAMA.md)
+- [Oyunlar ve Eğlence (quiz, puzzle, Five Forces vb.)](dahis-web/OYUNLAR.md)
 - [Backend README](dahis-be/README.md)
 - [API Request Kılavuzu](dahis-be/REQUEST-README.md)
 - [Web Deployment](dahis-web/DEPLOYMENT.md)

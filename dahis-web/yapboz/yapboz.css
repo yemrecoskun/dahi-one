@@ -1,0 +1,158 @@
+/* Karakter Yapbozu – sürgülü 3x3 */
+
+.yapboz-page {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-dark, #0a0a0f);
+  color: var(--text-primary, #fff);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.yapboz-header {
+  text-align: center;
+  padding: 1rem 1rem 0.75rem;
+}
+
+.yapboz-back {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #b0b0b8);
+  text-decoration: none;
+}
+.yapboz-back:hover { color: var(--text-primary); }
+
+.yapboz-title { font-size: clamp(1.35rem, 4vw, 1.75rem); font-weight: 700; margin-bottom: 0.2rem; }
+.yapboz-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
+
+.yapboz-main {
+  max-width: 380px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.yapboz-game-wrap {
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.yapboz-board-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.yapboz-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: min(280px, 85vw);
+  aspect-ratio: 1;
+  gap: 4px;
+  background: #1a1a24;
+  padding: 8px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.12);
+}
+
+.yapboz-tile {
+  background-size: 300% 300%;
+  background-repeat: no-repeat;
+  background-color: #252532;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.yapboz-tile:hover:not(.yapboz-empty) {
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.6);
+  transform: scale(1.02);
+}
+.yapboz-tile.yapboz-empty {
+  cursor: default;
+  background: #1e1e2a;
+  background-image: none;
+}
+
+.yapboz-char-name {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.yapboz-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.yapboz-btn {
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+}
+.yapboz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.yapboz-btn-undo { background: #2a2a35; color: var(--text-secondary); }
+.yapboz-btn-undo:not(:disabled):hover { background: #3a3a48; }
+.yapboz-btn-shuffle { background: #667eea; color: #fff; }
+.yapboz-btn-shuffle:hover { background: #7688f0; }
+
+.yapboz-how {
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.yapboz-how summary {
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+.yapboz-how p {
+  padding: 0 0.75rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.yapboz-win {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+.yapboz-win.is-visible { opacity: 1; visibility: visible; }
+.yapboz-win-box {
+  background: #1a1a24;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 320px;
+  border: 1px solid rgba(67, 233, 123, 0.3);
+}
+.yapboz-win-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: #43e97b; }
+.yapboz-win-msg { color: var(--text-secondary); margin-bottom: 1.25rem; }
+.yapboz-win-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  background: #43e97b;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+}
+.yapboz-win-btn:hover { filter: brightness(1.1); }
