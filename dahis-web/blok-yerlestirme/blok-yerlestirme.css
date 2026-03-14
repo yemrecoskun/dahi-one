@@ -1,0 +1,126 @@
+.blok-page { font-family: 'Poppins', sans-serif; background: var(--bg-dark,#0a0a0f); color: var(--text-primary,#fff); min-height: 100vh; padding-bottom: 2rem; }
+.blok-header { text-align: center; padding: 1rem; }
+.blok-back { display: inline-block; margin-bottom: .5rem; font-size: .9rem; color: var(--text-secondary,#aaa); text-decoration: none; }
+.blok-back:hover { color: var(--text-primary,#fff); }
+.blok-title { font-size: clamp(1.3rem,4vw,1.7rem); font-weight: 700; margin-bottom: .25rem; }
+.blok-subtitle { font-size: .85rem; color: var(--text-secondary,#aaa); }
+.blok-main { max-width: 420px; margin: 0 auto; padding: 0 1rem; }
+.blok-game-wrap { background: rgba(255,255,255,.04); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255,255,255,.08); }
+
+/* Score */
+.blok-score-bar { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-bottom: .75rem; font-size: .95rem; }
+.blok-score-label { color: var(--text-secondary,#aaa); }
+.blok-score-val { font-weight: 700; font-size: 1.1rem; color: #43e97b; }
+
+/* Board */
+.blok-board-wrap { display: flex; justify-content: center; margin-bottom: 1rem; }
+.blok-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  background: #1a1a24;
+  padding: 8px;
+  border-radius: 12px;
+  width: min(340px, 90vw);
+  aspect-ratio: 1;
+}
+.blok-cell {
+  background: #252532;
+  border-radius: 5px;
+  transition: background .12s, box-shadow .12s;
+  cursor: default;
+  aspect-ratio: 1;
+}
+.blok-cell.filled {
+  border-radius: 5px;
+}
+.blok-cell.preview {
+  opacity: .55;
+  border-radius: 5px;
+}
+.blok-cell.preview-invalid {
+  background: rgba(255,60,60,.4) !important;
+  box-shadow: none !important;
+}
+.blok-cell.line-clear {
+  animation: lineClear .35s ease forwards;
+}
+@keyframes lineClear {
+  0%   { filter: brightness(2) saturate(1.5); }
+  100% { filter: brightness(1) saturate(1); opacity: 0; }
+}
+
+/* Piece tray */
+.blok-pieces {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  min-height: 90px;
+}
+.blok-piece-card {
+  background: rgba(255,255,255,.05);
+  border: 2px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: .5rem;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s, box-shadow .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  min-height: 64px;
+  user-select: none;
+}
+.blok-piece-card:hover { transform: scale(1.06); }
+.blok-piece-card.selected {
+  border-color: #fff;
+  box-shadow: 0 0 18px var(--piece-color,#43e97b);
+  transform: scale(1.08);
+}
+.blok-piece-card.used { opacity: .25; pointer-events: none; }
+.blok-piece-grid {
+  display: grid;
+  gap: 2px;
+}
+.blok-piece-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* Actions */
+.blok-actions { display: flex; gap: .75rem; justify-content: center; margin-bottom: .5rem; }
+.blok-btn { padding: .55rem 1.1rem; border-radius: 10px; font-size: .9rem; font-weight: 600; border: none; cursor: pointer; background: #2a2a35; color: var(--text-secondary,#aaa); font-family: inherit; }
+.blok-btn:hover:not(:disabled) { background: #3a3a48; color: #fff; }
+.blok-btn:disabled { opacity: .5; cursor: not-allowed; }
+.blok-btn-new { background: #2a3a2a; color: #43e97b; }
+.blok-btn-new:hover { background: #3a4a3a; color: #fff; }
+
+/* Hint */
+.blok-hint { text-align: center; font-size: .78rem; color: var(--text-secondary,#aaa); margin: 0; }
+
+/* Game-over overlay */
+.blok-over {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s, visibility .3s;
+}
+.blok-over.is-visible { opacity: 1; visibility: visible; }
+.blok-over-box {
+  background: #1a1a24;
+  border-radius: 16px; padding: 2rem;
+  text-align: center; max-width: 300px;
+  border: 1px solid rgba(245,87,108,.4);
+}
+.blok-over-title { font-size: 1.5rem; margin-bottom: .5rem; color: #f5576c; }
+.blok-over-score { color: var(--text-secondary,#aaa); margin-bottom: 1.25rem; }
+.blok-over-btn {
+  padding: .65rem 1.5rem; border-radius: 10px; font-weight: 600;
+  background: #43e97b; color: #0a0a0f; border: none; cursor: pointer; font-family: inherit;
+}
+.blok-over-btn:hover { filter: brightness(1.1); }
