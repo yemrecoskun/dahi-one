@@ -121,10 +121,10 @@ window.__TRANSLATIONS__ = {
         'eglence.numberlink_title': 'Noktaları Birleştir',
         'eglence.numberlink_desc': 'Noktaları sırayla birleştir, tüm hücreleri doldur.',
         'eglence.numberlink_cta': 'Oyna →',
-        'eglence.sudoku_title': 'Karakter Sudokusu',
+        'eglence.sudoku_title': 'Dahis Sudoku',
         'eglence.sudoku_desc': "6x6 sudoku. Her satır, sütun ve bölgede her karakter bir kez.",
         'eglence.sudoku_cta': 'Oyna →',
-        'eglence.takuzu_title': 'Karakter Takuzu',
+        'eglence.takuzu_title': 'Dahis Takuzu',
         'eglence.takuzu_desc': 'İki karakterle doldur. = aynı, X karşıt. En fazla 2 yan yana.',
         'eglence.takuzu_cta': 'Oyna →',
         'eglence.crown_title': 'Taç Yerleştir',
@@ -161,7 +161,7 @@ window.__TRANSLATIONS__ = {
 
         // --- Karakter Sudokusu ---
         'cs.back': '← Eğlence',
-        'cs.title': 'Karakter Sudokusu',
+        'cs.title': 'Dahis Sudoku',
         'cs.subtitle': 'Her satır, sütun ve bölgede her karakter bir kez.',
         'cs.hint': 'İpucu',
         'cs.notes_off': 'Notlar KAPALI',
@@ -174,7 +174,7 @@ window.__TRANSLATIONS__ = {
 
         // --- Karakter Takuzu ---
         'tkz.back': '← Eğlence',
-        'tkz.title': 'Karakter Takuzu',
+        'tkz.title': 'Dahis Takuzu',
         'tkz.subtitle': 'İki karakterle doldur. Eşittir aynı, X karşıt.',
         'tkz.undo': 'Geri Al',
         'tkz.hint': 'İpucu',
@@ -506,10 +506,10 @@ window.__TRANSLATIONS__ = {
         'eglence.numberlink_title': 'Connect the Dots',
         'eglence.numberlink_desc': 'Connect the numbered points in order and fill every cell.',
         'eglence.numberlink_cta': 'Play →',
-        'eglence.sudoku_title': 'Character Sudoku',
+        'eglence.sudoku_title': 'Dahis Sudoku',
         'eglence.sudoku_desc': '6x6 Sudoku. Each row, column and region has each character once.',
         'eglence.sudoku_cta': 'Play →',
-        'eglence.takuzu_title': 'Character Takuzu',
+        'eglence.takuzu_title': 'Dahis Takuzu',
         'eglence.takuzu_desc': 'Fill with two symbols. = same, X opposite. Max 2 in a row.',
         'eglence.takuzu_cta': 'Play →',
         'eglence.crown_title': 'Crown Puzzle',
@@ -544,7 +544,7 @@ window.__TRANSLATIONS__ = {
         'nl.play_again': 'Play Again',
 
         'cs.back': '← Fun',
-        'cs.title': 'Character Sudoku',
+        'cs.title': 'Dahis Sudoku',
         'cs.subtitle': 'Each row, column and region has each character once.',
         'cs.hint': 'Hint',
         'cs.notes_off': 'Notes OFF',
@@ -556,7 +556,7 @@ window.__TRANSLATIONS__ = {
         'cs.play_again': 'Play Again',
 
         'tkz.back': '← Fun',
-        'tkz.title': 'Character Takuzu',
+        'tkz.title': 'Dahis Takuzu',
         'tkz.subtitle': 'Fill with two symbols. = same, X opposite.',
         'tkz.undo': 'Undo',
         'tkz.hint': 'Hint',
