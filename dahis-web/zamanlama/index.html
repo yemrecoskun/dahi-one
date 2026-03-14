@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/zamanlama/">
+  <title>Zamanlanmış Karakter Yerleştirme – dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="zamanlama.css">
+</head>
+<body class="zkr-page">
+  <div id="nav-placeholder"></div>
+
+  <header class="zkr-header">
+    <a href="/eglence" class="zkr-back" data-i18n="zkr.back">← Eğlence</a>
+    <h1 class="zkr-title" data-i18n="zkr.title">Zamanlanmış Karakter</h1>
+    <p class="zkr-subtitle" data-i18n="zkr.subtitle">Doğru karakteri doğru zamanda doğru yere yerleştir.</p>
+  </header>
+
+  <main class="zkr-main">
+    <div class="zkr-game-wrap">
+
+      <!-- Stats Bar -->
+      <div class="zkr-stats">
+        <div class="zkr-stat">
+          <span class="zkr-stat-label" data-i18n="zkr.score_label">Puan</span>
+          <span class="zkr-stat-value" id="zkrScore">0</span>
+        </div>
+        <div class="zkr-stat">
+          <span class="zkr-stat-label" data-i18n="zkr.level_label">Seviye</span>
+          <span class="zkr-stat-value" id="zkrLevel">1</span>
+        </div>
+        <div class="zkr-stat">
+          <span class="zkr-stat-label" data-i18n="zkr.lives_label">Can</span>
+          <span class="zkr-stat-value" id="zkrLives">❤️❤️❤️</span>
+        </div>
+      </div>
+
+      <!-- Clock Display -->
+      <div class="zkr-clock-wrap">
+        <div class="zkr-clock" id="zkrClock">
+          <div class="zkr-clock-face">
+            <div class="zkr-clock-hand zkr-clock-hand--second" id="zkrSecondHand"></div>
+            <div class="zkr-clock-center"></div>
+          </div>
+          <div class="zkr-clock-timer" id="zkrTimer">5</div>
+        </div>
+      </div>
+
+      <!-- Active Character (to be placed) -->
+      <div class="zkr-active-area">
+        <p class="zkr-active-label" data-i18n="zkr.active_label">Aktif Karakter</p>
+        <div class="zkr-active-char" id="zkrActiveChar" draggable="true">
+          <span class="zkr-char-symbol" id="zkrCharSymbol">?</span>
+          <span class="zkr-char-name" id="zkrCharName" data-i18n="zkr.waiting">Bekleniyor…</span>
+        </div>
+      </div>
+
+      <!-- Target Slots -->
+      <div class="zkr-slots-label" data-i18n="zkr.slots_label">Hedef Alanlar</div>
+      <div class="zkr-slots" id="zkrSlots"></div>
+
+      <!-- Start / Game Over overlay -->
+      <div class="zkr-overlay" id="zkrOverlay">
+        <div class="zkr-overlay-box">
+          <div class="zkr-overlay-icon" id="zkrOverlayIcon">⏰</div>
+          <h2 class="zkr-overlay-title" id="zkrOverlayTitle" data-i18n="zkr.start_title">Zamanlanmış Karakter</h2>
+          <p class="zkr-overlay-desc" id="zkrOverlayDesc" data-i18n="zkr.start_desc">Aktif karakteri doğru hedefe yerleştir. Her seviyede süre kısalır!</p>
+          <button class="zkr-btn zkr-btn-start" id="zkrStartBtn" data-i18n="zkr.start_btn">Başla →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- How to Play -->
+    <details class="zkr-how">
+      <summary data-i18n="zkr.how_title">Nasıl oynanır?</summary>
+      <div class="zkr-how-inner">
+        <p data-i18n="zkr.how_1">Ekranda aktif bir karakter belirir. Süre dolmadan onu doğru hedef alana tıkla veya sürükle.</p>
+        <p data-i18n="zkr.how_2">Doğru yerleştirme puan kazandırır; yanlış veya süre aşımı can kaybettirir.</p>
+        <p data-i18n="zkr.how_3">Her 5 doğru yerleştirmede seviye yükselir ve süre kısalır.</p>
+        <p data-i18n="zkr.how_4">3 can hakkın bitti mi? Oyun sona erer.</p>
+      </div>
+    </details>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="zamanlama.js"></script>
+</body>
+</html>
