@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/crown-puzzle/">
+  <title>Taç Yerleştir – dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="crown-puzzle.css">
+</head>
+<body class="crown-page">
+  <div id="nav-placeholder"></div>
+
+  <header class="crown-header">
+    <a href="/eglence" class="crown-back" data-i18n="crown.back">← Eğlence</a>
+    <h1 class="crown-title" data-i18n="crown.title">Taç Yerleştir</h1>
+    <p class="crown-subtitle" data-i18n="crown.subtitle">Her satır, sütun ve bölgede tam bir taç. İki taç çapraz bile temas etmesin.</p>
+  </header>
+
+  <main class="crown-main">
+    <div class="crown-game-wrap">
+      <div class="crown-grid-wrap">
+        <div class="crown-grid" id="crownGrid" role="grid" aria-label="Oyun alanı"></div>
+      </div>
+
+      <div class="crown-actions">
+        <button type="button" class="crown-btn crown-btn-undo" id="btnUndo" disabled data-i18n="crown.undo">Geri al</button>
+        <button type="button" class="crown-btn crown-btn-hint" id="btnHint" data-i18n="crown.hint">İpucu</button>
+      </div>
+
+      <details class="crown-how" id="crownHow">
+        <summary data-i18n="crown.how_title">Nasıl oynanır?</summary>
+        <div class="crown-how-inner">
+          <p data-i18n="crown.how_goal">Amacınız her satır, sütun ve renk bölgesinde tam olarak bir taç olmasını sağlamaktır.</p>
+          <p data-i18n="crown.how_tap">Bir kez tıklayın = X (taç gelmez). İki kez tıklayın = Taç. Taç yerleştirilemeyecek hücreleri X ile işaretleyin.</p>
+          <p data-i18n="crown.how_diag">İki taç birbirine yan yana veya çapraz temas edemez.</p>
+        </div>
+      </details>
+
+      <details class="crown-how" id="crownExamples">
+        <summary data-i18n="crown.examples_title">Örnekler</summary>
+        <div class="crown-examples-inner">
+          <p data-i18n="crown.examples_text">Sol: Taç konunca komşu (ve çapraz) hücrelere taç konamaz. Sağ: Her satır, sütun ve bölgede bir taç.</p>
+        </div>
+      </details>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/includes/load-common.js"></script>
+  <script src="crown-puzzle.js"></script>
+</body>
+</html>

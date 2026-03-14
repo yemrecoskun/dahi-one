@@ -127,6 +127,9 @@ window.__TRANSLATIONS__ = {
         'eglence.takuzu_title': 'Karakter Takuzu',
         'eglence.takuzu_desc': 'İki karakterle doldur. = aynı, X karşıt. En fazla 2 yan yana.',
         'eglence.takuzu_cta': 'Oyna →',
+        'eglence.crown_title': 'Taç Yerleştir',
+        'eglence.crown_desc': '8x8 bölgeli bulmaca. Her satır, sütun ve bölgede bir taç. İki taç temas etmesin.',
+        'eglence.crown_cta': 'Oyna →',
 
         // --- Noktaları Birleştir (number-link) ---
         'nl.back': '← Eğlence',
@@ -169,6 +172,22 @@ window.__TRANSLATIONS__ = {
         'tkz.win_title': 'Tebrikler!',
         'tkz.win_msg': 'Bulmacayı tamamladın.',
         'tkz.play_again': 'Tekrar Oyna',
+
+        // --- Taç Yerleştir (crown puzzle) ---
+        'crown.back': '← Eğlence',
+        'crown.title': 'Taç Yerleştir',
+        'crown.subtitle': 'Her satır, sütun ve bölgede tam bir taç. İki taç çapraz bile temas etmesin.',
+        'crown.undo': 'Geri al',
+        'crown.hint': 'İpucu',
+        'crown.how_title': 'Nasıl oynanır?',
+        'crown.how_goal': 'Amacınız her satır, sütun ve renk bölgesinde tam olarak bir taç olmasını sağlamaktır.',
+        'crown.how_tap': 'Bir kez tıklayın = X (taç gelmez). İki kez tıklayın = Taç. Taç yerleştirilemeyecek hücreleri X ile işaretleyin.',
+        'crown.how_diag': 'İki taç birbirine yan yana veya çapraz temas edemez.',
+        'crown.examples_title': 'Örnekler',
+        'crown.examples_text': 'Taç konunca komşu (ve çapraz) hücrelere taç konamaz. Her satır, sütun ve bölgede bir taç.',
+        'crown.win_title': 'Tebrikler!',
+        'crown.win_msg': 'Tüm taçları doğru yerleştirdin.',
+        'crown.play_again': 'Tekrar Oyna',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -429,6 +448,9 @@ window.__TRANSLATIONS__ = {
         'eglence.takuzu_title': 'Character Takuzu',
         'eglence.takuzu_desc': 'Fill with two symbols. = same, X opposite. Max 2 in a row.',
         'eglence.takuzu_cta': 'Play →',
+        'eglence.crown_title': 'Crown Puzzle',
+        'eglence.crown_desc': '8x8 grid with regions. One crown per row, column and region. No two crowns touch.',
+        'eglence.crown_cta': 'Play →',
 
         'nl.back': '← Fun',
         'nl.title': 'Connect the Dots',
@@ -468,6 +490,21 @@ window.__TRANSLATIONS__ = {
         'tkz.win_title': 'Well done!',
         'tkz.win_msg': 'You completed the puzzle.',
         'tkz.play_again': 'Play Again',
+
+        'crown.back': '← Fun',
+        'crown.title': 'Crown Puzzle',
+        'crown.subtitle': 'Exactly one crown per row, column and region. No two crowns touch, even diagonally.',
+        'crown.undo': 'Undo',
+        'crown.hint': 'Hint',
+        'crown.how_title': 'How to play?',
+        'crown.how_goal': 'Place exactly one crown in every row, column and colored region.',
+        'crown.how_tap': 'Tap once = X (no crown). Tap twice = Crown. Mark with X where a crown cannot go.',
+        'crown.how_diag': 'Two crowns cannot touch, even diagonally.',
+        'crown.examples_title': 'Examples',
+        'crown.examples_text': 'When you place a crown, adjacent and diagonal cells cannot have a crown. One crown per row, column and region.',
+        'crown.win_title': 'Well done!',
+        'crown.win_msg': 'You placed all crowns correctly.',
+        'crown.play_again': 'Play Again',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",
