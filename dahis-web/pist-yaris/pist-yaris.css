@@ -1,0 +1,243 @@
+/* ===== Pist Çiz & Yarış – Styles ===== */
+
+.py-page {
+  background: #0d0d1a;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+}
+
+/* Header */
+.py-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+  position: relative;
+  z-index: 10;
+}
+
+.py-back {
+  color: #00ccff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.py-back:hover { opacity: 0.75; }
+
+.py-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(90deg, #00ccff, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  flex: 1;
+}
+
+.py-subtitle {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Main layout */
+.py-main {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+/* Draw UI bar */
+.py-draw-ui {
+  background: rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid rgba(0, 200, 255, 0.15);
+  padding: 0.5rem 1rem;
+  flex-shrink: 0;
+}
+
+.py-draw-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.py-draw-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.py-draw-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Buttons */
+.py-btn {
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.py-btn:active { transform: scale(0.97); }
+.py-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.py-btn--reset {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.py-btn--reset:hover:not(:disabled) { background: rgba(255,255,255,0.18); }
+
+.py-btn--start {
+  background: linear-gradient(135deg, #00ccff, #a78bfa);
+  color: #000;
+}
+.py-btn--start:hover:not(:disabled) { opacity: 0.9; }
+
+.py-btn--redraw {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
+}
+.py-btn--redraw:hover { background: rgba(255,255,255,0.18); }
+
+/* Canvas */
+.py-canvas-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* HUD overlay */
+.py-hud {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(0, 200, 255, 0.25);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 180px;
+  backdrop-filter: blur(6px);
+}
+
+.py-hud.hidden { display: none; }
+
+.py-hud-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 0.75rem;
+}
+
+.py-hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.py-hud-label {
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.py-hud-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00ccff;
+  line-height: 1.2;
+}
+
+/* Speed bar */
+.py-speed-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.py-speed-label {
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.py-speed-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.py-speed-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00ccff, #a78bfa);
+  border-radius: 3px;
+  transition: width 0.1s;
+}
+
+.py-speed-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #00ccff;
+  min-width: 26px;
+  text-align: right;
+}
+
+/* Controls hint */
+.py-controls-hint {
+  flex-shrink: 0;
+  padding: 0.4rem 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.py-controls-hint.hidden { display: none; }
+
+.py-controls-text {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .py-header { padding: 0.5rem 0.75rem; }
+  .py-subtitle { display: none; }
+  .py-hud { min-width: 150px; right: 0.3rem; top: 0.3rem; }
+  .py-hud-value { font-size: 0.85rem; }
+  .py-draw-hint { display: none; }
+}

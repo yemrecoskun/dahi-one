@@ -330,6 +330,24 @@ window.__TRANSLATIONS__ = {
         'eglence.breakout3d_title': '3D Breakout',
         'eglence.breakout3d_desc': 'Fizik tabanlı 3D tuğla kırma. Raketi kontrol et, güçlendirmeleri topla, tüm tuğlaları kır!',
         'eglence.breakout3d_cta': 'Oyna →',
+        'eglence.pistyaris_title': 'Pist Çiz & Yarış',
+        'eglence.pistyaris_desc': 'Kendi yarış pistini çiz, sonra arabayı sürerek en iyi tur süresini yakala!',
+        'eglence.pistyaris_cta': 'Oyna →',
+
+        // --- Pist Çiz & Yarış oyunu ---
+        'py.back': '← Eğlence',
+        'py.title': 'Pist Çiz & Yarış',
+        'py.subtitle': 'Pistini çiz, arabayı sür!',
+        'py.draw_hint': '🖊️ Fare veya parmakla pistin yolunu çiz',
+        'py.reset': '🔄 Yeniden Çiz',
+        'py.start_race': '🏁 Yarışa Başla',
+        'py.laps': 'Tur',
+        'py.best': 'En İyi',
+        'py.last': 'Son Tur',
+        'py.current': 'Süre',
+        'py.speed': 'Hız',
+        'py.redraw': '🔄 Pisti Değiştir',
+        'py.controls_hint': '⌨️ ← → veya A / D  |  📱 Sol yarı = sola, sağ yarı = sağa',
 
         // --- 3D Breakout oyunu ---
         'bko.back': '← Eğlence',
@@ -835,6 +853,24 @@ window.__TRANSLATIONS__ = {
         'eglence.breakout3d_title': '3D Breakout',
         'eglence.breakout3d_desc': 'Physics-based 3D brick breaker. Control the paddle, grab power-ups, smash all bricks!',
         'eglence.breakout3d_cta': 'Play →',
+        'eglence.pistyaris_title': 'Draw Track & Race',
+        'eglence.pistyaris_desc': 'Draw your own race track, then drive the car to beat your best lap time!',
+        'eglence.pistyaris_cta': 'Play →',
+
+        // --- Draw Track & Race game ---
+        'py.back': '← Fun',
+        'py.title': 'Draw Track & Race',
+        'py.subtitle': 'Draw your track, drive the car!',
+        'py.draw_hint': '🖊️ Draw the track with mouse or finger',
+        'py.reset': '🔄 Redraw',
+        'py.start_race': '🏁 Start Race',
+        'py.laps': 'Laps',
+        'py.best': 'Best',
+        'py.last': 'Last Lap',
+        'py.current': 'Time',
+        'py.speed': 'Speed',
+        'py.redraw': '🔄 Change Track',
+        'py.controls_hint': '⌨️ ← → or A / D  |  📱 Left half = left, right half = right',
 
         // --- 3D Breakout game ---
         'bko.back': '← Fun',
