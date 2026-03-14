@@ -130,7 +130,7 @@ window.__TRANSLATIONS__ = {
         'eglence.crown_title': 'Taç Yerleştir',
         'eglence.crown_desc': '8x8 bölgeli bulmaca. Her satır, sütun ve bölgede bir taç. İki taç temas etmesin.',
         'eglence.crown_cta': 'Oyna →',
-        'eglence.yapboz_title': 'Karakter Yapbozu',
+        'eglence.yapboz_title': 'Dahis Yapboz',
         'eglence.yapboz_desc': 'Karakter resmini parçalara böl, kaydırarak tamamla.',
         'eglence.yapboz_cta': 'Oyna →',
         'eglence.oneline_title': 'Tek Hat',
@@ -204,9 +204,9 @@ window.__TRANSLATIONS__ = {
         'crown.win_msg': 'Tüm taçları doğru yerleştirdin.',
         'crown.play_again': 'Tekrar Oyna',
 
-        // --- Karakter Yapbozu ---
+        // --- Dahis Yapboz ---
         'yapboz.back': '← Eğlence',
-        'yapboz.title': 'Karakter Yapbozu',
+        'yapboz.title': 'Dahis Yapboz',
         'yapboz.subtitle': 'Parçaları kaydırarak resmi tamamla.',
         'yapboz.undo': 'Geri al',
         'yapboz.shuffle': 'Karıştır',
@@ -515,7 +515,7 @@ window.__TRANSLATIONS__ = {
         'eglence.crown_title': 'Crown Puzzle',
         'eglence.crown_desc': '8x8 grid with regions. One crown per row, column and region. No two crowns touch.',
         'eglence.crown_cta': 'Play →',
-        'eglence.yapboz_title': 'Character Jigsaw',
+        'eglence.yapboz_title': 'Dahis Jigsaw',
         'eglence.yapboz_desc': 'Slide the pieces to complete the character image.',
         'eglence.yapboz_cta': 'Play →',
         'eglence.oneline_title': 'One-Line Link',
@@ -586,7 +586,7 @@ window.__TRANSLATIONS__ = {
         'crown.play_again': 'Play Again',
 
         'yapboz.back': '← Fun',
-        'yapboz.title': 'Character Jigsaw',
+        'yapboz.title': 'Dahis Jigsaw',
         'yapboz.subtitle': 'Slide the pieces to complete the image.',
         'yapboz.undo': 'Undo',
         'yapboz.shuffle': 'Shuffle',
