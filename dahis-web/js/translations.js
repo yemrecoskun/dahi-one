@@ -121,6 +121,9 @@ window.__TRANSLATIONS__ = {
         'eglence.numberlink_title': 'Noktaları Birleştir',
         'eglence.numberlink_desc': 'Noktaları sırayla birleştir, tüm hücreleri doldur.',
         'eglence.numberlink_cta': 'Oyna →',
+        'eglence.sudoku_title': 'Karakter Sudokusu',
+        'eglence.sudoku_desc': "6x6 sudoku. Her satır, sütun ve bölgede her karakter bir kez.",
+        'eglence.sudoku_cta': 'Oyna →',
 
         // --- Noktaları Birleştir (number-link) ---
         'nl.back': '← Eğlence',
@@ -134,6 +137,19 @@ window.__TRANSLATIONS__ = {
         'nl.win_title': 'Tebrikler!',
         'nl.win_msg': 'Tüm noktaları birleştirdin.',
         'nl.play_again': 'Tekrar Oyna',
+
+        // --- Karakter Sudokusu ---
+        'cs.back': '← Eğlence',
+        'cs.title': 'Karakter Sudokusu',
+        'cs.subtitle': 'Her satır, sütun ve bölgede her karakter bir kez.',
+        'cs.hint': 'İpucu',
+        'cs.notes_off': 'Notlar KAPALI',
+        'cs.notes_on': 'Notlar AÇIK',
+        'cs.delete': 'Sil',
+        'cs.undo': 'Geri al',
+        'cs.win_title': 'Tebrikler!',
+        'cs.win_msg': 'Sudokuyu tamamladın.',
+        'cs.play_again': 'Tekrar Oyna',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -388,6 +404,9 @@ window.__TRANSLATIONS__ = {
         'eglence.numberlink_title': 'Connect the Dots',
         'eglence.numberlink_desc': 'Connect the numbered points in order and fill every cell.',
         'eglence.numberlink_cta': 'Play →',
+        'eglence.sudoku_title': 'Character Sudoku',
+        'eglence.sudoku_desc': '6x6 Sudoku. Each row, column and region has each character once.',
+        'eglence.sudoku_cta': 'Play →',
 
         'nl.back': '← Fun',
         'nl.title': 'Connect the Dots',
@@ -400,6 +419,18 @@ window.__TRANSLATIONS__ = {
         'nl.win_title': 'Well done!',
         'nl.win_msg': 'You connected all the points.',
         'nl.play_again': 'Play Again',
+
+        'cs.back': '← Fun',
+        'cs.title': 'Character Sudoku',
+        'cs.subtitle': 'Each row, column and region has each character once.',
+        'cs.hint': 'Hint',
+        'cs.notes_off': 'Notes OFF',
+        'cs.notes_on': 'Notes ON',
+        'cs.delete': 'Delete',
+        'cs.undo': 'Undo',
+        'cs.win_title': 'Well done!',
+        'cs.win_msg': 'You completed the sudoku.',
+        'cs.play_again': 'Play Again',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",

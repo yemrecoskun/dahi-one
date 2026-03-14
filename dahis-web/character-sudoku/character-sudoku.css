@@ -1,0 +1,278 @@
+/* Karakter Sudokusu – 6x6 */
+
+.cs-page {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-dark, #0a0a0f);
+  color: var(--text-primary, #fff);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.cs-header {
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.cs-back {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #b0b0b8);
+  text-decoration: none;
+}
+
+.cs-back:hover { color: var(--text-primary); }
+
+.cs-title {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.cs-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.cs-main {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.cs-game-wrap {
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.cs-grid-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* 6x6 grid, 2x3 blocks – thick border every 2 rows and 3 cols */
+.cs-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 0;
+  width: min(320px, 90vw);
+  aspect-ratio: 1;
+  background: #1a1a24;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.12);
+}
+
+.cs-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: clamp(0.85rem, 4vw, 1.1rem);
+  cursor: pointer;
+  background: #22222e;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.15s;
+}
+
+/* 2x3 kutu kenarları */
+.cs-cell[data-col="2"],
+.cs-cell[data-col="5"] { border-right-width: 2px; border-right-color: rgba(255,255,255,0.25); }
+.cs-cell[data-row="1"],
+.cs-cell[data-row="3"],
+.cs-cell[data-row="5"] { border-bottom-width: 2px; border-bottom-color: rgba(255,255,255,0.25); }
+
+.cs-cell:hover { background: rgba(102, 126, 234, 0.2); }
+
+.cs-cell.selected {
+  background: rgba(102, 126, 234, 0.35);
+  box-shadow: inset 0 0 0 2px #667eea;
+}
+
+.cs-cell.fixed {
+  color: var(--text-primary);
+  cursor: default;
+  background: #2a2a38;
+}
+
+.cs-cell.fixed:hover { background: #2a2a38; }
+
+.cs-cell.error { background: rgba(245, 87, 108, 0.25); }
+
+.cs-cell .cs-char { line-height: 1; }
+
+.cs-cell .cs-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+  font-size: 0.5em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.1;
+  padding: 1px;
+}
+
+.cs-cell .cs-notes span { visibility: hidden; }
+.cs-cell .cs-notes span.visible { visibility: visible; }
+
+/* Controls: Hint, Notes */
+.cs-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.cs-ctrl-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: #2a2a35;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cs-ctrl-btn:hover { background: #3a3a48; color: var(--text-primary); }
+
+.cs-ctrl-btn.active {
+  background: rgba(102, 126, 234, 0.3);
+  color: #aab8ff;
+  border-color: #667eea;
+}
+
+.cs-ctrl-icon { font-size: 1rem; }
+
+/* Keypad: 1-6 + Sil, Geri al */
+.cs-keypad {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cs-num-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+.cs-num-keys .cs-key {
+  aspect-ratio: 1;
+  min-height: 44px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  background: rgba(67, 233, 123, 0.2);
+  color: #43e97b;
+  border: 1px solid rgba(67, 233, 123, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.cs-num-keys .cs-key:hover { background: rgba(67, 233, 123, 0.35); }
+.cs-num-keys .cs-key:active { transform: scale(0.97); }
+
+.cs-action-keys {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.cs-key {
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.cs-key-icon { font-size: 1.2rem; }
+
+.cs-key-delete {
+  background: rgba(67, 233, 123, 0.2);
+  color: #43e97b;
+  border: 1px solid rgba(67, 233, 123, 0.4);
+}
+
+.cs-key-delete:hover { background: rgba(67, 233, 123, 0.35); }
+
+.cs-key-undo {
+  background: #2a2a35;
+  color: var(--text-secondary);
+}
+
+.cs-key-undo:not(:disabled):hover { background: #3a3a48; color: var(--text-primary); }
+.cs-key-undo:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Win overlay */
+.cs-win {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.cs-win.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cs-win-box {
+  background: #1a1a24;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 320px;
+  border: 1px solid rgba(67, 233, 123, 0.3);
+}
+
+.cs-win-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: #43e97b; }
+.cs-win-msg { color: var(--text-secondary); margin-bottom: 1.25rem; }
+
+.cs-win-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  background: #43e97b;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+}
+
+.cs-win-btn:hover { filter: brightness(1.1); }
+
+.cs-cell-hint {
+  animation: cs-flash 0.6s ease;
+}
+@keyframes cs-flash {
+  0%, 100% { background: #22222e; }
+  50% { background: rgba(67, 233, 123, 0.5); }
+}
