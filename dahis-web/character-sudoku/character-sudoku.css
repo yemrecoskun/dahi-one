@@ -103,22 +103,52 @@
 
 .cs-cell.error { background: rgba(245, 87, 108, 0.25); }
 
-.cs-cell .cs-char { line-height: 1; }
+/* Karakter logosu veya renkli kutu – ışıklı */
+.cs-char {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.cs-char-glow {
+  box-shadow: 0 0 12px var(--cs-char-color, #667eea), 0 0 4px var(--cs-char-color, #667eea);
+}
+.cs-char-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cs-char-emoji {
+  font-size: 0.9rem;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
 
 .cs-cell .cs-notes {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 0;
-  font-size: 0.5em;
-  font-weight: 600;
-  color: var(--text-secondary);
-  line-height: 1.1;
-  padding: 1px;
+  gap: 2px;
+  padding: 2px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-items: center;
 }
-
-.cs-cell .cs-notes span { visibility: hidden; }
-.cs-cell .cs-notes span.visible { visibility: visible; }
+.cs-note-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.35;
+}
+.cs-note-dot.visible {
+  opacity: 1;
+  box-shadow: 0 0 6px currentColor;
+}
 
 /* Controls: Hint, Notes */
 .cs-controls {
@@ -173,18 +203,39 @@
   min-height: 44px;
   font-size: 1.1rem;
   font-weight: 700;
-  border-radius: 10px;
-  background: rgba(67, 233, 123, 0.2);
-  color: #43e97b;
-  border: 1px solid rgba(67, 233, 123, 0.4);
+  border-radius: 50%;
+  background: #252532;
+  border: 2px solid rgba(255,255,255,0.12);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, transform 0.1s;
+  transition: transform 0.1s, box-shadow 0.2s;
+  overflow: hidden;
+  padding: 0;
+}
+.cs-key-char {
+  box-shadow: 0 0 14px var(--cs-char-color, #667eea);
+}
+.cs-key-img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+.cs-key-grad {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #fff;
 }
 
-.cs-num-keys .cs-key:hover { background: rgba(67, 233, 123, 0.35); }
+.cs-num-keys .cs-key:hover {
+  box-shadow: 0 0 20px var(--cs-char-color), 0 0 8px var(--cs-char-color);
+  transform: scale(1.05);
+}
 .cs-num-keys .cs-key:active { transform: scale(0.97); }
 
 .cs-action-keys {

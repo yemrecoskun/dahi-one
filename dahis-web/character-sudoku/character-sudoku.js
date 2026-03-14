@@ -5,9 +5,16 @@
   var BOX_R = 2;
   var BOX_C = 3;
 
-  // 6 karakter: Puls, Zest, Lumo, Vigo, Aura, Dahi (1-6)
-  var CHAR_LABELS = ['P', 'Z', 'L', 'V', 'A', 'D'];
-  var CHAR_NAMES = ['Puls', 'Zest', 'Lumo', 'Vigo', 'Aura', 'Dahi'];
+  // 6 karakter: logo veya renk + ışık (site kökündeki görseller: /kirmizi.png vb.)
+  var CHARS = [
+    { name: 'Puls', image: '/kirmizi.png', color: '#ff4444', gradient: 'linear-gradient(135deg,#ff4444,#ff9944)' },
+    { name: 'Zest', image: '/turuncu.png', color: '#ff8844', gradient: 'linear-gradient(135deg,#fa709a,#fee140)' },
+    { name: 'Lumo', image: '/sari.png', color: '#ffdd44', gradient: 'linear-gradient(135deg,#f9d423,#f83600)' },
+    { name: 'Vigo', image: '/yesil.png', color: '#44dd88', gradient: 'linear-gradient(135deg,#43e97b,#38f9d7)' },
+    { name: 'Aura', image: '/mavi.png', color: '#4488ff', gradient: 'linear-gradient(135deg,#4facfe,#00f2fe)' },
+    { name: 'Dahi', image: null, color: '#764ba2', gradient: 'linear-gradient(135deg,#667eea,#764ba2)' }
+  ];
+  var CHAR_NAMES = CHARS.map(function (c) { return c.name; });
 
   function boxIndex(r, c) {
     return Math.floor(r / BOX_R) * (SIZE / BOX_C) + Math.floor(c / BOX_C);
@@ -224,17 +231,31 @@
         if (hasError(r, c)) cell.classList.add('error');
 
         if (grid[r][c] !== 0) {
-          var span = document.createElement('span');
-          span.className = 'cs-char';
-          span.textContent = CHAR_LABELS[grid[r][c] - 1] || grid[r][c];
-          span.title = CHAR_NAMES[grid[r][c] - 1] || '';
-          cell.appendChild(span);
+          var charIdx = grid[r][c] - 1;
+          var ch = CHARS[charIdx];
+          var wrap = document.createElement('div');
+          wrap.className = 'cs-char cs-char-glow';
+          wrap.title = ch.name;
+          wrap.style.setProperty('--cs-char-color', ch.color);
+          if (ch.image) {
+            var img = document.createElement('img');
+            img.src = ch.image;
+            img.alt = ch.name;
+            img.className = 'cs-char-img';
+            wrap.appendChild(img);
+          } else {
+            wrap.style.background = ch.gradient;
+            wrap.classList.add('cs-char-emoji');
+            wrap.textContent = '✦';
+          }
+          cell.appendChild(wrap);
         } else if (notes[r][c] && notes[r][c].length > 0) {
           var notesDiv = document.createElement('div');
           notesDiv.className = 'cs-notes';
           for (var i = 1; i <= 6; i++) {
             var n = document.createElement('span');
-            n.textContent = CHAR_LABELS[i - 1];
+            n.className = 'cs-note-dot';
+            n.style.backgroundColor = CHARS[i - 1].color;
             if (notes[r][c].indexOf(i) >= 0) n.classList.add('visible');
             notesDiv.appendChild(n);
           }
@@ -268,11 +289,25 @@
   function initKeypad() {
     numKeysEl.innerHTML = '';
     for (var i = 1; i <= 6; i++) {
+      var ch = CHARS[i - 1];
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'cs-key';
-      btn.textContent = CHAR_LABELS[i - 1];
-      btn.title = CHAR_NAMES[i - 1] || '';
+      btn.className = 'cs-key cs-key-char';
+      btn.title = ch.name;
+      btn.style.setProperty('--cs-char-color', ch.color);
+      if (ch.image) {
+        var img = document.createElement('img');
+        img.src = ch.image;
+        img.alt = ch.name;
+        img.className = 'cs-key-img';
+        btn.appendChild(img);
+      } else {
+        var grad = document.createElement('span');
+        grad.className = 'cs-key-grad';
+        grad.style.background = ch.gradient;
+        grad.textContent = '✦';
+        btn.appendChild(grad);
+      }
       (function (v) {
         btn.addEventListener('click', function () { onKeypad(v); });
       })(i);
