@@ -19,16 +19,18 @@ const speedBarEl = document.getElementById('speedBar');
 const speedNumEl = document.getElementById('speedNum');
 
 // --- Constants ---
-const ROAD_WIDTH = 64;          // pixels – visual road width
-const CAR_W = 14;               // car width
-const CAR_H = 22;               // car length (height in local coords)
-const TRAIL_LEN = 50;           // max trail points
-const BASE_SPEED = 2.8;         // px/frame on track
-const OFF_TRACK_SPEED = 1.1;    // px/frame off track
-const TURN_RATE = 0.036;        // radians/frame
-const SPEED_LERP = 0.07;        // how fast speed adjusts
-const MIN_RAW_POINTS = 40;      // minimum drawing points to enable start
-const START_LINE_COOLDOWN = 150; // frames to skip after crossing start line
+const ROAD_WIDTH = 64;              // pixels – visual road width
+const CAR_W = 14;                   // car width
+const CAR_H = 22;                   // car length (height in local coords)
+const TRAIL_LEN = 50;               // max trail points
+const BASE_SPEED = 2.8;             // px/frame on track
+const OFF_TRACK_SPEED = 1.1;        // px/frame off track
+const TURN_RATE = 0.036;            // radians/frame
+const SPEED_LERP = 0.07;            // how fast speed adjusts
+const MIN_RAW_POINTS = 40;          // minimum drawing points to enable start
+const START_LINE_COOLDOWN = 150;    // frames to skip after crossing start line
+// Speed percentage is mapped to 0–200 km/h equivalent for the HUD display
+const SPEED_DISPLAY_MULTIPLIER = 2;
 
 // --- Game State ---
 let gameState = 'draw'; // 'draw' | 'race'
@@ -63,6 +65,13 @@ let bestLap = Infinity;
 let lapStartTime = 0;
 let slCooldown = 0;    // start-line crossing cooldown frames
 let rafId = null;
+
+// --- Feature detection (done once at init) ---
+const supportsRoundRect = typeof CanvasRenderingContext2D !== 'undefined' &&
+  typeof CanvasRenderingContext2D.prototype.roundRect === 'function';
+
+// --- Utility ---
+function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
 // --- Canvas Sizing ---
 function resizeCanvas() {
@@ -286,7 +295,7 @@ function distToSegSq(px, py, ax, ay, bx, by) {
   const dx = bx - ax, dy = by - ay;
   const lenSq = dx * dx + dy * dy;
   if (lenSq === 0) return (px - ax) ** 2 + (py - ay) ** 2;
-  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
+  const t = clamp01(((px - ax) * dx + (py - ay) * dy) / lenSq);
   return (px - (ax + t * dx)) ** 2 + (py - (ay + t * dy)) ** 2;
 }
 
@@ -351,6 +360,7 @@ function startRace() {
   const p1 = smoothPoints[Math.min(5, smoothPoints.length - 1)];
   car.x = p0.x;
   car.y = p0.y;
+  // atan2 returns math angle (0 = right); add PI/2 so 0 = pointing up in canvas coords
   car.angle = Math.atan2(p1.y - p0.y, p1.x - p0.x) + Math.PI / 2;
   car.speed = 0;
   car.onTrack = true;
@@ -431,7 +441,7 @@ function update() {
   // Speed HUD
   const pct = Math.min(car.speed / BASE_SPEED, 1) * 100;
   speedBarEl.style.width = pct + '%';
-  speedNumEl.textContent = Math.round(pct * 2);
+  speedNumEl.textContent = Math.round(pct * SPEED_DISPLAY_MULTIPLIER);
 }
 
 function updateLapHUD(lapTime) {
@@ -546,7 +556,7 @@ function drawCar() {
   // Car body
   ctx.fillStyle = car.onTrack ? '#00ccff' : '#ff8800';
   ctx.beginPath();
-  if (ctx.roundRect) {
+  if (supportsRoundRect) {
     ctx.roundRect(-w / 2, -h / 2, w, h, 3);
   } else {
     ctx.rect(-w / 2, -h / 2, w, h);
