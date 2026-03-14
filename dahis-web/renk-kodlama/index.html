@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/renk-kodlama/">
+  <title>Renk Kodlama Zeka Oyunu – dahi's One</title>
+  <meta name="description" content="Renk Kodlama Zeka Oyunu: Gizli renk dizisini ipuçlarıyla çöz. Mastermind tarzı sezgisel bulmaca.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="renk-kodlama.css">
+</head>
+<body class="rk-page">
+  <div id="nav-placeholder"></div>
+
+  <header class="rk-header">
+    <a href="/eglence" class="rk-back" data-i18n="rk.back">← Eğlence</a>
+    <h1 class="rk-title" data-i18n="rk.title">Renk Kodlama</h1>
+    <p class="rk-subtitle" data-i18n="rk.subtitle">Gizli renk sırasını ipuçlarıyla çöz.</p>
+  </header>
+
+  <main class="rk-main">
+    <div class="rk-game-wrap">
+
+      <!-- Stats Bar -->
+      <div class="rk-stats">
+        <div class="rk-stat">
+          <span class="rk-stat-label" data-i18n="rk.attempts_label">Deneme</span>
+          <span class="rk-stat-value" id="rkAttempts">0 / 6</span>
+        </div>
+        <div class="rk-stat">
+          <span class="rk-stat-label" data-i18n="rk.level_label">Seviye</span>
+          <span class="rk-stat-value" id="rkLevel">1</span>
+        </div>
+        <div class="rk-stat">
+          <span class="rk-stat-label" data-i18n="rk.score_label">Puan</span>
+          <span class="rk-stat-value" id="rkScore">0</span>
+        </div>
+      </div>
+
+      <!-- Board: past guesses -->
+      <div class="rk-board" id="rkBoard" role="list" aria-label="Tahmin geçmişi"></div>
+
+      <!-- Current guess row -->
+      <div class="rk-current-row" id="rkCurrentRow">
+        <div class="rk-peg-slot rk-peg-slot--guess" id="rkSlot0" data-slot="0" aria-label="Slot 1"></div>
+        <div class="rk-peg-slot rk-peg-slot--guess" id="rkSlot1" data-slot="1" aria-label="Slot 2"></div>
+        <div class="rk-peg-slot rk-peg-slot--guess" id="rkSlot2" data-slot="2" aria-label="Slot 3"></div>
+        <div class="rk-peg-slot rk-peg-slot--guess" id="rkSlot3" data-slot="3" aria-label="Slot 4"></div>
+        <button class="rk-btn rk-btn-guess" id="rkGuessBtn" disabled data-i18n="rk.guess_btn">Tahmin Et</button>
+      </div>
+
+      <!-- Color palette -->
+      <div class="rk-palette" id="rkPalette" role="group" aria-label="Renk seçimi"></div>
+
+      <!-- Undo / New Game -->
+      <div class="rk-actions">
+        <button class="rk-btn rk-btn-secondary" id="rkUndoBtn" data-i18n="rk.undo">Geri Al</button>
+        <button class="rk-btn rk-btn-secondary" id="rkNewBtn" data-i18n="rk.new_game">Yeni Oyun</button>
+      </div>
+
+      <!-- Start / Game Over overlay -->
+      <div class="rk-overlay" id="rkOverlay">
+        <div class="rk-overlay-box">
+          <div class="rk-overlay-icon" id="rkOverlayIcon">🎨</div>
+          <h2 class="rk-overlay-title" id="rkOverlayTitle" data-i18n="rk.start_title">Renk Kodlama</h2>
+          <p class="rk-overlay-desc" id="rkOverlayDesc" data-i18n="rk.start_desc">Gizli renk dizisini ipuçlarını kullanarak bul. 🟢 = doğru renk + doğru yer, 🟡 = doğru renk yanlış yer.</p>
+          <div class="rk-overlay-secret" id="rkOverlaySecret"></div>
+          <button class="rk-btn rk-btn-start" id="rkStartBtn" data-i18n="rk.start_btn">Başla →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- How to Play -->
+    <details class="rk-how">
+      <summary data-i18n="rk.how_title">Nasıl oynanır?</summary>
+      <div class="rk-how-inner">
+        <p data-i18n="rk.how_1">Alt bölmeden renk seçerek mevcut satırı doldur.</p>
+        <p data-i18n="rk.how_2">"Tahmin Et"e bas. 🟢 = doğru renk, doğru konum. 🟡 = doğru renk, yanlış konum.</p>
+        <p data-i18n="rk.how_3">6 denemende gizli diziyi bulursan kazanırsın!</p>
+        <p data-i18n="rk.how_4">Her seviyede renk sayısı artar ve dizi uzar.</p>
+      </div>
+    </details>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="renk-kodlama.js"></script>
+</body>
+</html>
