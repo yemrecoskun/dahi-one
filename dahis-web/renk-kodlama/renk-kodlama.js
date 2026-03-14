@@ -26,6 +26,12 @@
     return { slots: 5, colors: 6, maxTries: 6 };
   }
 
+  /* ---- Scoring constants ----
+     Bonus = max(BONUS_MIN, BONUS_BASE − (tries − 1) × BONUS_PER_GUESS) × level */
+  var BONUS_BASE      = 50;  // maximum bonus points per win
+  var BONUS_MIN       = 10;  // minimum bonus points
+  var BONUS_PER_GUESS = 8;   // bonus reduction per extra guess used
+
   /* ---- Game State ---- */
   var state = {
     level:       1,
@@ -310,7 +316,7 @@
 
     // Check win
     if (feedback.correct === cfg.slots) {
-      var bonus = Math.max(10, 50 - (state.guesses.length - 1) * 8);
+      var bonus = Math.max(BONUS_MIN, BONUS_BASE - (state.guesses.length - 1) * BONUS_PER_GUESS);
       state.score += bonus * state.level;
       endGame(true);
       return;
@@ -336,7 +342,7 @@
     if (won) {
       elOverIcon.textContent  = '🎉';
       elOverTitle.textContent = t('rk.win_title', 'Tebrikler!');
-      elOverDesc.textContent  = t('rk.win_desc', 'Gizli kodu buldun!').replace('{score}', state.score).replace('{tries}', state.guesses.length);
+      elOverDesc.textContent  = t('rk.win_desc', 'Gizli kodu buldun!').replace('{tries}', state.guesses.length).replace('{score}', state.score);
       elOverSecret.innerHTML  = '';
       state.level++;
       elStartBtn.textContent  = t('rk.next_level', 'Sonraki Seviye →');
@@ -344,7 +350,7 @@
     } else {
       elOverIcon.textContent  = '😢';
       elOverTitle.textContent = t('rk.over_title', 'Oyun Bitti!');
-      elOverDesc.textContent  = t('rk.over_desc', 'Gizli kod:').replace('{score}', state.score);
+      elOverDesc.textContent  = t('rk.over_desc', 'Gizli kod:');
       showSecret(state.secret);
       elStartBtn.textContent  = t('rk.play_again', 'Tekrar Oyna →');
       elStartBtn.onclick      = function () { startGame(true); };
