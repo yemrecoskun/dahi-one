@@ -269,10 +269,6 @@
         card.appendChild(grid);
         if (!p.used) {
           card.addEventListener('click', function () { selectPiece(idx); });
-          card.addEventListener('touchstart', function (e) {
-            e.preventDefault();
-            selectPiece(idx);
-          }, { passive: false });
         }
         piecesEl.appendChild(card);
       })(i);
@@ -435,16 +431,16 @@
     var title = document.createElement('h2');
     title.className = 'blok-over-title';
     title.setAttribute('data-i18n', 'blok.over_title');
-    title.textContent = 'Oyun Bitti!';
+    title.textContent = (window.getI18n && window.getI18n('blok.over_title')) || 'Oyun Bitti!';
 
     var msg = document.createElement('p');
     msg.className = 'blok-over-score';
-    msg.textContent = 'Puan: ' + score;
+    msg.textContent = ((window.getI18n && window.getI18n('blok.score')) || 'Puan:') + ' ' + score;
 
     var btn = document.createElement('button');
     btn.className = 'blok-over-btn';
     btn.setAttribute('data-i18n', 'blok.play_again');
-    btn.textContent = 'Tekrar Oyna';
+    btn.textContent = (window.getI18n && window.getI18n('blok.play_again')) || 'Tekrar Oyna';
     btn.addEventListener('click', function () {
       document.body.removeChild(overEl);
       overEl = null;
