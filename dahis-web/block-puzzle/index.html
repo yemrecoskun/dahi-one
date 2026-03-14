@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/block-puzzle/">
+    <title>Dahis Blok Yerleştirme – dahi's One</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="block-puzzle.css">
+</head>
+<body class="block-puzzle-page">
+    <div id="nav-placeholder"></div>
+
+    <header class="bp-header">
+        <a href="/eglence" class="bp-back" data-i18n="bp.back">← Eğlence</a>
+        <h1 class="bp-title" data-i18n="bp.title">Dahis Blok Yerleştirme</h1>
+        <p class="bp-subtitle" data-i18n="bp.subtitle">Blokları seç ve alanı tamamen doldur.</p>
+    </header>
+
+    <main class="bp-main">
+        <div class="bp-container">
+
+            <!-- Level Selector -->
+            <div class="bp-levels" id="levelSelect" role="group" aria-label="Zorluk seçimi">
+                <button type="button" class="bp-level-btn active" data-level="0" data-i18n="bp.level_easy">Kolay (4×4)</button>
+                <button type="button" class="bp-level-btn" data-level="1" data-i18n="bp.level_medium">Orta (5×5)</button>
+                <button type="button" class="bp-level-btn" data-level="2" data-i18n="bp.level_hard">Zor (6×6)</button>
+            </div>
+
+            <!-- Grid -->
+            <div class="bp-grid-wrap">
+                <div class="bp-grid" id="bpGrid" role="grid" aria-label="Oyun alanı"></div>
+            </div>
+
+            <!-- Piece Tray -->
+            <p class="bp-tray-label" data-i18n="bp.pieces_label">Yerleştirilecek bloklar:</p>
+            <div class="bp-tray" id="bpTray" aria-label="Bloklar"></div>
+
+            <!-- Action Buttons -->
+            <div class="bp-actions">
+                <button type="button" class="bp-btn bp-btn-undo" id="btnUndo" disabled data-i18n="bp.undo">Geri Al</button>
+                <button type="button" class="bp-btn bp-btn-reset" id="btnReset" data-i18n="bp.reset">Sıfırla</button>
+            </div>
+
+            <!-- How to play -->
+            <section class="bp-how-to" aria-label="Nasıl oynanır">
+                <h2 class="bp-how-title" data-i18n="bp.how_title">Nasıl oynanır?</h2>
+                <ul class="bp-how-list">
+                    <li data-i18n="bp.how_1">Alttaki renkli bloklardan birine tıkla ve seç.</li>
+                    <li data-i18n="bp.how_2">Seçili bloğu yerleştirmek için ızgarada bir hücreye tıkla.</li>
+                    <li data-i18n="bp.how_3">Tüm blokları yerleştirerek alanı tamamen doldur.</li>
+                    <li data-i18n="bp.how_4">Hata yaptıysan Geri Al düğmesiyle son hareketi geri al.</li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Win Modal -->
+    <div class="bp-modal-overlay" id="winModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="bp-modal">
+            <div class="bp-modal-icon">🎉</div>
+            <h2 class="bp-modal-title" data-i18n="bp.win_title">Tebrikler!</h2>
+            <p class="bp-modal-msg" data-i18n="bp.win_msg">Tüm blokları başarıyla yerleştirdin!</p>
+            <button type="button" class="bp-btn bp-btn-play-again" id="btnPlayAgain" data-i18n="bp.play_again">Tekrar Oyna</button>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="/includes/load-common.js"></script>
+    <script src="block-puzzle.js"></script>
+</body>
+</html>
