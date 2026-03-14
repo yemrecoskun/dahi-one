@@ -145,6 +145,9 @@ window.__TRANSLATIONS__ = {
         'eglence.dahispath_title': 'Dahis Path',
         'eglence.dahispath_desc': 'Blokları kaydırarak karakteri enerji portaline ulaştır.',
         'eglence.dahispath_cta': 'Oyna →',
+        'eglence.blok_title': 'Dahis Blok Yerleştirme',
+        'eglence.blok_desc': 'Neon blokları stratejik yerleştir, satırları ve sütunları doldur.',
+        'eglence.blok_cta': 'Oyna →',
 
         // --- Noktaları Birleştir (number-link) ---
         'nl.back': '← Eğlence',
@@ -252,6 +255,17 @@ window.__TRANSLATIONS__ = {
         'dahispath.win_title': 'Portal açıldı!',
         'dahispath.win_msg': 'Karakter enerji portaline ulaştı.',
         'dahispath.play_again': 'Tekrar oyna',
+
+        // --- Blok Yerleştirme ---
+        'blok.back': '← Eğlence',
+        'blok.title': 'Dahis Blok Yerleştirme',
+        'blok.subtitle': 'Blokları stratejik yerleştir, alanı tamamen doldur.',
+        'blok.score': 'Puan:',
+        'blok.undo': 'Geri Al',
+        'blok.new_game': 'Yeni Oyun',
+        'blok.hint': 'Bir blok seç, ardından tahtaya tıklayarak yerleştir.',
+        'blok.over_title': 'Oyun Bitti!',
+        'blok.play_again': 'Tekrar Oyna',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -530,6 +544,9 @@ window.__TRANSLATIONS__ = {
         'eglence.dahispath_title': 'Dahis Path',
         'eglence.dahispath_desc': 'Slide blocks to bring the character to the energy portal.',
         'eglence.dahispath_cta': 'Play →',
+        'eglence.blok_title': 'Dahis Block Placement',
+        'eglence.blok_desc': 'Place neon blocks strategically and fill rows and columns.',
+        'eglence.blok_cta': 'Play →',
 
         'nl.back': '← Fun',
         'nl.title': 'Connect the Dots',
@@ -632,6 +649,17 @@ window.__TRANSLATIONS__ = {
         'dahispath.win_title': 'Portal opened!',
         'dahispath.win_msg': 'The character reached the energy portal.',
         'dahispath.play_again': 'Play again',
+
+        // --- Block Placement ---
+        'blok.back': '← Fun',
+        'blok.title': 'Dahis Block Placement',
+        'blok.subtitle': 'Place blocks strategically to fill the entire area.',
+        'blok.score': 'Score:',
+        'blok.undo': 'Undo',
+        'blok.new_game': 'New Game',
+        'blok.hint': 'Select a block, then click the board to place it.',
+        'blok.over_title': 'Game Over!',
+        'blok.play_again': 'Play Again',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",
