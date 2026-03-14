@@ -1,0 +1,198 @@
+/* Karakter Takuzu – 6x6, = ve X kısıtları */
+
+.tkz-page {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-dark, #0a0a0f);
+  color: var(--text-primary, #fff);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.tkz-header {
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.tkz-back {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #b0b0b8);
+  text-decoration: none;
+}
+.tkz-back:hover { color: var(--text-primary); }
+
+.tkz-title { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; margin-bottom: 0.25rem; }
+.tkz-subtitle { font-size: 0.9rem; color: var(--text-secondary); }
+
+.tkz-main {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.tkz-game-wrap {
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.tkz-grid-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* 11x11: hücreler (2r+1,2c+1), yatay kenar (2r+1,2c+2), dikey kenar (2r+2,2c+1) */
+.tkz-grid {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(11, 1fr);
+  width: min(320px, 88vw);
+  aspect-ratio: 1;
+  background: #1a1a24;
+  border-radius: 12px;
+  padding: 6px;
+  gap: 0;
+}
+
+.tkz-cell {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #252532;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.tkz-cell:hover { background: rgba(102, 126, 234, 0.25); }
+.tkz-cell.selected { border-color: #667eea; background: rgba(102, 126, 234, 0.2); }
+.tkz-cell.fixed { cursor: default; }
+.tkz-cell.fixed:hover { background: #252532; }
+
+.tkz-sym {
+  font-size: clamp(1.2rem, 5vw, 1.6rem);
+  line-height: 1;
+}
+.tkz-sym-1 { color: #ff8844; }   /* turuncu daire */
+.tkz-sym-2 { color: #4488ff; }   /* mavi ay */
+
+.tkz-edge {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 0;
+  min-height: 0;
+}
+.tkz-edge.eq { color: #43e97b; }
+.tkz-edge.x { color: #f5576c; }
+
+.tkz-corner { grid-column: 1; grid-row: 1; min-width: 0; min-height: 0; }
+
+/* Karakter seçimi + aksiyonlar */
+.tkz-symbols {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.tkz-sym-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.15);
+  background: #252532;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, transform 0.1s;
+}
+.tkz-sym-btn:hover { border-color: #667eea; }
+.tkz-sym-btn:active { transform: scale(0.97); }
+.tkz-sym-btn .tkz-sym { font-size: 1.6rem; }
+
+.tkz-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.tkz-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+}
+.tkz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.tkz-btn-undo { background: #2a2a35; color: var(--text-secondary); }
+.tkz-btn-undo:not(:disabled):hover { background: #3a3a48; }
+.tkz-btn-hint { background: #fff; color: #1a1a24; border: 2px solid #444; }
+.tkz-btn-hint:hover { background: #e8e8f0; }
+
+.tkz-how {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 1rem;
+}
+.tkz-how summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.tkz-how-inner { margin-top: 0.5rem; }
+.tkz-how-inner p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.35rem; }
+
+/* Win */
+.tkz-win {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+.tkz-win.is-visible { opacity: 1; visibility: visible; }
+.tkz-win-box {
+  background: #1a1a24;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 320px;
+  border: 1px solid rgba(67, 233, 123, 0.3);
+}
+.tkz-win-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: #43e97b; }
+.tkz-win-msg { color: var(--text-secondary); margin-bottom: 1.25rem; }
+.tkz-win-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  background: #43e97b;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+}
+.tkz-win-btn:hover { filter: brightness(1.1); }
+
+.tkz-cell-hint { animation: tkz-flash 0.6s ease; }
+@keyframes tkz-flash {
+  0%, 100% { background: #252532; }
+  50% { background: rgba(67, 233, 123, 0.5); }
+}

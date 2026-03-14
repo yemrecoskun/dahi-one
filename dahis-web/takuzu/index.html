@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/takuzu/">
+  <title>Karakter Takuzu – dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="takuzu.css">
+</head>
+<body class="tkz-page">
+  <div id="nav-placeholder"></div>
+
+  <header class="tkz-header">
+    <a href="/eglence" class="tkz-back" data-i18n="tkz.back">← Eğlence</a>
+    <h1 class="tkz-title" data-i18n="tkz.title">Karakter Takuzu</h1>
+    <p class="tkz-subtitle" data-i18n="tkz.subtitle">İki karakterle doldur. Eşittir aynı, X karşıt.</p>
+  </header>
+
+  <main class="tkz-main">
+    <div class="tkz-game-wrap">
+      <div class="tkz-grid-wrap">
+        <div class="tkz-grid" id="tkzGrid" role="grid" aria-label="Takuzu alanı"></div>
+      </div>
+
+      <div class="tkz-symbols">
+        <button type="button" class="tkz-sym-btn" id="btnSym1" title="Puls">
+          <span class="tkz-sym tkz-sym-1" id="sym1Icon">●</span>
+        </button>
+        <button type="button" class="tkz-sym-btn" id="btnSym2" title="Aura">
+          <span class="tkz-sym tkz-sym-2" id="sym2Icon">☽</span>
+        </button>
+      </div>
+
+      <div class="tkz-actions">
+        <button type="button" class="tkz-btn tkz-btn-undo" id="btnUndo" disabled data-i18n="tkz.undo">Geri Al</button>
+        <button type="button" class="tkz-btn tkz-btn-hint" id="btnHint" data-i18n="tkz.hint">İpucu</button>
+      </div>
+
+      <details class="tkz-how" id="tkzHow">
+        <summary data-i18n="tkz.how_title">Nasıl oynanır?</summary>
+        <div class="tkz-how-inner">
+          <p data-i18n="tkz.how_fill">Izgarayı her hücrede bir karakter (turuncu daire veya mavi ay) olacak şekilde doldurun.</p>
+          <p data-i18n="tkz.how_max2">En fazla 2 aynı karakter dikey veya yatay yan yana olabilir.</p>
+          <p data-i18n="tkz.how_equal">Her satırda ve her sütunda eşit sayıda iki karakter (3’er) bulunmalıdır.</p>
+          <p data-i18n="tkz.how_same">= işaretiyle ayrılan hücreler aynı türde olmalıdır.</p>
+          <p data-i18n="tkz.how_opp">X işaretiyle ayrılan hücreler karşıt türde olmalıdır.</p>
+        </div>
+      </details>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/includes/load-common.js"></script>
+  <script src="takuzu.js"></script>
+</body>
+</html>

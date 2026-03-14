@@ -124,6 +124,9 @@ window.__TRANSLATIONS__ = {
         'eglence.sudoku_title': 'Karakter Sudokusu',
         'eglence.sudoku_desc': "6x6 sudoku. Her satır, sütun ve bölgede her karakter bir kez.",
         'eglence.sudoku_cta': 'Oyna →',
+        'eglence.takuzu_title': 'Karakter Takuzu',
+        'eglence.takuzu_desc': 'İki karakterle doldur. = aynı, X karşıt. En fazla 2 yan yana.',
+        'eglence.takuzu_cta': 'Oyna →',
 
         // --- Noktaları Birleştir (number-link) ---
         'nl.back': '← Eğlence',
@@ -150,6 +153,22 @@ window.__TRANSLATIONS__ = {
         'cs.win_title': 'Tebrikler!',
         'cs.win_msg': 'Sudokuyu tamamladın.',
         'cs.play_again': 'Tekrar Oyna',
+
+        // --- Karakter Takuzu ---
+        'tkz.back': '← Eğlence',
+        'tkz.title': 'Karakter Takuzu',
+        'tkz.subtitle': 'İki karakterle doldur. Eşittir aynı, X karşıt.',
+        'tkz.undo': 'Geri Al',
+        'tkz.hint': 'İpucu',
+        'tkz.how_title': 'Nasıl oynanır?',
+        'tkz.how_fill': 'Izgarayı her hücrede bir karakter (turuncu daire veya mavi ay) olacak şekilde doldurun.',
+        'tkz.how_max2': 'En fazla 2 aynı karakter dikey veya yatay yan yana olabilir.',
+        'tkz.how_equal': 'Her satırda ve her sütunda eşit sayıda iki karakter (3\'er) bulunmalıdır.',
+        'tkz.how_same': '= işaretiyle ayrılan hücreler aynı türde olmalıdır.',
+        'tkz.how_opp': 'X işaretiyle ayrılan hücreler karşıt türde olmalıdır.',
+        'tkz.win_title': 'Tebrikler!',
+        'tkz.win_msg': 'Bulmacayı tamamladın.',
+        'tkz.play_again': 'Tekrar Oyna',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -407,6 +426,9 @@ window.__TRANSLATIONS__ = {
         'eglence.sudoku_title': 'Character Sudoku',
         'eglence.sudoku_desc': '6x6 Sudoku. Each row, column and region has each character once.',
         'eglence.sudoku_cta': 'Play →',
+        'eglence.takuzu_title': 'Character Takuzu',
+        'eglence.takuzu_desc': 'Fill with two symbols. = same, X opposite. Max 2 in a row.',
+        'eglence.takuzu_cta': 'Play →',
 
         'nl.back': '← Fun',
         'nl.title': 'Connect the Dots',
@@ -431,6 +453,21 @@ window.__TRANSLATIONS__ = {
         'cs.win_title': 'Well done!',
         'cs.win_msg': 'You completed the sudoku.',
         'cs.play_again': 'Play Again',
+
+        'tkz.back': '← Fun',
+        'tkz.title': 'Character Takuzu',
+        'tkz.subtitle': 'Fill with two symbols. = same, X opposite.',
+        'tkz.undo': 'Undo',
+        'tkz.hint': 'Hint',
+        'tkz.how_title': 'How to play?',
+        'tkz.how_fill': 'Fill the grid so each cell has one symbol (orange circle or blue moon).',
+        'tkz.how_max2': 'At most 2 of the same symbol can be adjacent vertically or horizontally.',
+        'tkz.how_equal': 'Each row and column must have an equal count of each symbol (3 each).',
+        'tkz.how_same': 'Cells separated by = must be the same symbol.',
+        'tkz.how_opp': 'Cells separated by X must be opposite symbols.',
+        'tkz.win_title': 'Well done!',
+        'tkz.win_msg': 'You completed the puzzle.',
+        'tkz.play_again': 'Play Again',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",
