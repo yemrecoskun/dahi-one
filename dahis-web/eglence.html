@@ -26,7 +26,10 @@
         <div class="container">
             <h1 class="eglence-title" data-i18n="eglence.title">Eğlence</h1>
             <p class="eglence-intro" data-i18n="eglence.intro">Oyunlar, quizler ve eğlenceli içerikler. Birini seç ve başla.</p>
-            <div class="eglence-grid" id="eglenceGrid">
+
+            <div class="eglence-category">
+                <h2 class="eglence-cat-title" data-i18n="eglence.cat_entertainment">Eğlence</h2>
+                <div class="eglence-grid">
                 <a href="/quiz" class="eglence-card eglence-card-link">
                     <div class="eglence-card-glow" style="--eglence-color: #667eea;"></div>
                     <div class="eglence-card-icon">🎯</div>
@@ -48,7 +51,13 @@
                     <p class="eglence-card-desc" data-i18n="eglence.soz_desc">Rastgele bir One senin için bir cümle seçer. Yenile, paylaş.</p>
                     <span class="eglence-card-cta" data-i18n="eglence.soz_cta">Söz al →</span>
                 </a>
-                <a href="/memory" class="eglence-card eglence-card-link">
+                </div>
+            </div>
+
+            <div class="eglence-category">
+                <h2 class="eglence-cat-title" data-i18n="eglence.cat_card_multi">Kart / Çoklu Oyun</h2>
+                <div class="eglence-grid">
+                <a href="/five-forces" class="eglence-card eglence-card-link">
                     <div class="eglence-card-glow" style="--eglence-color: #ffdd44;"></div>
                     <div class="eglence-card-icon">🃏</div>
                     <h3 class="eglence-card-title" data-i18n="eglence.memory_title">One hafıza kartları</h3>
@@ -61,6 +70,19 @@
                     <h3 class="eglence-card-title" data-i18n="eglence.fiveforces_title">DAHIS: Five Forces</h3>
                     <p class="eglence-card-desc" data-i18n="eglence.fiveforces_desc">3–5 oyunculu stratejik kart oyunu. Karakter seç, puanını yükselt, kazan.</p>
                     <span class="eglence-card-cta" data-i18n="eglence.fiveforces_cta">Oyna →</span>
+                </a>
+                </div>
+            </div>
+
+            <div class="eglence-category">
+                <h2 class="eglence-cat-title" data-i18n="eglence.cat_games">Oyun</h2>
+                <div class="eglence-grid">
+                <a href="/memory" class="eglence-card eglence-card-link">
+                    <div class="eglence-card-glow" style="--eglence-color: #ffdd44;"></div>
+                    <div class="eglence-card-icon">🃏</div>
+                    <h3 class="eglence-card-title" data-i18n="eglence.memory_title">One hafıza kartları</h3>
+                    <p class="eglence-card-desc" data-i18n="eglence.memory_desc">Aynı One çiftini bul. Kartları çevir, eşleştir!</p>
+                    <span class="eglence-card-cta" data-i18n="eglence.memory_cta">Oyna →</span>
                 </a>
                 <a href="/number-link" class="eglence-card eglence-card-link">
                     <div class="eglence-card-glow" style="--eglence-color: #43e97b;"></div>
@@ -139,6 +161,7 @@
                     <p class="eglence-card-desc" data-i18n="eglence.rk_desc">Gizli renk sırasını ipuçlarıyla çöz. 🟢 doğru yer, 🟡 yanlış yer.</p>
                     <span class="eglence-card-cta" data-i18n="eglence.rk_cta">Oyna →</span>
                 </a>
+                </div>
             </div>
         </div>
     </section>

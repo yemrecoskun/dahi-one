@@ -2091,6 +2091,23 @@ html[data-theme="light"] .nav-lang-switcher {
     margin-bottom: 2.5rem;
 }
 
+.eglence-category {
+    margin-bottom: 2.5rem;
+}
+
+.eglence-category:last-child {
+    margin-bottom: 0;
+}
+
+.eglence-cat-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 .eglence-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

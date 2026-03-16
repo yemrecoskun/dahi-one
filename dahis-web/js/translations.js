@@ -103,6 +103,9 @@ window.__TRANSLATIONS__ = {
         // --- Eğlence ---
         'eglence.title': 'Eğlence',
         'eglence.intro': 'Oyunlar, quizler ve eğlenceli içerikler. Birini seç ve başla.',
+        'eglence.cat_entertainment': 'Eğlence',
+        'eglence.cat_card_multi': 'Kart / Çoklu Oyun',
+        'eglence.cat_games': 'Oyun',
         'eglence.quiz_title': 'Hangi One sensin?',
         'eglence.quiz_desc': 'Soru-cevap ile seni yansıtan One karakterini keşfet.',
         'eglence.quiz_cta': 'Başla →',
@@ -544,6 +547,9 @@ window.__TRANSLATIONS__ = {
 
         'eglence.title': 'Fun',
         'eglence.intro': 'Games, quizzes, and fun content. Pick one and start.',
+        'eglence.cat_entertainment': 'Entertainment',
+        'eglence.cat_card_multi': 'Card / Multiplayer',
+        'eglence.cat_games': 'Games',
         'eglence.quiz_title': 'Which One are you?',
         'eglence.quiz_desc': 'Discover the One character that reflects you through questions.',
         'eglence.quiz_cta': 'Start →',
