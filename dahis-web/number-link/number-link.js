@@ -4,10 +4,10 @@
   var ROWS = 5;
   var COLS = 5;
 
-  // Engel: merkez haç (orta hücre + üst, alt, sol, sağ)
-  var BLOCKED = [[1, 2], [2, 1], [2, 2], [2, 3], [3, 2]];
+  // Engel: sadece merkez hücre (çözülebilir yol için ardışık hücreler bitişik olmalı)
+  var BLOCKED = [[2, 2]];
 
-  // Çözülebilir bulmaca: önce tüm boş hücreleri dolaşan bir yol, sonra bu yola 1-12 numaraları yerleştir
+  // Çözülebilir bulmaca: tüm boş hücreleri bitişik olarak dolaşan bir yol, 1-12 numaraları bu yol üzerinde
   function buildPuzzle() {
     var g = [];
     for (var r = 0; r < ROWS; r++) {
@@ -17,18 +17,19 @@
         g[r][c] = isBlocked ? -1 : 0;
       }
     }
-    // Merkez haç dışında kalan 20 hücrede bir yol (sırayla ziyaret)
+    // 24 hücrede sürekli bitişik yol (her ardışık çift komşu)
     var pathOrder = [
       [0, 0], [0, 1], [0, 2], [0, 3], [0, 4],
-      [1, 4], [1, 3], [1, 1], [1, 0],
-      [2, 0], [2, 4], [3, 0], [3, 1], [3, 3], [3, 4],
-      [4, 4], [4, 3], [4, 2], [4, 1], [4, 0]
+      [1, 4], [2, 4], [3, 4], [4, 4],
+      [4, 3], [4, 2], [4, 1], [4, 0],
+      [3, 0], [2, 0], [1, 0],
+      [1, 1], [1, 2], [1, 3],
+      [2, 3], [3, 3], [3, 2], [3, 1], [2, 1]
     ];
-    // 12 noktayı bu yol üzerinde yerleştir
-    var numIndices = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 19, 1];
-    numIndices.sort(function (a, b) { return a - b; });
-    for (var i = 0; i < numIndices.length; i++) {
-      var p = pathOrder[numIndices[i]];
+    // 12 noktayı yol üzerinde eşit aralıklarla yerleştir (indeks 0,2,4,...,22)
+    for (var i = 0; i < 12; i++) {
+      var idx = i * 2;
+      var p = pathOrder[idx];
       g[p[0]][p[1]] = i + 1;
     }
     return { grid: g, maxNum: 12 };

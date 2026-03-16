@@ -3,8 +3,7 @@
   var SIZE = 4;
   var LEVELS = ['Enerji', 'Lumo', 'Vigo', 'Zest', 'Puls', 'Aura', "Dahi's One"];
   var grid = [], score = 0, winShown = false;
-  var gridEl = document.getElementById('grid');
-  var scoreEl = document.getElementById('score');
+  var gridEl, scoreEl;
 
   function emptyCells() {
     var out = [];
@@ -98,18 +97,31 @@
     if (scoreEl) scoreEl.textContent = score;
   }
 
-  document.addEventListener('keydown', function (e) {
-    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.key) >= 0) { e.preventDefault(); move(e.key.replace('Arrow','').toLowerCase()); }
-  });
-  var touchStart = null;
-  gridEl.addEventListener('touchstart', function (e) { touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
-  gridEl.addEventListener('touchend', function (e) {
-    if (!touchStart) return;
-    var dx = e.changedTouches[0].clientX - touchStart.x, dy = e.changedTouches[0].clientY - touchStart.y;
-    if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
-    else move(dy > 0 ? 'down' : 'up');
-    touchStart = null;
-  }, { passive: true });
+  function attachListeners() {
+    document.addEventListener('keydown', function (e) {
+      if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.key) >= 0) { e.preventDefault(); move(e.key.replace('Arrow','').toLowerCase()); }
+    });
+    var touchStart = null;
+    if (gridEl) {
+      gridEl.setAttribute('tabindex', '0');
+      gridEl.addEventListener('touchstart', function (e) { touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
+      gridEl.addEventListener('touchend', function (e) {
+        if (!touchStart) return;
+        var dx = e.changedTouches[0].clientX - touchStart.x, dy = e.changedTouches[0].clientY - touchStart.y;
+        if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
+        else move(dy > 0 ? 'down' : 'up');
+        touchStart = null;
+      }, { passive: true });
+    }
+  }
 
-  initGrid();
+  function run() {
+    gridEl = document.getElementById('grid');
+    scoreEl = document.getElementById('score');
+    if (!gridEl) return;
+    attachListeners();
+    initGrid();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
 })();

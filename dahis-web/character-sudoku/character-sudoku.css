@@ -53,13 +53,13 @@
   margin-bottom: 1rem;
 }
 
-/* 6x6 grid, 2x3 blocks – thick border every 2 rows and 3 cols */
+/* 4x4 grid, 2x2 blocks */
 .cs-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   gap: 0;
-  width: min(320px, 90vw);
+  width: min(280px, 90vw);
   aspect-ratio: 1;
   background: #1a1a24;
   border-radius: 10px;
@@ -79,12 +79,10 @@
   transition: background 0.15s;
 }
 
-/* 2x3 kutu kenarları */
-.cs-cell[data-col="2"],
-.cs-cell[data-col="5"] { border-right-width: 2px; border-right-color: rgba(255,255,255,0.25); }
+/* 2x2 kutu kenarları */
+.cs-cell[data-col="2"] { border-right-width: 2px; border-right-color: rgba(255,255,255,0.25); }
 .cs-cell[data-row="1"],
-.cs-cell[data-row="3"],
-.cs-cell[data-row="5"] { border-bottom-width: 2px; border-bottom-color: rgba(255,255,255,0.25); }
+.cs-cell[data-row="3"] { border-bottom-width: 2px; border-bottom-color: rgba(255,255,255,0.25); }
 
 .cs-cell:hover { background: rgba(102, 126, 234, 0.2); }
 

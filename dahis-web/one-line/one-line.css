@@ -14,6 +14,7 @@
 .oneline-game-wrap { background: rgba(255,255,255,.04); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255,255,255,.08); }
 .oneline-grid { display: grid; gap: 3px; width: min(300px,88vw); margin: 0 auto 1rem; aspect-ratio: 1; background: #1a1a24; padding: 8px; border-radius: 12px; }
 .oneline-cell { background: #252532; border-radius: 8px; position: relative; transition: background .15s; }
+.oneline-cell.oneline-blocked { background: #1a1a24; opacity: 0.7; cursor: not-allowed; }
 .oneline-cell.filled { border-radius: 8px; box-shadow: inset 0 0 20px var(--neon-color), 0 0 12px var(--neon-color); }
 .oneline-cell.start { box-shadow: inset 0 0 16px var(--neon-color), 0 0 20px var(--neon-color); }
 .oneline-actions { display: flex; gap: .75rem; justify-content: center; }

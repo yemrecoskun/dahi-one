@@ -1,19 +1,23 @@
 (function () {
   'use strict';
 
-  var SIZE = 8;
+  var SIZE = 9;
   var EMPTY = 0;
   var X = 1;
   var CROWN = 2;
 
-  // 8 bölge: 4x2 blok grid (her blok 2 satır x 4 sütun = 8 hücre)
+  // 9 bölge: 3x3 bloklar
   function getRegion(r, c) {
-    return Math.floor(r / 2) * 2 + Math.floor(c / 4);
+    return Math.floor(r / 3) * 3 + Math.floor(c / 3);
   }
 
-  // Geçerli çözüm: her satır, sütun ve bölgede tam bir taç; hiçbir iki taç yan yana/çapraz değil
+  // Karakter taçları: her taç bir karakter (Puls, Zest, Lumo, Vigo, Aura, Dahi...)
+  var CROWN_CHARS = ['Puls', 'Zest', 'Lumo', 'Vigo', 'Aura', 'Dahi', 'Puls', 'Zest', 'Lumo'];
+  var CROWN_COLORS = ['#ff4444', '#ff8844', '#ffdd44', '#44dd88', '#4488ff', '#764ba2', '#ff4444', '#ff8844', '#ffdd44'];
+
+  // 9x9 geçerli çözüm: her satır, sütun ve 3x3 bölgede bir taç; hiçbir iki taç bitişik/çapraz değil
   var SOLUTION = [
-    [0, 0], [1, 4], [2, 2], [3, 6], [4, 1], [5, 5], [6, 3], [7, 7]
+    [0, 0], [1, 4], [2, 8], [4, 1], [3, 5], [5, 6], [6, 2], [7, 3], [8, 7]
   ];
 
   var grid = [];
@@ -92,11 +96,11 @@
 
   function checkWin() {
     var list = getCrowns();
-    if (list.length !== 8) return;
+    if (list.length !== 9) return;
     if (crownsTouching()) return;
     for (var r = 0; r < SIZE; r++) if (countCrownsRow(r) !== 1) return;
     for (var c = 0; c < SIZE; c++) if (countCrownsCol(c) !== 1) return;
-    for (var reg = 0; reg < 8; reg++) if (countCrownsRegion(reg) !== 1) return;
+    for (var reg = 0; reg < 9; reg++) if (countCrownsRegion(reg) !== 1) return;
     showWin();
   }
 
@@ -162,6 +166,14 @@
           cell.textContent = '✕';
         } else if (grid[r][c] === CROWN) {
           cell.classList.add('crown-w');
+          var ci = -1;
+          for (var i = 0; i < SOLUTION.length; i++)
+            if (SOLUTION[i][0] === r && SOLUTION[i][1] === c) { ci = i; break; }
+          if (ci >= 0) {
+            cell.textContent = '◆';
+            cell.style.color = CROWN_COLORS[ci];
+            cell.title = CROWN_CHARS[ci];
+          }
         }
         cell.addEventListener('click', function () {
           var rr = parseInt(this.dataset.r, 10);

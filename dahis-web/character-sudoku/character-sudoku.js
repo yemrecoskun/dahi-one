@@ -1,18 +1,16 @@
 (function () {
   'use strict';
 
-  var SIZE = 6;
+  var SIZE = 4;
   var BOX_R = 2;
-  var BOX_C = 3;
+  var BOX_C = 2;
 
-  // 6 karakter: logo veya renk + ışık (site kökündeki görseller: /kirmizi.png vb.)
+  // 4 karakter (4x4 sudoku)
   var CHARS = [
     { name: 'Puls', image: '/kirmizi.png', color: '#ff4444', gradient: 'linear-gradient(135deg,#ff4444,#ff9944)' },
     { name: 'Zest', image: '/turuncu.png', color: '#ff8844', gradient: 'linear-gradient(135deg,#fa709a,#fee140)' },
     { name: 'Lumo', image: '/sari.png', color: '#ffdd44', gradient: 'linear-gradient(135deg,#f9d423,#f83600)' },
-    { name: 'Vigo', image: '/yesil.png', color: '#44dd88', gradient: 'linear-gradient(135deg,#43e97b,#38f9d7)' },
-    { name: 'Aura', image: '/mavi.png', color: '#4488ff', gradient: 'linear-gradient(135deg,#4facfe,#00f2fe)' },
-    { name: 'Dahi', image: null, color: '#764ba2', gradient: 'linear-gradient(135deg,#667eea,#764ba2)' }
+    { name: 'Vigo', image: '/yesil.png', color: '#44dd88', gradient: 'linear-gradient(135deg,#43e97b,#38f9d7)' }
   ];
   var CHAR_NAMES = CHARS.map(function (c) { return c.name; });
 
@@ -20,23 +18,19 @@
     return Math.floor(r / BOX_R) * (SIZE / BOX_C) + Math.floor(c / BOX_C);
   }
 
-  // Çözülebilir 6x6 sudoku: önce dolu çözüm, sonra bazı hücreleri boş bırak
+  // 4x4 sudoku: 2x2 bloklar, daha kolay
   function createPuzzle() {
     var solution = [
-      [1, 2, 3, 4, 5, 6],
-      [4, 5, 6, 1, 2, 3],
-      [2, 3, 1, 5, 6, 4],
-      [5, 6, 4, 2, 3, 1],
-      [3, 1, 2, 6, 4, 5],
-      [6, 4, 5, 3, 1, 2]
+      [1, 2, 3, 4],
+      [3, 4, 1, 2],
+      [2, 1, 4, 3],
+      [4, 3, 2, 1]
     ];
     var mask = [
-      [0, 0, 1, 0, 1, 1],
-      [0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 1, 0],
-      [0, 1, 0, 1, 0, 0],
-      [0, 0, 1, 0, 1, 0],
-      [0, 0, 0, 0, 0, 0]
+      [1, 0, 0, 1],
+      [0, 1, 1, 0],
+      [0, 1, 0, 1],
+      [1, 0, 1, 0]
     ];
     var grid = [];
     var fixed = [];
@@ -252,7 +246,7 @@
         } else if (notes[r][c] && notes[r][c].length > 0) {
           var notesDiv = document.createElement('div');
           notesDiv.className = 'cs-notes';
-          for (var i = 1; i <= 6; i++) {
+          for (var i = 1; i <= SIZE; i++) {
             var n = document.createElement('span');
             n.className = 'cs-note-dot';
             n.style.backgroundColor = CHARS[i - 1].color;
@@ -288,7 +282,7 @@
 
   function initKeypad() {
     numKeysEl.innerHTML = '';
-    for (var i = 1; i <= 6; i++) {
+    for (var i = 1; i <= SIZE; i++) {
       var ch = CHARS[i - 1];
       var btn = document.createElement('button');
       btn.type = 'button';

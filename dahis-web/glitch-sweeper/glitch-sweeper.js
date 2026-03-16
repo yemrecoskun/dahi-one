@@ -1,9 +1,8 @@
 (function () {
   'use strict';
   var ROWS = 9, COLS = 9, MINES = 10;
-  var mines = [], revealed = [], flagged = [], gridEl = document.getElementById('grid');
-  var mineCountEl = document.getElementById('mineCount');
-  var flagCountEl = document.getElementById('flagCount');
+  var mines = [], revealed = [], flagged = [];
+  var gridEl, mineCountEl, flagCountEl;
 
   function placeMines(firstR, firstC) {
     mines = [];
@@ -74,6 +73,7 @@
   }
 
   function render() {
+    if (!gridEl) return;
     if (!gameStarted) {
       gridEl.innerHTML = '';
       gridEl.style.gridTemplateColumns = 'repeat(' + COLS + ', 1fr)';
@@ -106,5 +106,13 @@
     if (flagCountEl) flagCountEl.textContent = flags;
   }
 
-  render();
+  function run() {
+    gridEl = document.getElementById('grid');
+    mineCountEl = document.getElementById('mineCount');
+    flagCountEl = document.getElementById('flagCount');
+    if (!gridEl) return;
+    render();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
 })();

@@ -14,17 +14,20 @@
       [1, 2, 2, 1, 2, 1],
       [2, 1, 1, 2, 1, 2]
     ];
-    var hEdges = [];
-    var vEdges = [];
+    var hEdges = [], vEdges = [], hVisible = [], vVisible = [];
     for (var r = 0; r < SIZE; r++) {
-      hEdges[r] = [];
-      for (var c = 0; c < SIZE - 1; c++)
+      hEdges[r] = []; hVisible[r] = [];
+      for (var c = 0; c < SIZE - 1; c++) {
         hEdges[r][c] = solution[r][c] === solution[r][c + 1] ? '=' : 'X';
+        hVisible[r][c] = Math.random() < 0.45;
+      }
     }
     for (var r = 0; r < SIZE - 1; r++) {
-      vEdges[r] = [];
-      for (var c = 0; c < SIZE; c++)
+      vEdges[r] = []; vVisible[r] = [];
+      for (var c = 0; c < SIZE; c++) {
         vEdges[r][c] = solution[r][c] === solution[r + 1][c] ? '=' : 'X';
+        vVisible[r][c] = Math.random() < 0.45;
+      }
     }
     var mask = [
       [1, 1, 0, 0, 0, 0],
@@ -44,7 +47,7 @@
         fixed[r][c] = !!mask[r][c];
       }
     }
-    return { grid: grid, fixed: fixed, solution: solution, hEdges: hEdges, vEdges: vEdges };
+    return { grid: grid, fixed: fixed, solution: solution, hEdges: hEdges, vEdges: vEdges, hVisible: hVisible, vVisible: vVisible };
   }
 
   var state = createPuzzle();
@@ -53,6 +56,8 @@
   var solution = state.solution;
   var hEdges = state.hEdges;
   var vEdges = state.vEdges;
+  var hVisible = state.hVisible;
+  var vVisible = state.vVisible;
   var selected = null;
   var history = [];
 
@@ -175,6 +180,8 @@
         solution = state.solution;
         hEdges = state.hEdges;
         vEdges = state.vEdges;
+        hVisible = state.hVisible;
+        vVisible = state.vVisible;
         history = [];
         selected = null;
         render();
@@ -228,14 +235,14 @@
           he.className = 'tkz-edge ' + (hEdges[r][c] === '=' ? 'eq' : 'x');
           he.style.gridColumn = col + 1;
           he.style.gridRow = row + 1;
-          he.textContent = hEdges[r][c];
+          he.textContent = hVisible[r][c] ? hEdges[r][c] : '';
           gridEl.appendChild(he);
         } else if (!evenRow && evenCol && r < SIZE - 1) {
           var ve = document.createElement('div');
           ve.className = 'tkz-edge ' + (vEdges[r][c] === '=' ? 'eq' : 'x');
           ve.style.gridColumn = col + 1;
           ve.style.gridRow = row + 1;
-          ve.textContent = vEdges[r][c];
+          ve.textContent = vVisible[r][c] ? vEdges[r][c] : '';
           gridEl.appendChild(ve);
         } else {
           var corner = document.createElement('div');

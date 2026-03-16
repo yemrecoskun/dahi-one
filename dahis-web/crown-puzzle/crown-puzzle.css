@@ -46,9 +46,9 @@
 
 .crown-grid {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, 1fr);
-  width: min(320px, 90vw);
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: min(300px, 88vw);
   aspect-ratio: 1;
   gap: 1px;
   background: #1a1a24;
@@ -72,7 +72,7 @@
 .crown-cell:hover { filter: brightness(1.15); }
 .crown-cell:active { transform: scale(0.97); }
 
-/* Bölge renkleri (8 bölge) */
+/* Bölge renkleri (9 bölge, 3x3) */
 .crown-cell[data-region="0"] { background: #e8d5f2; }
 .crown-cell[data-region="1"] { background: #c5e1c8; }
 .crown-cell[data-region="2"] { background: #bbdefb; }
@@ -81,22 +81,18 @@
 .crown-cell[data-region="5"] { background: #ffccbc; }
 .crown-cell[data-region="6"] { background: #d7ccc8; }
 .crown-cell[data-region="7"] { background: #cfd8dc; }
+.crown-cell[data-region="8"] { background: #f8bbd0; }
 
 .crown-cell.crown-x {
   background: #37474f !important;
   color: rgba(255,255,255,0.7);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .crown-cell.crown-w {
-  background: linear-gradient(135deg, #ffd700, #ffb300) !important;
-  color: #1a1a24;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2), 0 0 12px rgba(255, 215, 0, 0.5);
-}
-.crown-cell.crown-w::after {
-  content: '♔';
-  font-size: clamp(1rem, 4vw, 1.4rem);
-  line-height: 1;
+  background: #2a2a38 !important;
+  font-size: clamp(0.85rem, 3vw, 1.1rem);
+  box-shadow: 0 0 10px currentColor;
 }
 
 .crown-actions {
