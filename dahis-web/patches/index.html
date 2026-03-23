@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/patches/">
+  <title>Patches – dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="patches.css">
+</head>
+<body class="patches-page">
+  <div id="nav-placeholder"></div>
+  <header class="patches-header">
+    <a href="/eglence" class="patches-back" data-i18n="patches.back">← Eğlence</a>
+    <h1 class="patches-title" data-i18n="patches.title">Patches</h1>
+    <p class="patches-subtitle" data-i18n="patches.subtitle">Her dikdörtgenin alanı, içindeki sayıya eşit olsun.</p>
+  </header>
+  <main class="patches-main">
+    <div class="patches-legend">
+      <div class="patches-legend-sample" aria-hidden="true">
+        <span class="patches-legend-num">4</span>
+        <span class="patches-legend-grid"></span>
+      </div>
+      <p class="patches-legend-text" data-i18n="patches.legend_main">Her şekli tamamlayıp tabloyu doldurun.</p>
+      <ul class="patches-legend-shapes">
+        <li data-i18n="patches.shape_square">Kare</li>
+        <li data-i18n="patches.shape_tall">Uzun dikdörtgen</li>
+        <li data-i18n="patches.shape_wide">Geniş dikdörtgen</li>
+      </ul>
+      <p class="patches-legend-rule" data-i18n="patches.legend_rule">Bir hücrede sayı varsa, o sayının bulunduğu dikdörtgenin alanı (genişlik × yükseklik) o sayıya eşit olmalıdır.</p>
+    </div>
+    <div class="patches-game-wrap">
+      <div class="patches-grid" id="patchesGrid" role="grid" aria-label="Patches"></div>
+      <div class="patches-actions">
+        <button type="button" class="patches-btn" id="btnUndo" disabled data-i18n="patches.undo">Geri Al</button>
+        <button type="button" class="patches-btn" id="btnHint" data-i18n="patches.hint">İpucu</button>
+      </div>
+      <button type="button" class="patches-submit" id="btnCheck" data-i18n="patches.show_results">Sonuçları göster</button>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="patches.js"></script>
+</body>
+</html>

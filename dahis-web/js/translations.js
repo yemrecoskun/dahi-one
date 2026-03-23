@@ -308,9 +308,27 @@ window.__TRANSLATIONS__ = {
         'rk.how_4': 'Her seviyede renk sayısı artar ve dizi uzar.',
 
         // --- Eğlence sayfası kartı ---
+        'eglence.patches_title': 'Patches',
+        'eglence.patches_desc': 'Sayılı ipuçlarıyla tabloyu dikdörtgenlere böl. Alan = sayı.',
+        'eglence.patches_cta': 'Oyna →',
         'eglence.rk_title': 'Renk Kodlama',
         'eglence.rk_desc': 'Gizli renk sırasını ipuçlarıyla çöz. 🟢 doğru yer, 🟡 yanlış yer.',
         'eglence.rk_cta': 'Oyna →',
+
+        'patches.back': '← Eğlence',
+        'patches.title': 'Patches',
+        'patches.subtitle': 'Her dikdörtgenin alanı, içindeki sayıya eşit olsun.',
+        'patches.legend_main': 'Her şekli tamamlayıp tabloyu doldurun.',
+        'patches.shape_square': 'Kare',
+        'patches.shape_tall': 'Uzun dikdörtgen',
+        'patches.shape_wide': 'Geniş dikdörtgen',
+        'patches.legend_rule': 'Bir hücrede sayı varsa, o sayının bulunduğu dikdörtgenin alanı (genişlik × yükseklik) o sayıya eşit olmalıdır.',
+        'patches.undo': 'Geri Al',
+        'patches.hint': 'İpucu',
+        'patches.show_results': 'Sonuçları göster',
+        'patches.win_title': 'Harika!',
+        'patches.win_msg': 'Tüm şekiller doğru.',
+        'patches.play_again': 'Sonraki seviye',
 
         // --- About ---
         'about.title': 'Hakkımızda',
@@ -747,9 +765,27 @@ window.__TRANSLATIONS__ = {
         'rk.how_4': 'Each level adds more colours or a longer code.',
 
         // --- Fun page card ---
+        'eglence.patches_title': 'Patches',
+        'eglence.patches_desc': 'Divide the grid into rectangles using the clues. Area = number.',
+        'eglence.patches_cta': 'Play →',
         'eglence.rk_title': 'Colour Code',
         'eglence.rk_desc': 'Crack the secret colour sequence with clues. 🟢 right spot, 🟡 wrong spot.',
         'eglence.rk_cta': 'Play →',
+
+        'patches.back': '← Fun',
+        'patches.title': 'Patches',
+        'patches.subtitle': 'Each rectangle\'s area must equal the number inside it.',
+        'patches.legend_main': 'Complete each shape and fill the grid.',
+        'patches.shape_square': 'Square',
+        'patches.shape_tall': 'Tall rectangle',
+        'patches.shape_wide': 'Wide rectangle',
+        'patches.legend_rule': 'If a cell has a number, the rectangle containing it must have that area (width × height).',
+        'patches.undo': 'Undo',
+        'patches.hint': 'Hint',
+        'patches.show_results': 'Show results',
+        'patches.win_title': 'Well done!',
+        'patches.win_msg': 'All shapes are correct.',
+        'patches.play_again': 'Next level',
 
         'about.title': 'About',
         'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",
