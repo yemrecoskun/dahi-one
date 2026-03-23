@@ -311,11 +311,17 @@
 
   btnHint.addEventListener('click', hint);
 
+  function trCs(key, fallbackTr) {
+    if (typeof window.getI18n !== 'function') return fallbackTr;
+    var x = window.getI18n(key);
+    return (x && x !== key) ? x : fallbackTr;
+  }
+
   function updateNotesLabel() {
     if (!notesLabel) return;
-    notesLabel.textContent = (typeof window.t === 'function')
-      ? (notesMode ? (window.t('cs.notes_on') || 'Notlar AÇIK') : (window.t('cs.notes_off') || 'Notlar KAPALI'))
-      : (notesMode ? 'Notlar AÇIK' : 'Notlar KAPALI');
+    notesLabel.textContent = notesMode
+      ? trCs('cs.notes_on', 'Notlar AÇIK')
+      : trCs('cs.notes_off', 'Notlar KAPALI');
   }
   btnNotes.addEventListener('click', function () {
     notesMode = !notesMode;
@@ -331,5 +337,8 @@
 
   initKeypad();
   render();
-  if (notesLabel && typeof window.t === 'function') notesLabel.textContent = window.t('cs.notes_off') || 'Notlar KAPALI';
+  if (notesLabel) updateNotesLabel();
+  window.addEventListener('load', function () {
+    if (notesLabel) updateNotesLabel();
+  });
 })();

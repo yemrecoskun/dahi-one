@@ -31,3 +31,18 @@
 /zamanlama    /zamanlama/index.html   200
 /renk-kodlama    /renk-kodlama/index.html   200
 /patches    /patches/index.html   200
+
+# Alt klasör oyunları (temiz URL → index.html)
+/number-link    /number-link/index.html   200
+/character-sudoku    /character-sudoku/index.html   200
+/takuzu    /takuzu/index.html   200
+/crown-puzzle    /crown-puzzle/index.html   200
+/yapboz    /yapboz/index.html   200
+/one-line    /one-line/index.html   200
+/crystal-merge    /crystal-merge/index.html   200
+/glitch-sweeper    /glitch-sweeper/index.html   200
+/dahis-path    /dahis-path/index.html   200
+
+# Five Forces (lobi + oyun odası)
+/five-forces    /five-forces/five-forces.html   200
+/five-forces/game    /five-forces/game.html   200

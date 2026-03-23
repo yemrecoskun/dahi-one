@@ -39,6 +39,20 @@
     RewriteRule ^funniest-dahis-characters/?$ funniest-dahis-characters.html [L]
     RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
 
+    # Eğlence alt klasör oyunları: /oyun → oyun/index.html
+    RewriteRule ^number-link/?$ number-link/index.html [L]
+    RewriteRule ^character-sudoku/?$ character-sudoku/index.html [L]
+    RewriteRule ^takuzu/?$ takuzu/index.html [L]
+    RewriteRule ^crown-puzzle/?$ crown-puzzle/index.html [L]
+    RewriteRule ^yapboz/?$ yapboz/index.html [L]
+    RewriteRule ^one-line/?$ one-line/index.html [L]
+    RewriteRule ^crystal-merge/?$ crystal-merge/index.html [L]
+    RewriteRule ^glitch-sweeper/?$ glitch-sweeper/index.html [L]
+    RewriteRule ^dahis-path/?$ dahis-path/index.html [L]
+    RewriteRule ^patches/?$ patches/index.html [L]
+    RewriteRule ^renk-kodlama/?$ renk-kodlama/index.html [L]
+    RewriteRule ^zamanlama/?$ zamanlama/index.html [L]
+
     # Five Forces oyunu – lobi (dizin içinde), oyun sayfası ve statik dosyalar geçerli; diğer yollar 404
     RewriteRule ^five-forces/?$ five-forces/five-forces.html [L]
     RewriteRule ^five-forces/game/?$ five-forces/game.html [L]
