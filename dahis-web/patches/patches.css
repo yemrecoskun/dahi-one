@@ -9,7 +9,7 @@
 .patches-back { display: inline-block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); text-decoration: none; }
 .patches-title { font-size: clamp(1.4rem, 4vw, 1.85rem); font-weight: 700; margin-bottom: 0.25rem; }
 .patches-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
-.patches-main { max-width: 400px; margin: 0 auto; padding: 0 1rem; }
+.patches-main { max-width: min(480px, 100%); margin: 0 auto; padding: 0 1rem; }
 .patches-legend {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 14px;
@@ -49,6 +49,57 @@
 .patches-legend-shapes { margin: 0.25rem 0 0.5rem 1rem; padding: 0; }
 .patches-legend-rule { margin: 0; line-height: 1.45; }
 .patches-game-wrap { background: rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+.patches-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.patches-toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.patches-select {
+  flex: 1;
+  max-width: 160px;
+  padding: 0.45rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #2a2a35;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.patches-toolbar-meta {
+  flex: 1 1 100%;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+}
+.patches-toolbar-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.patches-stat strong { color: #f5d547; }
+.patches-toolbar-nav {
+  display: flex;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+.patches-btn--icon {
+  min-width: 2.5rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 1.25rem;
+  line-height: 1;
+}
 .patches-grid {
   display: grid;
   gap: 2px;
@@ -60,6 +111,12 @@
   border-radius: 12px;
   user-select: none;
   touch-action: none;
+}
+.patches-grid--medium {
+  width: min(340px, 94vw);
+}
+.patches-grid--large {
+  width: min(380px, 96vw);
 }
 .patches-cell {
   background: #3a3a48;
@@ -89,6 +146,8 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 .patches-cell.drag-preview { outline: 2px dashed rgba(255, 255, 255, 0.6); outline-offset: -2px; z-index: 2; }
+.patches-cell.drag-preview-valid { outline-color: rgba(67, 233, 123, 0.85); }
+.patches-cell.drag-preview-invalid { outline-color: rgba(245, 87, 108, 0.9); }
 .patches-actions { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 0.75rem; }
 .patches-btn {
   padding: 0.55rem 1.2rem;

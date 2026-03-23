@@ -32,6 +32,25 @@
       <p class="patches-legend-rule" data-i18n="patches.legend_rule">Bir hücrede sayı varsa, o sayının bulunduğu dikdörtgenin alanı (genişlik × yükseklik) o sayıya eşit olmalıdır.</p>
     </div>
     <div class="patches-game-wrap">
+      <div class="patches-toolbar">
+        <label class="patches-toolbar-row">
+          <span data-i18n="patches.difficulty_label">Zorluk</span>
+          <select id="patchesDifficulty" class="patches-select" aria-label="Zorluk">
+            <option value="easy" data-i18n="patches.diff_easy">Kolay</option>
+            <option value="medium" data-i18n="patches.diff_medium">Orta</option>
+            <option value="hard" data-i18n="patches.diff_hard">Zor</option>
+          </select>
+        </label>
+        <div class="patches-toolbar-meta" id="patchesPuzzleMeta" aria-live="polite"></div>
+        <div class="patches-toolbar-stats">
+          <span class="patches-stat"><span data-i18n="patches.moves_label">Hamle</span>: <strong id="patchesMoves">0</strong></span>
+          <span class="patches-stat"><span data-i18n="patches.hints_label">İpucu</span>: <strong id="patchesHints">0</strong></span>
+        </div>
+        <div class="patches-toolbar-nav">
+          <button type="button" class="patches-btn patches-btn--icon" id="btnPuzzlePrev" data-i18n-attr="patches.prev_puzzle" data-i18n-attr-name="aria-label" title="Önceki bulmaca">‹</button>
+          <button type="button" class="patches-btn patches-btn--icon" id="btnPuzzleNext" data-i18n-attr="patches.next_puzzle_short" data-i18n-attr-name="aria-label" title="Sonraki bulmaca">›</button>
+        </div>
+      </div>
       <div class="patches-grid" id="patchesGrid" role="grid" aria-label="Patches"></div>
       <div class="patches-actions">
         <button type="button" class="patches-btn" id="btnUndo" disabled data-i18n="patches.undo">Geri Al</button>
