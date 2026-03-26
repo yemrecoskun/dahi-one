@@ -85,27 +85,47 @@
     return secret;
   }
 
-  /* ---- Scoring feedback (Mastermind rules) ---- */
-  function computeFeedback(secret, guess) {
-    var correct = 0;
-    var misplaced = 0;
-    var secretCount = {};
-    var guessCount  = {};
-
-    // Count exact matches first
-    for (var i = 0; i < secret.length; i++) {
+  /* ---- Per-slot feedback (Mastermind: exact first, then pair misplaced) ---- */
+  function computePerSlotFeedback(secret, guess) {
+    var n = secret.length;
+    var status = new Array(n);
+    var secretUsed = new Array(n);
+    var guessUsed = new Array(n);
+    var i, gi, si;
+    for (i = 0; i < n; i++) {
+      secretUsed[i] = false;
+      guessUsed[i] = false;
+    }
+    for (i = 0; i < n; i++) {
       if (secret[i] === guess[i]) {
-        correct++;
+        status[i] = 'exact';
+        secretUsed[i] = true;
+        guessUsed[i] = true;
       } else {
-        secretCount[secret[i]] = (secretCount[secret[i]] || 0) + 1;
-        guessCount[guess[i]]   = (guessCount[guess[i]]   || 0) + 1;
+        status[i] = 'none';
       }
     }
-    // Count misplaced
-    for (var c in guessCount) {
-      if (secretCount[c]) {
-        misplaced += Math.min(guessCount[c], secretCount[c]);
+    for (gi = 0; gi < n; gi++) {
+      if (guessUsed[gi]) continue;
+      for (si = 0; si < n; si++) {
+        if (secretUsed[si]) continue;
+        if (secret[si] === guess[gi]) {
+          status[gi] = 'partial';
+          secretUsed[si] = true;
+          guessUsed[gi] = true;
+          break;
+        }
       }
+    }
+    return status;
+  }
+
+  function feedbackFromSlots(status) {
+    var correct = 0;
+    var misplaced = 0;
+    for (var i = 0; i < status.length; i++) {
+      if (status[i] === 'exact') correct++;
+      else if (status[i] === 'partial') misplaced++;
     }
     return { correct: correct, misplaced: misplaced };
   }
@@ -210,34 +230,24 @@
     elGuessBtn.disabled = !full || !state.running;
   }
 
-  function appendBoardRow(pegs, feedback, cfg) {
+  function appendBoardRow(pegs, slotFeedback, cfg) {
     var row = document.createElement('div');
     row.className = 'rk-board-row';
     row.setAttribute('role', 'listitem');
 
     var pegWrap = document.createElement('div');
     pegWrap.className = 'rk-board-pegs';
-    pegs.forEach(function (colorId) {
+    pegs.forEach(function (colorId, idx) {
       var dot = document.createElement('div');
       dot.className = 'rk-peg';
+      if (slotFeedback[idx] === 'exact') dot.classList.add('rk-peg--exact');
+      else if (slotFeedback[idx] === 'partial') dot.classList.add('rk-peg--partial');
       dot.style.background = colorHex(colorId);
       dot.style.borderColor = 'rgba(255,255,255,0.25)';
       pegWrap.appendChild(dot);
     });
 
-    var fbGrid = document.createElement('div');
-    fbGrid.className = 'rk-feedback';
-    var total = feedback.correct + feedback.misplaced;
-    for (var i = 0; i < cfg.slots; i++) {
-      var dot = document.createElement('div');
-      dot.className = 'rk-fb-dot';
-      if (i < feedback.correct)                    dot.classList.add('correct');
-      else if (i < total)                           dot.classList.add('misplaced');
-      fbGrid.appendChild(dot);
-    }
-
     row.appendChild(pegWrap);
-    row.appendChild(fbGrid);
     elBoard.appendChild(row);
   }
 
@@ -309,9 +319,10 @@
       if (!guess[i]) return;
     }
 
-    var feedback = computeFeedback(state.secret, guess);
+    var slotFb = computePerSlotFeedback(state.secret, guess);
+    var feedback = feedbackFromSlots(slotFb);
     state.guesses.push({ pegs: guess, feedback: feedback });
-    appendBoardRow(guess, feedback, cfg);
+    appendBoardRow(guess, slotFb, cfg);
     updateStats();
 
     // Check win
