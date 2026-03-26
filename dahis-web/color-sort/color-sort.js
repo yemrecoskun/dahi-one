@@ -69,7 +69,57 @@
     return movesList;
   }
 
-  /** Ball-sort’ta her tüp daima tek renk (veya boş); “karışıklık” renklerin yanlış tüpte olmasıdır. */
+  function validateState(state) {
+    var total = 0;
+    var counts = [0, 0, 0, 0, 0];
+    var ti, t, j, c;
+    for (ti = 0; ti < state.length; ti++) {
+      t = state[ti];
+      if (t.length > CAPACITY) return false;
+      total += t.length;
+      for (j = 0; j < t.length; j++) {
+        c = t[j];
+        if (c < 0 || c >= NUM_COLORS) return false;
+        counts[c]++;
+      }
+    }
+    if (total !== NUM_COLORS * CAPACITY) return false;
+    for (j = 0; j < NUM_COLORS; j++) {
+      if (counts[j] !== CAPACITY) return false;
+    }
+    return true;
+  }
+
+  /** Önceden hedef düzene BFS ile doğrulanmış karışık başlangıçlar (tüp içi çok renkli). */
+  var FALLBACK_MIXED = [
+    '04301|20|41021|32|41213|03424|3',
+    '34044|130|21|31304|020|22143|21',
+    '41031|42|201|13042|430|20|33241',
+    '02102|343|10124|34404|30|2112|3',
+    '20410|0011|42|34323|2|3442|0113',
+    '20213|131|2444|330|20203|4|0114',
+    '00024|4202|021|11143|2|33|34314',
+    '1240|33|410|22102|443|04301|321'
+  ];
+
+  function parseLevelEncoded(encoded) {
+    var segs = encoded.split('|');
+    if (segs.length !== NUM_COLORS + EMPTY_TUBES) return null;
+    var out = [];
+    var si, i, ch, d;
+    for (si = 0; si < segs.length; si++) {
+      var tube = [];
+      for (i = 0; i < segs[si].length; i++) {
+        ch = segs[si].charAt(i);
+        d = parseInt(ch, 10);
+        if (isNaN(d) || d < 0 || d >= NUM_COLORS) return null;
+        tube.push(d);
+      }
+      out.push(tube);
+    }
+    return validateState(out) ? out : null;
+  }
+
   function shuffleFromSolved(count) {
     var state = solvedState();
     var m, list, pick;
@@ -80,24 +130,6 @@
       applyMove(pick[0], pick[1], state);
     }
     return state;
-  }
-
-  /** Hedef tüp indexinde olmayan blok sayısı (0 = kazanılmış düzen). */
-  function blocksNotAtHome(state) {
-    var bad = 0;
-    var ti, t, j, c;
-    for (ti = 0; ti < state.length; ti++) {
-      t = state[ti];
-      for (j = 0; j < t.length; j++) {
-        c = t[j];
-        if (ti < NUM_COLORS) {
-          if (c !== ti) bad++;
-        } else {
-          bad++;
-        }
-      }
-    }
-    return bad;
   }
 
   /** Kazanç: renk i yalnızca tüp i'de (sıra 0..4), son iki tüp boş — karışık düzen bu hedefe ulaşınca biter */
@@ -117,17 +149,18 @@
   }
 
   function newGame() {
-    var tries = 0;
-    var minAway = 15;
-    do {
-      tubes = shuffleFromSolved(220 + Math.floor(Math.random() * 150));
-      tries++;
-    } while ((isWon(tubes) || blocksNotAtHome(tubes) < minAway) && tries < 50);
-    tries = 0;
-    while ((isWon(tubes) || blocksNotAtHome(tubes) < minAway) && tries < 12) {
-      tubes = shuffleFromSolved(380 + Math.floor(Math.random() * 120));
-      tries++;
+    var st = parseLevelEncoded(FALLBACK_MIXED[Math.floor(Math.random() * FALLBACK_MIXED.length)]);
+    if (!st || isWon(st)) st = parseLevelEncoded(FALLBACK_MIXED[0]);
+    if (!st || isWon(st)) {
+      var guard = 0;
+      do {
+        tubes = shuffleFromSolved(280 + Math.floor(Math.random() * 140));
+        guard++;
+      } while (isWon(tubes) && guard < 20);
+    } else {
+      tubes = st;
     }
+
     selected = null;
     moves = 0;
     history = [];
