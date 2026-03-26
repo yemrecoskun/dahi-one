@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <base href="/color-sort/">
+  <title>One Renk Sıralama – dahi's One</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="color-sort.css">
+</head>
+<body class="colorsort-page">
+  <div id="nav-placeholder"></div>
+  <header class="colorsort-header">
+    <a href="/eglence" class="colorsort-back" data-i18n="colorsort.back">← Eğlence</a>
+    <h1 class="colorsort-title" data-i18n="colorsort.title">One Renk Sıralama</h1>
+    <p class="colorsort-subtitle" data-i18n="colorsort.subtitle">Beş One rengini tüplere ayır. Her tüpte en fazla 5 blok; üstteki aynı renk grubunu birlikte taşırsın.</p>
+  </header>
+  <main class="colorsort-main">
+    <div class="colorsort-grid" id="colorsortGrid" role="group" aria-label="Renk tüpleri"></div>
+    <div class="colorsort-bar">
+      <button type="button" class="colorsort-btn" id="btnColorsortNew" data-i18n="colorsort.restart">Yeniden</button>
+      <span class="colorsort-moves"><span data-i18n="colorsort.moves_label">Hamle</span>: <strong id="colorsortMoves">0</strong></span>
+      <button type="button" class="colorsort-btn colorsort-btn--ghost colorsort-btn--icon" id="btnColorsortHint" data-i18n-attr="colorsort.hint_aria" data-i18n-attr-name="aria-label" title="İpucu">?</button>
+      <button type="button" class="colorsort-btn colorsort-btn--ghost colorsort-btn--icon" id="btnColorsortGoal" data-i18n-attr="colorsort.goal_aria" data-i18n-attr-name="aria-label" title="Amaç">👁</button>
+      <button type="button" class="colorsort-btn" id="btnColorsortUndo" disabled data-i18n="colorsort.undo">Geri al</button>
+    </div>
+    <p class="colorsort-msg" id="colorsortMsg" role="status"></p>
+    <div class="colorsort-legend">
+      <h2 data-i18n="colorsort.how_title">Nasıl oynanır?</h2>
+      <p data-i18n="colorsort.how_1">Önce kaynak tüpe, sonra hedef tüpe dokun. Üstteki aynı renkli bloklar tek hamlede taşınır.</p>
+      <p data-i18n="colorsort.how_2">Hedef boş olmalı veya üstteki renkle aynı olmalı; tüp en fazla 5 blok alır.</p>
+      <p data-i18n="colorsort.how_3">İlk beş tüp soldan Puls → Zest → Lumo → Vigo → Aura hedefine göre dolar; sondaki iki tüp boş kalmalı.</p>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/includes/load-common.js"></script>
+  <script src="color-sort.js"></script>
+</body>
+</html>

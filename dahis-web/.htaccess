@@ -49,6 +49,7 @@
     RewriteRule ^crystal-merge/?$ crystal-merge/index.html [L]
     RewriteRule ^glitch-sweeper/?$ glitch-sweeper/index.html [L]
     RewriteRule ^dahis-path/?$ dahis-path/index.html [L]
+    RewriteRule ^color-sort/?$ color-sort/index.html [L]
     RewriteRule ^patches/?$ patches/index.html [L]
     RewriteRule ^renk-kodlama/?$ renk-kodlama/index.html [L]
     RewriteRule ^zamanlama/?$ zamanlama/index.html [L]
