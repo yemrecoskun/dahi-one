@@ -6,11 +6,11 @@
   var EMPTY_TUBES = 2;
 
   var CHARS = [
-    { id: 0, key: 'puls', name: 'Puls' },
-    { id: 1, key: 'zest', name: 'Zest' },
-    { id: 2, key: 'lumo', name: 'Lumo' },
-    { id: 3, key: 'vigo', name: 'Vigo' },
-    { id: 4, key: 'aura', name: 'Aura' }
+    { id: 0, key: 'puls', name: 'Puls', img: '/kirmizi.png', color: '#e53935' },
+    { id: 1, key: 'zest', name: 'Zest', img: '/turuncu.png', color: '#ff6f00' },
+    { id: 2, key: 'lumo', name: 'Lumo', img: '/sari.png', color: '#ffc107' },
+    { id: 3, key: 'vigo', name: 'Vigo', img: '/yesil.png', color: '#00c853' },
+    { id: 4, key: 'aura', name: 'Aura', img: '/mavi.png', color: '#1e88e5' }
   ];
 
   var tubes = [];
@@ -288,9 +288,20 @@
         for (var i = tube.length - 1; i >= 0; i--) {
           var slot = document.createElement('div');
           slot.className = 'colorsort-slot';
+          var ch = CHARS[tube[i]];
           var blk = document.createElement('div');
-          blk.className = 'colorsort-block colorsort-block--' + CHARS[tube[i]].key;
-          blk.setAttribute('aria-hidden', 'true');
+          blk.className = 'colorsort-block';
+          blk.setAttribute('data-character', ch.key);
+          blk.style.backgroundColor = ch.color;
+          var im = document.createElement('img');
+          im.className = 'colorsort-block-img';
+          im.src = ch.img;
+          im.alt = ch.name;
+          im.width = 24;
+          im.height = 24;
+          im.loading = 'lazy';
+          im.decoding = 'async';
+          blk.appendChild(im);
           slot.appendChild(blk);
           inner.appendChild(slot);
         }
