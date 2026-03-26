@@ -235,35 +235,21 @@
     row.className = 'rk-board-row';
     row.setAttribute('role', 'listitem');
 
-    var stack = document.createElement('div');
-    stack.className = 'rk-board-row-stack';
-
     var pegWrap = document.createElement('div');
     pegWrap.className = 'rk-board-pegs';
-    pegs.forEach(function (colorId) {
+    pegs.forEach(function (colorId, idx) {
       var dot = document.createElement('div');
       dot.className = 'rk-peg';
+      if (slotFeedback[idx] === 'exact') dot.classList.add('rk-peg--exact');
+      else if (slotFeedback[idx] === 'partial') dot.classList.add('rk-peg--partial');
       dot.style.background = colorHex(colorId);
-      dot.style.borderColor = 'rgba(255,255,255,0.25)';
+      if (slotFeedback[idx] !== 'exact' && slotFeedback[idx] !== 'partial') {
+        dot.style.borderColor = 'rgba(255,255,255,0.25)';
+      }
       pegWrap.appendChild(dot);
     });
 
-    var hints = document.createElement('div');
-    hints.className = 'rk-slot-hints';
-    hints.setAttribute('aria-label', t('rk.hints_aria', 'Kutu bazında ipuçları'));
-    var hi;
-    for (hi = 0; hi < cfg.slots; hi++) {
-      var cell = document.createElement('div');
-      cell.className = 'rk-slot-hint';
-      if (slotFeedback[hi] === 'exact') cell.classList.add('rk-slot-hint--exact');
-      else if (slotFeedback[hi] === 'partial') cell.classList.add('rk-slot-hint--partial');
-      else cell.classList.add('rk-slot-hint--none');
-      hints.appendChild(cell);
-    }
-
-    stack.appendChild(pegWrap);
-    stack.appendChild(hints);
-    row.appendChild(stack);
+    row.appendChild(pegWrap);
     elBoard.appendChild(row);
   }
 
