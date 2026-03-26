@@ -69,15 +69,35 @@
     return movesList;
   }
 
+  /** Ball-sort’ta her tüp daima tek renk (veya boş); “karışıklık” renklerin yanlış tüpte olmasıdır. */
   function shuffleFromSolved(count) {
     var state = solvedState();
-    for (var m = 0; m < count; m++) {
-      var list = allValidMoves(state);
+    var m, list, pick;
+    for (m = 0; m < count; m++) {
+      list = allValidMoves(state);
       if (list.length === 0) break;
-      var pick = list[Math.floor(Math.random() * list.length)];
+      pick = list[Math.floor(Math.random() * list.length)];
       applyMove(pick[0], pick[1], state);
     }
     return state;
+  }
+
+  /** Hedef tüp indexinde olmayan blok sayısı (0 = kazanılmış düzen). */
+  function blocksNotAtHome(state) {
+    var bad = 0;
+    var ti, t, j, c;
+    for (ti = 0; ti < state.length; ti++) {
+      t = state[ti];
+      for (j = 0; j < t.length; j++) {
+        c = t[j];
+        if (ti < NUM_COLORS) {
+          if (c !== ti) bad++;
+        } else {
+          bad++;
+        }
+      }
+    }
+    return bad;
   }
 
   /** Kazanç: renk i yalnızca tüp i'de (sıra 0..4), son iki tüp boş — karışık düzen bu hedefe ulaşınca biter */
@@ -97,9 +117,17 @@
   }
 
   function newGame() {
+    var tries = 0;
+    var minAway = 15;
     do {
-      tubes = shuffleFromSolved(95 + Math.floor(Math.random() * 45));
-    } while (isWon(tubes));
+      tubes = shuffleFromSolved(220 + Math.floor(Math.random() * 150));
+      tries++;
+    } while ((isWon(tubes) || blocksNotAtHome(tubes) < minAway) && tries < 50);
+    tries = 0;
+    while ((isWon(tubes) || blocksNotAtHome(tubes) < minAway) && tries < 12) {
+      tubes = shuffleFromSolved(380 + Math.floor(Math.random() * 120));
+      tries++;
+    }
     selected = null;
     moves = 0;
     history = [];
@@ -226,6 +254,13 @@
           inner.appendChild(slot);
         }
         wrap.appendChild(inner);
+        if (idx < NUM_COLORS) {
+          var targetStrip = document.createElement('div');
+          targetStrip.className = 'colorsort-tube-target colorsort-block--' + CHARS[idx].key;
+          targetStrip.setAttribute('aria-hidden', 'true');
+          targetStrip.title = CHARS[idx].name;
+          wrap.appendChild(targetStrip);
+        }
         wrap.addEventListener('click', function () { onTubeClick(idx); });
         gridEl.appendChild(wrap);
       })(ti);
