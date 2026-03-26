@@ -132,20 +132,28 @@
     return state;
   }
 
-  /** Kazanç: renk i yalnızca tüp i'de (sıra 0..4), son iki tüp boş — karışık düzen bu hedefe ulaşınca biter */
+  /**
+   * Kazanç: tam 2 boş tüp; diğer 5 tüpün her biri dolu ve tek renk.
+   * Hangi rengin hangi sütunda olduğu önemli değil (sabit hizaya zorunluluk yok).
+   */
   function isWon(state) {
-    var ti;
-    for (ti = 0; ti < NUM_COLORS; ti++) {
-      var t = state[ti];
-      if (t.length !== CAPACITY) return false;
-      for (var j = 0; j < t.length; j++) {
-        if (t[j] !== ti) return false;
+    var empty = 0;
+    var fullMono = 0;
+    var ti, t, j, c;
+    for (ti = 0; ti < state.length; ti++) {
+      t = state[ti];
+      if (t.length === 0) {
+        empty++;
+        continue;
       }
+      c = t[0];
+      for (j = 1; j < t.length; j++) {
+        if (t[j] !== c) return false;
+      }
+      if (t.length !== CAPACITY) return false;
+      fullMono++;
     }
-    for (ti = NUM_COLORS; ti < state.length; ti++) {
-      if (state[ti].length !== 0) return false;
-    }
-    return true;
+    return empty === EMPTY_TUBES && fullMono === NUM_COLORS;
   }
 
   function newGame() {
@@ -156,7 +164,7 @@
       do {
         tubes = shuffleFromSolved(280 + Math.floor(Math.random() * 140));
         guard++;
-      } while (isWon(tubes) && guard < 20);
+      } while (isWon(tubes) && guard < 25);
     } else {
       tubes = st;
     }
@@ -287,13 +295,6 @@
           inner.appendChild(slot);
         }
         wrap.appendChild(inner);
-        if (idx < NUM_COLORS) {
-          var targetStrip = document.createElement('div');
-          targetStrip.className = 'colorsort-tube-target colorsort-block--' + CHARS[idx].key;
-          targetStrip.setAttribute('aria-hidden', 'true');
-          targetStrip.title = CHARS[idx].name;
-          wrap.appendChild(targetStrip);
-        }
         wrap.addEventListener('click', function () { onTubeClick(idx); });
         gridEl.appendChild(wrap);
       })(ti);

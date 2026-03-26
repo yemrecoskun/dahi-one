@@ -55,9 +55,6 @@
 }
 
 .colorsort-tube {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
   width: 100%;
   max-width: 68px;
   padding: 0;
@@ -66,17 +63,6 @@
   cursor: pointer;
   border-radius: 14px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.colorsort-tube-target {
-  flex: 0 0 auto;
-  height: 7px;
-  border-radius: 4px;
-  margin-top: 6px;
-  opacity: 0.5;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  pointer-events: none;
 }
 
 .colorsort-tube:focus-visible {
