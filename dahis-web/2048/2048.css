@@ -1,0 +1,28 @@
+.g2048-page { font-family: 'Poppins', sans-serif; background: var(--bg-dark,#0a0a0f); color: var(--text-primary,#fff); min-height: 100vh; padding-bottom: 2rem; }
+.g2048-header { text-align: center; padding: 1rem; }
+.g2048-back { display: inline-block; margin-bottom: .5rem; font-size: .9rem; color: var(--text-secondary); text-decoration: none; }
+.g2048-title { font-size: clamp(1.4rem,4vw,1.8rem); font-weight: 700; margin-bottom: .25rem; }
+.g2048-subtitle { font-size: .85rem; color: var(--text-secondary); }
+.g2048-score { margin-top: .5rem; font-size: 1rem; }
+.g2048-restart { margin-top: .5rem; padding: .5rem 1rem; border: none; border-radius: 10px; background: #43e97b; color: #0a0a0f; font-weight: 600; cursor: pointer; }
+.g2048-main { max-width: 380px; margin: 0 auto; padding: 0 1rem; }
+.g2048-game-wrap { background: rgba(255,255,255,.04); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255,255,255,.08); }
+.g2048-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: min(320px,90vw); margin: 0 auto; aspect-ratio: 1; background: #1a1a24; padding: 12px; border-radius: 12px; }
+.g2048-cell { background: #252532; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: clamp(.8rem,3.4vw,1.1rem); min-height: 0; color: #f3f3f3; box-shadow: 0 0 20px rgba(0,0,0,.3); }
+.g2048-cell.v2 { background: #eee4da; color: #776e65; }
+.g2048-cell.v4 { background: #ede0c8; color: #776e65; }
+.g2048-cell.v8 { background: #f2b179; }
+.g2048-cell.v16 { background: #f59563; }
+.g2048-cell.v32 { background: #f67c5f; }
+.g2048-cell.v64 { background: #f65e3b; }
+.g2048-cell.v128 { background: #edcf72; color: #776e65; font-size: .95rem; }
+.g2048-cell.v256 { background: #edcc61; color: #776e65; font-size: .95rem; }
+.g2048-cell.v512 { background: #edc850; color: #776e65; font-size: .95rem; }
+.g2048-cell.v1024 { background: #edc53f; color: #0a0a0f; font-size: .9rem; }
+.g2048-cell.v2048 { background: #edc22e; color: #0a0a0f; font-size: .9rem; }
+.g2048-hint { text-align: center; font-size: .8rem; color: var(--text-secondary); margin-top: .75rem; }
+.g2048-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.g2048-overlay-box { background: #1a1a24; border-radius: 16px; padding: 2rem; text-align: center; max-width: 320px; }
+.g2048-overlay-box h2 { margin-bottom: .5rem; }
+.g2048-overlay-box p { color: var(--text-secondary); margin-bottom: 1.25rem; }
+.g2048-overlay-box button { padding: .65rem 1.5rem; border-radius: 10px; font-weight: 600; background: #43e97b; color: #0a0a0f; border: none; cursor: pointer; }
