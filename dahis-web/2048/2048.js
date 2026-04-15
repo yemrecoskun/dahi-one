@@ -21,10 +21,10 @@
 
   function spawn() {
     var cells = emptyCells();
-    if (!cells.length) return false;
+    if (!cells.length) return null;
     var cell = cells[Math.floor(Math.random() * cells.length)];
     grid[cell[0]][cell[1]] = Math.random() < 0.9 ? 2 : 4;
-    return true;
+    return cell;
   }
 
   function setupBoard() {
@@ -43,10 +43,12 @@
   function mergeLine(line) {
     var arr = line.filter(function (v) { return v > 0; });
     var out = [];
+    var mergedIndices = [];
     for (var i = 0; i < arr.length; i++) {
       if (i + 1 < arr.length && arr[i] === arr[i + 1]) {
         var merged = arr[i] * 2;
         out.push(merged);
+        mergedIndices.push(out.length - 1);
         score += merged;
         if (merged >= TARGET) won = true;
         i++;
@@ -55,7 +57,7 @@
       }
     }
     while (out.length < SIZE) out.push(0);
-    return out;
+    return { line: out, mergedIndices: mergedIndices };
   }
 
   function cloneBoard(board) {
@@ -65,12 +67,17 @@
   function applyMove(board, dir) {
     var moved = false;
     var next = cloneBoard(board);
+    var mergedCells = [];
 
     if (dir === 'left' || dir === 'right') {
       for (var r = 0; r < SIZE; r++) {
         var line = dir === 'left' ? board[r].slice() : board[r].slice().reverse();
-        var merged = mergeLine(line);
+        var mergeResult = mergeLine(line);
+        var merged = mergeResult.line.slice();
         if (dir === 'right') merged.reverse();
+        mergeResult.mergedIndices.forEach(function (index) {
+          mergedCells.push([r, dir === 'left' ? index : SIZE - 1 - index]);
+        });
         for (var c = 0; c < SIZE; c++) {
           if (next[r][c] !== merged[c]) moved = true;
           next[r][c] = merged[c];
@@ -81,8 +88,12 @@
         var col = [];
         for (var r2 = 0; r2 < SIZE; r2++) col.push(board[r2][c2]);
         if (dir === 'down') col.reverse();
-        var mergedCol = mergeLine(col);
+        var mergeResultCol = mergeLine(col);
+        var mergedCol = mergeResultCol.line.slice();
         if (dir === 'down') mergedCol.reverse();
+        mergeResultCol.mergedIndices.forEach(function (index) {
+          mergedCells.push([dir === 'up' ? index : SIZE - 1 - index, c2]);
+        });
         for (var r3 = 0; r3 < SIZE; r3++) {
           if (next[r3][c2] !== mergedCol[r3]) moved = true;
           next[r3][c2] = mergedCol[r3];
@@ -90,7 +101,7 @@
       }
     }
 
-    return { moved: moved, board: next };
+    return { moved: moved, board: next, mergedCells: mergedCells };
   }
 
   function hasAnyMove() {
@@ -131,9 +142,15 @@
       return;
     }
 
+    var previousGrid = cloneBoard(grid);
     grid = state.board;
-    spawn();
-    render();
+    var spawnedCell = spawn();
+    render({
+      direction: dir,
+      mergedCells: state.mergedCells,
+      previousGrid: previousGrid,
+      spawnedCell: spawnedCell
+    });
 
     if (won) {
       won = false;
@@ -144,7 +161,14 @@
     if (!hasAnyMove()) showOverlay('g2048.gameover', 'Skor: ' + score);
   }
 
-  function render() {
+  function render(animationState) {
+    var mergedMap = {};
+    if (animationState && animationState.mergedCells) {
+      animationState.mergedCells.forEach(function (cell) {
+        mergedMap[cell[0] + '-' + cell[1]] = true;
+      });
+    }
+
     gridEl.innerHTML = '';
     for (var r = 0; r < SIZE; r++) {
       for (var c = 0; c < SIZE; c++) {
@@ -154,6 +178,23 @@
         if (value) {
           cell.classList.add('v' + value);
           cell.textContent = value;
+          if (animationState && mergedMap[r + '-' + c]) {
+            cell.classList.add('g2048-cell-merge');
+          } else if (
+            animationState &&
+            animationState.spawnedCell &&
+            animationState.spawnedCell[0] === r &&
+            animationState.spawnedCell[1] === c
+          ) {
+            cell.classList.add('g2048-cell-spawn');
+          } else if (
+            animationState &&
+            animationState.direction &&
+            animationState.previousGrid &&
+            animationState.previousGrid[r][c] !== value
+          ) {
+            cell.classList.add('g2048-cell-move-' + animationState.direction);
+          }
         }
         gridEl.appendChild(cell);
       }
