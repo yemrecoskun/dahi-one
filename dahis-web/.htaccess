@@ -46,6 +46,7 @@
     RewriteRule ^crown-puzzle/?$ crown-puzzle/index.html [L]
     RewriteRule ^yapboz/?$ yapboz/index.html [L]
     RewriteRule ^one-line/?$ one-line/index.html [L]
+    RewriteRule ^2048/?$ 2048/index.html [L]
     RewriteRule ^crystal-merge/?$ crystal-merge/index.html [L]
     RewriteRule ^glitch-sweeper/?$ glitch-sweeper/index.html [L]
     RewriteRule ^dahis-path/?$ dahis-path/index.html [L]
