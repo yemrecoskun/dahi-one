@@ -16,6 +16,8 @@
         return 'en';
     }
 
+    window.currentLang = getLang();
+
     window.getI18n = function (key) {
         var map = T[getLang()] || T.en;
         return map[key] != null ? map[key] : key;
@@ -24,6 +26,7 @@
     function setLang(lang) {
         if (lang !== 'tr' && lang !== 'en') return;
         try { localStorage.setItem(KEY, lang); } catch (e) {}
+        window.currentLang = lang;
         document.documentElement.setAttribute('lang', lang);
         apply();
         updateLangButtons();

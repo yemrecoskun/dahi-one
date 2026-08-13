@@ -20,9 +20,14 @@
   </header>
   <main class="dahispath-main">
     <div class="dahispath-game-wrap">
+      <div class="dahispath-meta">
+        <span class="dahispath-meta-label" data-i18n="dahispath.moves_label">Hamle</span>:
+        <span id="dpMoves">0</span>
+      </div>
       <div class="dahispath-grid" id="grid"></div>
       <div class="dahispath-actions">
         <button type="button" class="dahispath-btn" id="btnUndo" disabled data-i18n="dahispath.undo">Geri al</button>
+        <button type="button" class="dahispath-btn dahispath-btn-primary" id="btnReset" data-i18n="dahispath.reset">Yeniden</button>
       </div>
     </div>
   </main>

@@ -17,12 +17,23 @@
     <a href="/eglence" class="glitch-back" data-i18n="glitch.back">← Eğlence</a>
     <h1 class="glitch-title" data-i18n="glitch.title">Glitch Minesweeper</h1>
     <p class="glitch-subtitle" data-i18n="glitch.subtitle">Virüslü hücreleri işaretle, temiz hücreleri aç.</p>
-    <p class="glitch-meta">Virüs: <strong id="mineCount">10</strong> · Bayrak: <strong id="flagCount">0</strong></p>
+    <p class="glitch-meta">
+      <span class="glitch-mines"><span data-i18n="glitch.mines_label">Virüs</span>: <strong id="mineCount">10</strong></span>
+      <span class="glitch-flags"><span data-i18n="glitch.flags_label">Bayrak</span>: <strong id="flagCount">0</strong></span>
+    </p>
   </header>
   <main class="glitch-main">
     <div class="glitch-game-wrap">
       <div class="glitch-grid" id="grid"></div>
       <p class="glitch-hint" data-i18n="glitch.hint">Sol tık: aç · Sağ tık: Dahis bayrağı</p>
+      <details class="glitch-how">
+        <summary data-i18n="glitch.how_title">Nasıl oynanır?</summary>
+        <div class="glitch-how-inner">
+          <p data-i18n="glitch.how_1">Sol tıkla hücreleri aç. Sayı, komşu virüslü hücre sayısıdır.</p>
+          <p data-i18n="glitch.how_2">Sağ tıkla (masaüstü) virüs olduğunu düşündüğün hücreye bayrak koy.</p>
+          <p data-i18n="glitch.how_3">Tüm temiz hücreleri açınca kazanırsın.</p>
+        </div>
+      </details>
     </div>
   </main>
   <div id="footer-placeholder"></div>

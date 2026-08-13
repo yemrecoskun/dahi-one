@@ -17,12 +17,29 @@
     <a href="/eglence" class="crystal-back" data-i18n="crystal.back">← Eğlence</a>
     <h1 class="crystal-title" data-i18n="crystal.title">Crystal Merge</h1>
     <p class="crystal-subtitle" data-i18n="crystal.subtitle">Kristalleri birleştir, Dahi's One'a ulaş.</p>
-    <p class="crystal-score">Skor: <strong id="score">0</strong></p>
+    <p class="crystal-score"><span data-i18n="crystal.score_label">Skor</span>: <strong id="score">0</strong></p>
   </header>
   <main class="crystal-main">
     <div class="crystal-game-wrap">
       <div class="crystal-grid" id="grid"></div>
       <p class="crystal-hint" data-i18n="crystal.hint">Ok tuşları veya kaydır</p>
+      <div class="crystal-legend">
+        <span class="crystal-legend-item" data-l="1">Enerji</span>
+        <span class="crystal-legend-item" data-l="2">Lumo</span>
+        <span class="crystal-legend-item" data-l="3">Vigo</span>
+        <span class="crystal-legend-item" data-l="4">Zest</span>
+        <span class="crystal-legend-item" data-l="5">Puls</span>
+        <span class="crystal-legend-item" data-l="6">Aura</span>
+        <span class="crystal-legend-item" data-l="7">Dahi's One</span>
+      </div>
+      <details class="crystal-how">
+        <summary data-i18n="crystal.how_title">Nasıl oynanır?</summary>
+        <div class="crystal-how-inner">
+          <p data-i18n="crystal.how_1">Ok tuşları veya dokunmatik kaydırma ile taşları yönlendir.</p>
+          <p data-i18n="crystal.how_2">İki aynı seviye çarpışınca bir üst seviye kristal olur.</p>
+          <p data-i18n="crystal.how_3">Enerji → Lumo → Vigo → Zest → Puls → Aura → Dahi's One.</p>
+        </div>
+      </details>
     </div>
   </main>
   <div id="footer-placeholder"></div>

@@ -2,7 +2,10 @@
 
 .tkz-page {
   font-family: 'Poppins', sans-serif;
-  background: var(--bg-dark, #0a0a0f);
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(255,136,68,0.14), transparent 55%),
+    radial-gradient(900px 700px at 90% 110%, rgba(102,126,234,0.10), transparent 60%),
+    var(--bg-dark, #0a0a0f);
   color: var(--text-primary, #fff);
   min-height: 100vh;
   padding-bottom: 2rem;
@@ -22,7 +25,15 @@
 }
 .tkz-back:hover { color: var(--text-primary); }
 
-.tkz-title { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; margin-bottom: 0.25rem; }
+.tkz-title {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #ff8844, #f093fb, #667eea);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .tkz-subtitle { font-size: 0.9rem; color: var(--text-secondary); }
 
 .tkz-main {
@@ -195,4 +206,46 @@
 @keyframes tkz-flash {
   0%, 100% { background: #252532; }
   50% { background: rgba(67, 233, 123, 0.5); }
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .tkz-game-wrap {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .tkz-grid { background: rgba(0,0,0,0.05); }
+:root[data-theme="light"] .tkz-cell { background: #eef0f6; }
+:root[data-theme="light"] .tkz-cell:hover { background: rgba(102,126,234,0.18); }
+:root[data-theme="light"] .tkz-cell.selected {
+  background: rgba(102,126,234,0.22);
+  border-color: #667eea;
+}
+:root[data-theme="light"] .tkz-cell.fixed:hover { background: #eef0f6; }
+:root[data-theme="light"] .tkz-edge { color: #4b5563; }
+:root[data-theme="light"] .tkz-sym-btn {
+  background: #eef0f6;
+  border-color: rgba(0,0,0,0.12);
+}
+:root[data-theme="light"] .tkz-sym-btn:hover { border-color: #667eea; }
+:root[data-theme="light"] .tkz-btn-undo {
+  background: rgba(0,0,0,0.06);
+  color: #4b5563;
+}
+:root[data-theme="light"] .tkz-btn-undo:not(:disabled):hover { background: rgba(0,0,0,0.12); }
+:root[data-theme="light"] .tkz-btn-hint {
+  background: #1a1a24;
+  color: #fff;
+  border-color: #1a1a24;
+}
+:root[data-theme="light"] .tkz-btn-hint:hover { background: #2a2a35; }
+:root[data-theme="light"] .tkz-how { border-top-color: rgba(0,0,0,0.08); }
+:root[data-theme="light"] .tkz-win-box {
+  background: #fff;
+  color: #111827;
+  border-color: rgba(67,233,123,0.4);
+}
+:root[data-theme="light"] .tkz-win-msg { color: #4b5563; }
+:root[data-theme="light"] @keyframes tkz-flash {
+  0%, 100% { background: #eef0f6; }
+  50% { background: rgba(67,233,123,0.35); }
 }

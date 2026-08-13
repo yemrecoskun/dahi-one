@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import '../models/character.dart';
 import '../services/auth_service.dart';
 import '../widgets/custom_toast.dart';
-import 'devices_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,6 +17,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _authService = AuthService();
   bool _isLoading = true;
   bool _isDeleting = false;
+  /// Profil düzenlemeden dönünce [FutureBuilder] verisini yenilemek için.
+  int _profileDataNonce = 0;
 
   @override
   void initState() {
@@ -32,6 +34,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Color _parseHexColor(String colorCode) {
+    return Color(int.parse(colorCode.replaceFirst('#', '0xFF')));
+  }
+
+  /// Ana sayfa [CharacterOrb] ile uyumlu orb; çerçeve çizgisi seçili karakter renginde.
+  Widget _buildProfileAvatar(Map<String, dynamic> userData) {
+    final id =
+        (userData['profileCharacterId'] as String?)?.trim().toLowerCase() ?? '';
+    final map = Character.getCharacters();
+    final ch = id.isNotEmpty ? map[id] : null;
+    const double outer = 88;
+    const double ring = 2.75;
+    const double inner = outer - ring * 2;
+
+    if (ch == null || ch.image.isEmpty) {
+      final neutral = Colors.white.withOpacity(0.38);
+      return SizedBox(
+        width: outer,
+        height: outer,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: outer,
+              height: outer,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: neutral, width: ring),
+              ),
+            ),
+            Container(
+              width: inner,
+              height: inner,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.18),
+              ),
+              child: const Icon(Icons.person, size: 40, color: Colors.white),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final lineColor = _parseHexColor(ch.colorCode);
+    final fillColor = lineColor;
+
+    return SizedBox(
+      width: outer,
+      height: outer,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: outer,
+            height: outer,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: lineColor, width: ring),
+              boxShadow: [
+                BoxShadow(
+                  color: lineColor.withOpacity(0.42),
+                  blurRadius: 14,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: inner,
+            height: inner,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: fillColor,
+              boxShadow: [
+                BoxShadow(
+                  color: lineColor.withOpacity(0.45),
+                  blurRadius: 12,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(14),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(ch.image, fit: BoxFit.contain),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -199,10 +292,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Kullanıcı giriş yapmış
           return FutureBuilder<Map<String, dynamic>?>(
+            key: ValueKey(_profileDataNonce),
             future: _authService.getUserData(),
             builder: (context, userDataSnapshot) {
               final userData = userDataSnapshot.data ?? {};
-              final userName = userData['name'] as String? ?? user?.displayName ?? user?.email?.split('@')[0] ?? 'Kullanıcı';
+              final fn = (userData['firstName'] as String?)?.trim();
+              final ln = (userData['lastName'] as String?)?.trim();
+              final combined = [
+                if (fn != null && fn.isNotEmpty) fn,
+                if (ln != null && ln.isNotEmpty) ln,
+              ].join(' ');
+              final userName = combined.isNotEmpty
+                  ? combined
+                  : (userData['name'] as String? ??
+                      user?.displayName ??
+                      user?.email?.split('@')[0] ??
+                      'Kullanıcı');
 
               if (_isLoading) {
                 return const Center(child: CircularProgressIndicator());
@@ -213,58 +318,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profil Header
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF667eea),
-                            Color(0xFF764ba2),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.2),
+                    // Profil Header — tıkla: isim / soyisim / kullanıcı adı düzenle
+                    Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        onTap: _isLoading
+                            ? null
+                            : () async {
+                                final ok = await context.push<bool>(
+                                  '/profile/edit-identity',
+                                );
+                                if (ok == true && mounted) {
+                                  setState(() => _profileDataNonce++);
+                                }
+                              },
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF667eea),
+                                Color(0xFF764ba2),
+                              ],
                             ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 40,
-                              color: Colors.white,
-                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Row(
                               children: [
-                                Text(
-                                  userName,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                _buildProfileAvatar(userData),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userName,
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      if ((userData['username'] as String?)?.isNotEmpty ==
+                                          true) ...[
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          '@${userData['username']}',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white.withOpacity(0.95),
+                                          ),
+                                        ),
+                                      ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        user?.email ?? '',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Düzenlemek için dokun',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white.withOpacity(0.75),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  user?.email ?? '',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.white.withOpacity(0.8),
-                                  ),
+                                Icon(
+                                  Icons.edit_outlined,
+                                  color: Colors.white.withOpacity(0.9),
+                                  size: 26,
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -306,6 +443,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         onTap: () {
                           context.push('/devices');
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1a1a2e),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(0xFF667eea).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.people_outline,
+                          color: Color(0xFF667eea),
+                          size: 32,
+                        ),
+                        title: const Text(
+                          'Arkadaşlarım',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          'İstekler ve NFC ile ekleme',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFFb0b0b8),
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Color(0xFFb0b0b8),
+                        ),
+                        onTap: () {
+                          context.push('/friends');
                         },
                       ),
                     ),

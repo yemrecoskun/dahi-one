@@ -1,3 +1,5 @@
+import 'dart:async' show unawaited;
+
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,11 +17,15 @@ import 'screens/season_detail_screen.dart';
 import 'screens/episode_detail_screen.dart';
 import 'screens/store_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/edit_profile_identity_screen.dart';
 import 'screens/payment_info_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/devices_screen.dart';
 import 'screens/device_detail_screen.dart';
 import 'screens/contact_info_screen.dart';
+import 'screens/friends_screen.dart';
+import 'screens/friend_profile_screen.dart';
+import 'screens/add_friend_scan_screen.dart';
 import 'screens/webview_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'widgets/logo.dart';
@@ -36,26 +42,13 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  // Firebase'i başlat (hata durumunda uygulama çalışmaya devam eder)
+  // Firebase'i başlat (hata durumunda uygulama çalışmaya devam eder).
+  // Push izin/token işi runApp sonrasına alınır — açılışta beyaz ekran süresini kısaltır.
   try {
     await Firebase.initializeApp();
     print('✅ Firebase başarıyla başlatıldı');
-    
-    // Background message handler'ı kaydet
+
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    
-    // Push notification servisini başlat
-    // Hata durumunda uygulama çalışmaya devam eder
-    try {
-      await PushNotificationService().initialize();
-    } catch (e) {
-      // Hata mesajı zaten PushNotificationService içinde loglanıyor
-      // Burada sadece genel bir mesaj yazdırıyoruz
-      final errorStr = e.toString().toLowerCase();
-      if (!errorStr.contains("service_not_available")) {
-        print('⚠️  Push notification servisi başlatılamadı: $e');
-      }
-    }
   } catch (e) {
     // Firebase yapılandırma dosyaları eksikse uygulama yine de çalışır
     // Detaylar için: dahis-mobile/FIREBASE-SETUP.md ve FIREBASE-FIX.md dosyalarına bakın
@@ -71,11 +64,27 @@ void main() async {
       print('⚠️  Firebase başlatılamadı: $e');
     }
   }
-  
+
   runApp(const DahisApp());
-  
-  // Uygulama açıldığında versiyon kontrolü yap
-  _checkForUpdate();
+
+  // İlk frame çizildikten sonra push (iOS izin diyaloğu vb.) — cold start hızlanır
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (Firebase.apps.isNotEmpty) {
+      unawaited(_initPushNotificationsDeferred());
+    }
+    _checkForUpdate();
+  });
+}
+
+Future<void> _initPushNotificationsDeferred() async {
+  try {
+    await PushNotificationService().initialize();
+  } catch (e) {
+    final errorStr = e.toString().toLowerCase();
+    if (!errorStr.contains('service_not_available')) {
+      print('⚠️  Push notification servisi başlatılamadı: $e');
+    }
+  }
 }
 
 Future<void> _checkForUpdate() async {
@@ -219,6 +228,32 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const ProfileScreen(),
     ),
     GoRoute(
+      path: '/profile/edit-identity',
+      builder: (context, state) => const EditProfileIdentityScreen(),
+    ),
+    GoRoute(
+      path: '/friends',
+      builder: (context, state) => const FriendsScreen(),
+    ),
+    GoRoute(
+      path: '/add-friend-scan',
+      builder: (context, state) => const AddFriendScanScreen(),
+    ),
+    GoRoute(
+      path: '/friend-profile',
+      builder: (context, state) {
+        final q = state.uri.queryParameters;
+        final friendUid = q['friendUid'] ?? '';
+        final dahiosId = q['dahiosId'] ?? '';
+        final name = q['name'];
+        return FriendProfileScreen(
+          friendUid: friendUid,
+          sharedDahiosId: dahiosId,
+          displayName: (name != null && name.isNotEmpty) ? name : null,
+        );
+      },
+    ),
+    GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
@@ -252,7 +287,12 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         final url = state.uri.queryParameters['url'] ?? 'https://dahis.io';
         final title = state.uri.queryParameters['title'] ?? 'Sayfa';
-        return WebViewScreen(url: url, title: title);
+        final quizBridge = state.uri.queryParameters['quizBridge'] == '1';
+        return WebViewScreen(
+          url: url,
+          title: title,
+          enableQuizCharacterBridge: quizBridge,
+        );
       },
     ),
   ],

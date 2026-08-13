@@ -265,14 +265,29 @@
   }
 
   function hint() {
+    // Find a solution rect not yet fully placed AND whose cells are not occupied
+    // by any other user region (avoid overwriting valid placements).
     for (var i = 0; i < solution.length; i++) {
       var s = solution[i];
-      var ok = true;
-      for (var r = s.r; r < s.r + s.h && ok; r++)
-        for (var c = s.c; c < s.c + s.w && ok; c++)
-          if (region[r][c] === 0) ok = false;
-      if (ok) continue;
+      var fullyPlaced = true;
+      var hasConflict = false;
+      var expectedId = region[s.r][s.c];
+      for (var r = s.r; r < s.r + s.h; r++) {
+        for (var c = s.c; c < s.c + s.w; c++) {
+          if (region[r][c] === 0) fullyPlaced = false;
+          else if (expectedId === 0) expectedId = region[r][c];
+          else if (region[r][c] !== expectedId) hasConflict = true;
+        }
+      }
+      if (fullyPlaced && !hasConflict && expectedId !== 0) continue;
       pushHistory();
+      // Clear any conflicting user regions overlapping this rect
+      for (var rr = s.r; rr < s.r + s.h; rr++) {
+        for (var cc = s.c; cc < s.c + s.w; cc++) {
+          var rid = region[rr][cc];
+          if (rid && rid !== expectedId) clearRegionIdSilent(rid);
+        }
+      }
       var id = nextRegionId++;
       for (var rr2 = s.r; rr2 < s.r + s.h; rr2++)
         for (var cc2 = s.c; cc2 < s.c + s.w; cc2++)
@@ -280,8 +295,16 @@
       hintCount++;
       render();
       showMsg('hint', true);
+      // Auto-check win state after applying a hint
+      if (isSolved()) setTimeout(showWin, 200);
       return;
     }
+  }
+
+  function clearRegionIdSilent(id) {
+    for (var rr = 0; rr < rows; rr++)
+      for (var cc = 0; cc < cols; cc++)
+        if (region[rr][cc] === id) region[rr][cc] = 0;
   }
 
   function isSolved() {
@@ -325,10 +348,17 @@
 
   function showWin() {
     var P = getCurrentPuzzle();
+    var g = typeof window.getI18n === 'function' ? window.getI18n : function (k) { return k; };
+    var statsTemplate = g('patches.win_stats');
+    if (statsTemplate === 'patches.win_stats') statsTemplate = '{name} · {moves} hamle · {hints} ipucu';
+    var statsText = statsTemplate
+      .replace('{name}', P.name)
+      .replace('{moves}', String(moveCount))
+      .replace('{hints}', String(hintCount));
     var w = document.createElement('div');
     w.className = 'patches-win';
     w.innerHTML = '<div class="patches-win-box"><h2 data-i18n="patches.win_title">Harika!</h2><p>' +
-      P.name + ' · ' + moveCount + ' hamle · ' + hintCount + ' ipucu</p>' +
+      statsText + '</p>' +
       '<button type="button" id="patchesAgain" data-i18n="patches.next_puzzle">Sonraki bulmaca</button></div>';
     document.body.appendChild(w);
     if (typeof window.applyI18n === 'function') window.applyI18n();

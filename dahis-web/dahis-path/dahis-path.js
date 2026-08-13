@@ -3,12 +3,14 @@
   var SIZE = 4;
   var EMPTY = -1;
   var START = 0;
-  var GOAL = 1;
   var tiles = [];
   var emptyPos = { r: SIZE - 1, c: SIZE - 1 };
   var history = [];
+  var moves = 0;
   var gridEl = document.getElementById('grid');
   var btnUndo = document.getElementById('btnUndo');
+  var btnReset = document.getElementById('btnReset');
+  var movesEl = document.getElementById('dpMoves');
 
   function init() {
     tiles = [];
@@ -23,6 +25,7 @@
     }
     emptyPos = { r: SIZE - 1, c: SIZE - 1 };
     history = [];
+    moves = 0;
     shuffle();
     render();
   }
@@ -38,6 +41,13 @@
       swap(emptyPos.r, emptyPos.c, next.r, next.c);
       emptyPos = next;
     }
+    if (tiles[SIZE - 1][SIZE - 1] === START) {
+      // Extremely unlikely, but if shuffle lands on solved, do one more swap.
+      var last = emptyPos;
+      var alt = last.r > 0 ? { r: last.r - 1, c: last.c } : { r: last.r, c: last.c - 1 };
+      swap(last.r, last.c, alt.r, alt.c);
+      emptyPos = alt;
+    }
   }
   function swap(r1, c1, r2, c2) {
     var t = tiles[r1][c1];
@@ -51,18 +61,22 @@
       history.push({ er: emptyPos.r, ec: emptyPos.c, tr: r, tc: c });
       swap(r, c, emptyPos.r, emptyPos.c);
       emptyPos = { r: r, c: c };
+      moves++;
       render();
       checkWin();
     }
   }
   function checkWin() {
-    if (tiles[SIZE - 1][SIZE - 1] === START) showWin();
+    if (tiles[SIZE - 1][SIZE - 1] === START) setTimeout(showWin, 200);
   }
   function showWin() {
     var w = document.createElement('div');
     w.className = 'dahispath-win';
-    w.innerHTML = '<div class="dahispath-win-box"><h2 data-i18n="dahispath.win_title">Portal açıldı!</h2><p data-i18n="dahispath.win_msg">Karakter enerji portaline ulaştı.</p><button id="dahispathAgain" data-i18n="dahispath.play_again">Tekrar oyna</button></div>';
+    var movesLbl = (window.getI18n && window.getI18n('dahispath.moves_label')) || 'Hamle';
+    w.innerHTML = '<div class="dahispath-win-box"><h2 data-i18n="dahispath.win_title">Portal açıldı!</h2><p data-i18n="dahispath.win_msg">Karakter enerji portaline ulaştı.</p><p class="dahispath-win-moves"><strong>' + movesLbl + ': ' + moves + '</strong></p><button id="dahispathAgain" data-i18n="dahispath.play_again">Tekrar oyna</button></div>';
     document.body.appendChild(w);
+    if (window.applyI18n) window.applyI18n();
+    requestAnimationFrame(function () { w.classList.add('is-visible'); });
     w.querySelector('#dahispathAgain').onclick = function () { w.remove(); init(); };
   }
   function undo() {
@@ -70,6 +84,7 @@
     var h = history.pop();
     swap(h.er, h.ec, h.tr, h.tc);
     emptyPos = { r: h.tr, c: h.tc };
+    moves = Math.max(0, moves - 1);
     render();
   }
 
@@ -90,9 +105,11 @@
       }
       gridEl.appendChild(cell);
     }
-    btnUndo.disabled = history.length === 0;
+    if (btnUndo) btnUndo.disabled = history.length === 0;
+    if (movesEl) movesEl.textContent = String(moves);
   }
 
-  btnUndo.addEventListener('click', undo);
+  if (btnUndo) btnUndo.addEventListener('click', undo);
+  if (btnReset) btnReset.addEventListener('click', init);
   init();
 })();

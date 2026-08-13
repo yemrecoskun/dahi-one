@@ -1,23 +1,21 @@
 (function () {
   'use strict';
 
-  var SIZE = 9;
+  var SIZE = 8;
   var EMPTY = 0;
   var X = 1;
   var CROWN = 2;
 
-  // 9 bölge: 3x3 bloklar
+  // 8 bölge: her satır çifti 2x4'lük iki blok — toplam 8 blok
   function getRegion(r, c) {
-    return Math.floor(r / 3) * 3 + Math.floor(c / 3);
+    return Math.floor(r / 2) * 2 + Math.floor(c / 4);
   }
 
-  // Karakter taçları: her taç bir karakter (Puls, Zest, Lumo, Vigo, Aura, Dahi...)
-  var CROWN_CHARS = ['Puls', 'Zest', 'Lumo', 'Vigo', 'Aura', 'Dahi', 'Puls', 'Zest', 'Lumo'];
-  var CROWN_COLORS = ['#ff4444', '#ff8844', '#ffdd44', '#44dd88', '#4488ff', '#764ba2', '#ff4444', '#ff8844', '#ffdd44'];
-
-  // 9x9 geçerli çözüm: her satır, sütun ve 3x3 bölgede bir taç; hiçbir iki taç bitişik/çapraz değil
+  // 8x8 geçerli çözüm: her satır/sütun/bölgede tam bir taç; hiçbir iki taç yan yana veya çapraz temas etmez
+  // Kontrol edilmiş: tüm satırlar/sütunlar/bölgeler kaplı; komşu satırlar arası sütun farkı >= 2
   var SOLUTION = [
-    [0, 0], [1, 4], [2, 8], [4, 1], [3, 5], [5, 6], [6, 2], [7, 3], [8, 7]
+    [0, 1], [1, 5], [2, 3], [3, 7],
+    [4, 0], [5, 4], [6, 2], [7, 6]
   ];
 
   var grid = [];
@@ -96,11 +94,11 @@
 
   function checkWin() {
     var list = getCrowns();
-    if (list.length !== 9) return;
+    if (list.length !== SIZE) return;
     if (crownsTouching()) return;
     for (var r = 0; r < SIZE; r++) if (countCrownsRow(r) !== 1) return;
     for (var c = 0; c < SIZE; c++) if (countCrownsCol(c) !== 1) return;
-    for (var reg = 0; reg < 9; reg++) if (countCrownsRegion(reg) !== 1) return;
+    for (var reg = 0; reg < SIZE; reg++) if (countCrownsRegion(reg) !== 1) return;
     showWin();
   }
 
@@ -124,6 +122,7 @@
       el.classList.add('crown-cell-hint');
       setTimeout(function () { el.classList.remove('crown-cell-hint'); }, 600);
     }
+    checkWin();
   }
 
   var winEl = null;
@@ -137,6 +136,7 @@
       '<button type="button" class="crown-win-btn" id="crownWinAgain" data-i18n="crown.play_again">Tekrar Oyna</button>' +
       '</div>';
     document.body.appendChild(winEl);
+    if (window.applyI18n) window.applyI18n();
     setTimeout(function () { winEl.classList.add('is-visible'); }, 100);
     winEl.querySelector('#crownWinAgain').addEventListener('click', function () {
       winEl.classList.remove('is-visible');
@@ -145,7 +145,7 @@
           for (var c = 0; c < SIZE; c++) grid[r][c] = EMPTY;
         history = [];
         render();
-        if (winEl.parentNode) winEl.parentNode.removeChild(winEl);
+        if (winEl && winEl.parentNode) winEl.parentNode.removeChild(winEl);
         winEl = null;
       }, 300);
     });
@@ -166,14 +166,7 @@
           cell.textContent = '✕';
         } else if (grid[r][c] === CROWN) {
           cell.classList.add('crown-w');
-          var ci = -1;
-          for (var i = 0; i < SOLUTION.length; i++)
-            if (SOLUTION[i][0] === r && SOLUTION[i][1] === c) { ci = i; break; }
-          if (ci >= 0) {
-            cell.textContent = '◆';
-            cell.style.color = CROWN_COLORS[ci];
-            cell.title = CROWN_CHARS[ci];
-          }
+          cell.textContent = '♔';
         }
         cell.addEventListener('click', function () {
           var rr = parseInt(this.dataset.r, 10);

@@ -24,11 +24,23 @@
       <div class="oneline-char-btns" id="charBtns"></div>
     </div>
     <div class="oneline-game-wrap">
+      <div class="oneline-meta">
+        <span><span data-i18n="oneline.progress_label">İlerleme</span>:
+          <strong id="olProgress">0 / 24</strong></span>
+      </div>
       <div class="oneline-grid" id="grid"></div>
       <div class="oneline-actions">
         <button type="button" class="oneline-btn" id="btnUndo" disabled data-i18n="oneline.undo">Geri al</button>
         <button type="button" class="oneline-btn" id="btnClear" data-i18n="oneline.clear">Temizle</button>
       </div>
+      <details class="oneline-how">
+        <summary data-i18n="oneline.how_title">Nasıl oynanır?</summary>
+        <div class="oneline-how-inner">
+          <p data-i18n="oneline.how_1">Bir hücreye tıkla ve komşu hücreleri sürükleyerek yolu uzat.</p>
+          <p data-i18n="oneline.how_2">Aynı hücreden iki kez geçemezsin, engelli hücreleri atla.</p>
+          <p data-i18n="oneline.how_3">Tüm boş hücreleri tek bir çizgide geçince kazanırsın.</p>
+        </div>
+      </details>
     </div>
   </main>
   <div id="footer-placeholder"></div>

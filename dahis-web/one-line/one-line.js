@@ -23,6 +23,7 @@
   var charBtns = document.getElementById('charBtns');
   var btnUndo = document.getElementById('btnUndo');
   var btnClear = document.getElementById('btnClear');
+  var progressEl = document.getElementById('olProgress');
 
   function isAdjacent(r1, c1, r2, c2) { return (Math.abs(r1 - r2) + Math.abs(c1 - c2)) === 1; }
   function indexInPath(r, c) { for (var i = 0; i < path.length; i++) if (path[i][0] === r && path[i][1] === c) return i; return -1; }
@@ -79,14 +80,17 @@
           cell.classList.add('oneline-blocked');
           cell.style.pointerEvents = 'none';
         } else {
-          if (indexInPath(r, c) >= 0) cell.classList.add('filled');
+          var pathIdx = indexInPath(r, c);
+          if (pathIdx >= 0) cell.classList.add('filled');
           if (path.length && path[0][0] === r && path[0][1] === c) cell.classList.add('start');
+          if (path.length > 1 && path[path.length - 1][0] === r && path[path.length - 1][1] === c) cell.classList.add('end');
         }
         cell.style.setProperty('--neon-color', neon);
         gridEl.appendChild(cell);
       }
     }
     btnUndo.disabled = history.length === 0;
+    if (progressEl) progressEl.textContent = path.length + ' / ' + totalCells();
   }
 
   function cellAt(r, c) { return gridEl.querySelector('.oneline-cell[data-r="' + r + '"][data-c="' + c + '"]'); }
