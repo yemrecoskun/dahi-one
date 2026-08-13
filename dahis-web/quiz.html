@@ -151,6 +151,13 @@
       return '<span class="quiz-result-trait">' + t + '</span>';
     }).join('');
     showScreen('result');
+    // Uygulama WebView: sonucu Flutter'a ilet (profil karakteri)
+    try {
+      var app = new URLSearchParams(window.location.search).get('app');
+      if (app === '1' && typeof DahisQuiz !== 'undefined' && DahisQuiz.postMessage) {
+        DahisQuiz.postMessage(resultId);
+      }
+    } catch (e) {}
   }
 
   document.getElementById('quizStartBtn').addEventListener('click', function () {

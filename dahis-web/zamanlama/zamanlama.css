@@ -489,3 +489,45 @@
   .zkr-clock-hand--second { width: 36px; }
   .zkr-clock-timer { font-size: 1.5rem; }
 }
+
+/* ---------- Light theme overrides ---------- */
+html[data-theme="light"] .zkr-game-wrap {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .zkr-clock-face {
+  background: radial-gradient(circle, #f6f7fb 60%, #e4e6ee);
+  box-shadow: 0 0 24px rgba(167, 139, 250, 0.28), inset 0 0 12px rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .zkr-clock-timer {
+  color: #1f2937;
+  text-shadow: 0 0 12px rgba(167, 139, 250, 0.35);
+}
+html[data-theme="light"] .zkr-active-char {
+  background: rgba(167, 139, 250, 0.12);
+  border-color: rgba(167, 139, 250, 0.5);
+}
+html[data-theme="light"] .zkr-slot {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.18);
+}
+html[data-theme="light"] .zkr-slot:hover,
+html[data-theme="light"] .zkr-slot.drag-over {
+  background: rgba(167, 139, 250, 0.14);
+  border-color: #a78bfa;
+}
+html[data-theme="light"] .zkr-how {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .zkr-how-inner p {
+  color: #4b5563;
+  opacity: 1;
+}
+html[data-theme="light"] .zkr-overlay {
+  background: rgba(255, 255, 255, 0.9);
+}
+html[data-theme="light"] .zkr-overlay-desc {
+  color: #4b5563;
+  opacity: 1;
+}

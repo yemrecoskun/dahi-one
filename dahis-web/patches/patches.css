@@ -1,13 +1,24 @@
 .patches-page {
   font-family: 'Poppins', sans-serif;
-  background: var(--bg-dark, #0a0a0f);
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(67,233,123,0.14), transparent 55%),
+    radial-gradient(900px 700px at 90% 110%, rgba(255,221,68,0.10), transparent 60%),
+    var(--bg-dark, #0a0a0f);
   color: var(--text-primary, #fff);
   min-height: 100vh;
   padding-bottom: 2rem;
 }
 .patches-header { text-align: center; padding: 1rem; }
 .patches-back { display: inline-block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); text-decoration: none; }
-.patches-title { font-size: clamp(1.4rem, 4vw, 1.85rem); font-weight: 700; margin-bottom: 0.25rem; }
+.patches-title {
+  font-size: clamp(1.4rem, 4vw, 1.85rem);
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #43e97b, #ffdd44, #38f9d7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .patches-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
 .patches-main { max-width: min(480px, 100%); margin: 0 auto; padding: 0 1rem; }
 .patches-legend {
@@ -208,4 +219,51 @@
   color: #0a0a0f;
   border: none;
   cursor: pointer;
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .patches-legend {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+  color: #4b5563;
+}
+:root[data-theme="light"] .patches-legend-text { color: #1a1a24; }
+:root[data-theme="light"] .patches-legend-grid {
+  border-color: rgba(0,0,0,0.35);
+  background: repeating-linear-gradient(90deg, transparent, transparent 11px, rgba(0,0,0,0.08) 11px, rgba(0,0,0,0.08) 12px),
+    repeating-linear-gradient(0deg, transparent, transparent 11px, rgba(0,0,0,0.08) 11px, rgba(0,0,0,0.08) 12px);
+}
+:root[data-theme="light"] .patches-game-wrap {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .patches-toolbar { color: #4b5563; }
+:root[data-theme="light"] .patches-toolbar-meta { color: #1a1a24; }
+:root[data-theme="light"] .patches-select {
+  background: #fff;
+  border-color: rgba(0,0,0,0.15);
+  color: #1a1a24;
+}
+:root[data-theme="light"] .patches-grid {
+  background: rgba(0,0,0,0.1);
+}
+:root[data-theme="light"] .patches-cell {
+  background: #e8ecf3;
+  color: #1a1a24;
+}
+:root[data-theme="light"] .patches-cell.drag-preview { outline-color: rgba(0,0,0,0.5); }
+:root[data-theme="light"] .patches-btn {
+  background: rgba(0,0,0,0.08);
+  color: #1a1a24;
+}
+:root[data-theme="light"] .patches-submit {
+  background: #1a1a24;
+  color: #fff;
+  border-color: rgba(0,0,0,0.15);
+}
+:root[data-theme="light"] .patches-submit:hover { background: #2a2a35; }
+:root[data-theme="light"] .patches-win-box {
+  background: #fff;
+  color: #111827;
+  border-color: rgba(67,233,123,0.4);
 }

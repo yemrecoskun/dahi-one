@@ -434,3 +434,54 @@
   .rk-feedback { width: 36px; }
   .rk-fb-dot { width: 13px; height: 13px; }
 }
+
+/* ---------- Light theme overrides ---------- */
+html[data-theme="light"] .rk-game-wrap {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .rk-peg {
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+}
+html[data-theme="light"] .rk-peg.empty {
+  background: rgba(0, 0, 0, 0.05);
+}
+html[data-theme="light"] .rk-fb-dot {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+html[data-theme="light"] .rk-current-row {
+  background: rgba(244, 114, 182, 0.08);
+  border-color: rgba(244, 114, 182, 0.28);
+}
+html[data-theme="light"] .rk-peg-slot--guess {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.22);
+}
+html[data-theme="light"] .rk-peg-slot--guess.filled {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+html[data-theme="light"] .rk-btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1a1a24;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+html[data-theme="light"] .rk-btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.1);
+}
+html[data-theme="light"] .rk-overlay {
+  background: rgba(255, 255, 255, 0.92);
+}
+html[data-theme="light"] .rk-overlay-desc {
+  color: #4b5563;
+  opacity: 1;
+}
+html[data-theme="light"] .rk-how {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .rk-how-inner p {
+  color: #4b5563;
+  opacity: 1;
+}

@@ -1,6 +1,9 @@
 .colorsort-page {
   font-family: 'Poppins', sans-serif;
-  background: var(--bg-dark, #0a0a0f);
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(79, 172, 254, 0.16), transparent 55%),
+    radial-gradient(900px 700px at 90% 110%, rgba(56, 249, 215, 0.10), transparent 60%),
+    var(--bg-dark, #0a0a0f);
   color: var(--text-primary, #fff);
   min-height: 100vh;
   padding-bottom: 2rem;
@@ -20,9 +23,13 @@
 }
 
 .colorsort-title {
-  font-size: clamp(1.35rem, 4vw, 1.8rem);
-  font-weight: 700;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
   margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #4facfe, #00f2fe, #38f9d7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .colorsort-subtitle {
@@ -266,4 +273,30 @@ html[data-theme="light"] .colorsort-tube-inner {
 html[data-theme="light"] .colorsort-slot--ghost {
   border-color: rgba(0, 0, 0, 0.12);
   background: rgba(0, 0, 0, 0.03);
+}
+
+/* ---------- Light theme overrides ---------- */
+html[data-theme="light"] .colorsort-btn--ghost {
+  background: rgba(0, 0, 0, 0.05);
+  color: #1a1a24;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+html[data-theme="light"] .colorsort-moves {
+  color: #4b5563;
+}
+html[data-theme="light"] .colorsort-msg {
+  color: #4b5563;
+}
+html[data-theme="light"] .colorsort-legend {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #4b5563;
+}
+html[data-theme="light"] .colorsort-legend h2 {
+  color: #111827;
+}
+html[data-theme="light"] .colorsort-win-box {
+  background: #fff;
+  color: #111827;
+  border-color: rgba(79, 172, 254, 0.4);
 }

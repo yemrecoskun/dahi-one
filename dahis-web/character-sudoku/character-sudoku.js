@@ -57,7 +57,6 @@
   var notesMode = false;
   var selected = null;
   var history = [];
-  var hintUsed = false;
 
   var gridEl = document.getElementById('csGrid');
   var numKeysEl = document.getElementById('numKeys');
@@ -162,7 +161,6 @@
     if (!cell) return;
     var val = solution[cell.r][cell.c];
     setCell(cell.r, cell.c, val);
-    hintUsed = true;
     var el = gridEl.querySelector('[data-row="' + cell.r + '"][data-col="' + cell.c + '"]');
     if (el) {
       el.classList.add('cs-cell-hint');
@@ -203,7 +201,6 @@
         }
         history = [];
         selected = null;
-        hintUsed = false;
         render();
         if (winEl.parentNode) winEl.parentNode.removeChild(winEl);
         winEl = null;

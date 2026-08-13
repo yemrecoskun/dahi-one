@@ -6,13 +6,13 @@
 (function () {
   'use strict';
 
-  /* ---- Character Data ---- */
+  /* ---- Character Data (matches character-data.js) ---- */
   var CHARACTERS = [
-    { id: 'puls',  symbol: '🔴', name: 'Puls',  color: '#ef4444' },
-    { id: 'zest',  symbol: '🟡', name: 'Zest',  color: '#eab308' },
-    { id: 'lumo',  symbol: '🟢', name: 'Lumo',  color: '#22c55e' },
-    { id: 'vigo',  symbol: '🔵', name: 'Vigo',  color: '#3b82f6' },
-    { id: 'aura',  symbol: '🟣', name: 'Aura',  color: '#a855f7' },
+    { id: 'puls', symbol: '🔴', name: 'Puls', color: '#ff4444' },
+    { id: 'zest', symbol: '🟠', name: 'Zest', color: '#ff8844' },
+    { id: 'lumo', symbol: '🟡', name: 'Lumo', color: '#ffdd44' },
+    { id: 'vigo', symbol: '🟢', name: 'Vigo', color: '#44dd88' },
+    { id: 'aura', symbol: '🔵', name: 'Aura', color: '#4488ff' },
   ];
 
   /* ---- Game Constants ---- */

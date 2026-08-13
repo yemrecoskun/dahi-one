@@ -2,7 +2,10 @@
 
 .cs-page {
   font-family: 'Poppins', sans-serif;
-  background: var(--bg-dark, #0a0a0f);
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(255,68,68,0.14), transparent 55%),
+    radial-gradient(900px 700px at 90% 110%, rgba(255,136,68,0.10), transparent 60%),
+    var(--bg-dark, #0a0a0f);
   color: var(--text-primary, #fff);
   min-height: 100vh;
   padding-bottom: 2rem;
@@ -25,8 +28,12 @@
 
 .cs-title {
   font-size: clamp(1.5rem, 5vw, 2rem);
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #ff4444, #ff8844, #ffdd44);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .cs-subtitle {
@@ -324,4 +331,54 @@
 @keyframes cs-flash {
   0%, 100% { background: #22222e; }
   50% { background: rgba(67, 233, 123, 0.5); }
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .cs-game-wrap {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .cs-grid {
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.12);
+}
+:root[data-theme="light"] .cs-cell {
+  background: #f4f5f9;
+  border-color: rgba(0,0,0,0.06);
+}
+:root[data-theme="light"] .cs-cell[data-col="2"] { border-right-color: rgba(0,0,0,0.2); }
+:root[data-theme="light"] .cs-cell[data-row="1"],
+:root[data-theme="light"] .cs-cell[data-row="3"] { border-bottom-color: rgba(0,0,0,0.2); }
+:root[data-theme="light"] .cs-cell:hover { background: rgba(102,126,234,0.15); }
+:root[data-theme="light"] .cs-cell.selected {
+  background: rgba(102,126,234,0.25);
+  box-shadow: inset 0 0 0 2px #667eea;
+}
+:root[data-theme="light"] .cs-cell.fixed { background: rgba(0,0,0,0.08); }
+:root[data-theme="light"] .cs-cell.fixed:hover { background: rgba(0,0,0,0.08); }
+:root[data-theme="light"] .cs-char-emoji { color: #1a1a24; text-shadow: none; }
+:root[data-theme="light"] .cs-ctrl-btn {
+  background: rgba(0,0,0,0.06);
+  color: #4b5563;
+  border-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .cs-ctrl-btn:hover { background: rgba(0,0,0,0.12); color: #1a1a24; }
+:root[data-theme="light"] .cs-num-keys .cs-key {
+  background: #eef0f6;
+  border-color: rgba(0,0,0,0.12);
+}
+:root[data-theme="light"] .cs-key-undo {
+  background: rgba(0,0,0,0.06);
+  color: #4b5563;
+}
+:root[data-theme="light"] .cs-key-undo:not(:disabled):hover { background: rgba(0,0,0,0.12); color: #1a1a24; }
+:root[data-theme="light"] .cs-win-box {
+  background: #fff;
+  color: #111827;
+  border-color: rgba(67,233,123,0.4);
+}
+:root[data-theme="light"] .cs-win-msg { color: #4b5563; }
+:root[data-theme="light"] @keyframes cs-flash {
+  0%, 100% { background: #f4f5f9; }
+  50% { background: rgba(67,233,123,0.35); }
 }

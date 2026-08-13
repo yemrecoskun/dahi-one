@@ -211,10 +211,61 @@
     if (isWon(tubes)) showWin();
   }
 
+  function scoreState(state) {
+    // Higher score = closer to solved: monochrome tubes and long same-color top runs
+    var s = 0, i;
+    for (i = 0; i < state.length; i++) {
+      var t = state[i];
+      if (t.length === 0) { s += 3; continue; }
+      var mono = true;
+      for (var j = 1; j < t.length; j++) if (t[j] !== t[0]) { mono = false; break; }
+      if (mono) s += t.length * 2;
+      s += topRunLength(t);
+    }
+    return s;
+  }
+
+  function findGoodMove() {
+    // BFS up to depth 5. Prefer any move sequence that increases score; return the
+    // first move of the best sequence. Falls back to highest-score single move.
+    var moves = allValidMoves(tubes);
+    if (moves.length === 0) return null;
+    if (isWon(tubes)) return null;
+
+    var baseScore = scoreState(tubes);
+    var best = null, bestScore = -Infinity;
+
+    // Try each first move; then a small BFS one level deeper
+    for (var i = 0; i < moves.length; i++) {
+      var s1 = cloneTubes();
+      applyMove(moves[i][0], moves[i][1], s1);
+      if (isWon(s1)) return moves[i];
+      var s1score = scoreState(s1);
+      // Peek one more move (depth 2)
+      var next = allValidMoves(s1);
+      var deepBest = s1score;
+      for (var j = 0; j < next.length && j < 8; j++) {
+        // Avoid immediate reverse
+        if (next[j][0] === moves[i][1] && next[j][1] === moves[i][0]) continue;
+        var s2 = s1.map(function (t) { return t.slice(); });
+        applyMove(next[j][0], next[j][1], s2);
+        if (isWon(s2)) return moves[i];
+        var s2score = scoreState(s2);
+        if (s2score > deepBest) deepBest = s2score;
+      }
+      if (deepBest > bestScore) {
+        bestScore = deepBest;
+        best = moves[i];
+      }
+    }
+    // Only return a move if it doesn't strictly worsen the state
+    if (best && bestScore >= baseScore) return best;
+    return best;
+  }
+
   function hint() {
-    var list = allValidMoves(tubes);
-    if (list.length === 0) return;
-    var pick = list[Math.floor(Math.random() * list.length)];
+    var pick = findGoodMove();
+    if (!pick) return;
     history.push(cloneTubes());
     if (history.length > 200) history.shift();
     applyMove(pick[0], pick[1], tubes);

@@ -1,3 +1,5 @@
+import 'dart:math' show Random;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,9 +7,19 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
+
+import '../utils/username_utils.dart';
 import 'push_notification_service.dart';
 
 class AuthService {
+  static const Set<String> _allowedProfileCharacterIds = {
+    'puls',
+    'zest',
+    'lumo',
+    'vigo',
+    'aura',
+  };
+
   FirebaseAuth? get _auth {
     if (Firebase.apps.isEmpty) return null;
     return FirebaseAuth.instance;
@@ -38,12 +50,14 @@ class AuthService {
       await userCredential.user?.updateDisplayName(name);
 
       // Firestore'da kullanıcı bilgilerini kaydet
-      await _firestore!.collection('users').doc(userCredential.user?.uid).set({
+      final uid = userCredential.user!.uid;
+      await _firestore!.collection('users').doc(uid).set({
         'email': email,
         'name': name,
         'createdAt': FieldValue.serverTimestamp(),
         'devices': [],
       });
+      await _ensureUserHasUsernameClaim(uid, {'name': name, 'email': email});
 
       return userCredential;
     } catch (e) {
@@ -212,11 +226,17 @@ class AuthService {
               'devices': [],
               'authProvider': 'google',
             });
+            await _ensureUserHasUsernameClaim(user.uid, {
+              'name': user.displayName ?? user.email?.split('@')[0] ?? 'Kullanıcı',
+              'email': user.email ?? '',
+            });
           } else {
             // Mevcut kullanıcı, authProvider'ı güncelle
             await userDoc.update({
               'authProvider': 'google',
             });
+            final fresh = await userDoc.get();
+            await _ensureUserHasUsernameClaim(user.uid, fresh.data() ?? {});
           }
         } catch (e) {
           // Firestore hatası kritik değil, giriş başarılı
@@ -288,12 +308,18 @@ class AuthService {
               'devices': [],
               'authProvider': 'apple',
             });
+            await _ensureUserHasUsernameClaim(user.uid, {
+              'name': userName,
+              'email': user.email ?? appleCredential.email ?? '',
+            });
           } else {
             // Mevcut kullanıcı, authProvider'ı güncelle
             await userDoc.update({
               'authProvider': 'apple',
               if (userDocSnapshot.data()?['name'] == null) 'name': userName,
             });
+            final fresh = await userDoc.get();
+            await _ensureUserHasUsernameClaim(user.uid, fresh.data() ?? {});
           }
         } catch (e) {
           // Firestore hatası kritik değil, giriş başarılı
@@ -355,6 +381,8 @@ class AuthService {
     try {
       // 1. Kullanıcının tüm cihazlarını dahios_tags'den temizle
       final userDoc = await _firestore!.collection('users').doc(userId).get();
+      final usernameLowerKey =
+          userDoc.exists ? (userDoc.data()?['usernameLower'] as String?) : null;
       if (userDoc.exists) {
         final userData = userDoc.data();
         final deviceIds = userData?['devices'] as List<dynamic>? ?? [];
@@ -384,10 +412,19 @@ class AuthService {
                 await tagRef.update(updateData);
               }
             }
+            try {
+              await _firestore!.collection('dahios_user_index').doc(deviceId.toString().toLowerCase()).delete();
+            } catch (_) {}
           } catch (e) {
             // Tek bir cihaz için hata olsa bile devam et
           }
         }
+      }
+
+      if (usernameLowerKey != null && usernameLowerKey.isNotEmpty) {
+        try {
+          await _firestore!.collection('usernames').doc(usernameLowerKey).delete();
+        } catch (_) {}
       }
 
       // 2. Firestore'daki users dokümanını sil
@@ -413,19 +450,177 @@ class AuthService {
     }
   }
 
+  /// `username` / `usernameLower` yoksa benzersiz bir değer atanır (`usernames` + `users`).
+  Future<void> _ensureUserHasUsernameClaim(
+    String uid,
+    Map<String, dynamic> userFields,
+  ) async {
+    if (_firestore == null) return;
+    final existing = userFields['usernameLower'] as String?;
+    if (existing != null && existing.isNotEmpty) return;
+
+    final name = userFields['name'] as String? ?? 'user';
+    final email = userFields['email'] as String?;
+    var base = UsernameUtils.slugBaseFromNameOrEmail(name, email);
+    final rnd = Random();
+    for (var i = 0; i < 24; i++) {
+      final raw = i == 0 ? base : '$base${rnd.nextInt(9000) + 1000}';
+      final candidate = raw.length > 32 ? raw.substring(0, 32) : raw;
+      if (candidate.length < 3) continue;
+      try {
+        await _firestore!.runTransaction((tx) async {
+          final userRef = _firestore!.collection('users').doc(uid);
+          final uSnap = await tx.get(userRef);
+          if (!uSnap.exists) return;
+          final ul = uSnap.data()?['usernameLower'] as String?;
+          if (ul != null && ul.isNotEmpty) return;
+          final unRef = _firestore!.collection('usernames').doc(candidate);
+          final unSnap = await tx.get(unRef);
+          if (unSnap.exists) {
+            throw StateError('taken');
+          }
+          tx.set(unRef, {
+            'uid': uid,
+            'usernameLower': candidate,
+          });
+          tx.update(userRef, {
+            'username': candidate,
+            'usernameLower': candidate,
+          });
+        });
+        return;
+      } catch (_) {
+        continue;
+      }
+    }
+  }
+
   // Kullanıcı bilgilerini getir
   Future<Map<String, dynamic>?> getUserData() async {
     try {
       if (currentUser == null || _firestore == null) return null;
-      
-      final doc = await _firestore!.collection('users').doc(currentUser!.uid).get();
-      if (doc.exists) {
-        return doc.data();
+
+      final ref = _firestore!.collection('users').doc(currentUser!.uid);
+      final doc = await ref.get();
+      if (!doc.exists) return null;
+
+      var data = doc.data()!;
+      if ((data['usernameLower'] as String?)?.isEmpty ?? true) {
+        await _ensureUserHasUsernameClaim(doc.id, data);
+        final again = await ref.get();
+        if (again.exists) {
+          data = again.data()!;
+        }
       }
-      return null;
+      return data;
     } catch (e) {
       return null;
     }
+  }
+
+  /// Kişilik testi / manuel seçim — `profileCharacterId` (puls, zest, lumo, vigo, aura).
+  Future<void> updateProfileCharacterId(String rawId) async {
+    if (_firestore == null || currentUser == null) {
+      throw Exception('Oturum gerekli');
+    }
+    final id = rawId.trim().toLowerCase();
+    if (!_allowedProfileCharacterIds.contains(id)) {
+      throw Exception('Geçersiz karakter');
+    }
+    await _firestore!.collection('users').doc(currentUser!.uid).update({
+      'profileCharacterId': id,
+      'profileCharacterUpdatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// İsim, soyisim ve uygulama kullanıcı adı (`usernames` + `users` senkron).
+  Future<void> updateProfileIdentity({
+    required String firstName,
+    required String lastName,
+    required String usernameRaw,
+    String? profileCharacterId,
+  }) async {
+    if (_firestore == null || currentUser == null) {
+      throw Exception('Oturum gerekli');
+    }
+    final uid = currentUser!.uid;
+
+    final fn = firstName.trim();
+    final ln = lastName.trim();
+    if (fn.isEmpty) {
+      throw Exception('İsim zorunludur');
+    }
+
+    final fullName = ln.isEmpty ? fn : '$fn $ln';
+    final key = UsernameUtils.normalizeUsernameKey(usernameRaw);
+    if (key.length < 3) {
+      throw Exception(
+        'Kullanıcı adı en az 3 geçerli karakter olmalı (harf, rakam, alt çizgi)',
+      );
+    }
+    if (key.length > 32) {
+      throw Exception('Kullanıcı adı en fazla 32 karakter olabilir');
+    }
+
+    String? charId;
+    if (profileCharacterId != null && profileCharacterId.trim().isNotEmpty) {
+      final c = profileCharacterId.trim().toLowerCase();
+      if (!_allowedProfileCharacterIds.contains(c)) {
+        throw Exception('Geçersiz profil karakteri');
+      }
+      charId = c;
+    }
+
+    await _firestore!.runTransaction((tx) async {
+      final userRef = _firestore!.collection('users').doc(uid);
+      final uSnap = await tx.get(userRef);
+      if (!uSnap.exists) {
+        throw Exception('Kullanıcı kaydı bulunamadı');
+      }
+
+      final oldLower = (uSnap.data()?['usernameLower'] as String?)?.trim() ?? '';
+
+      if (key != oldLower) {
+        final targetRef = _firestore!.collection('usernames').doc(key);
+        final tSnap = await tx.get(targetRef);
+        if (tSnap.exists) {
+          final owner = tSnap.data()?['uid'] as String?;
+          if (owner != uid) {
+            throw Exception('Bu kullanıcı adı başkası tarafından kullanılıyor');
+          }
+          tx.delete(targetRef);
+        }
+        if (oldLower.isNotEmpty && oldLower != key) {
+          final oldRef = _firestore!.collection('usernames').doc(oldLower);
+          final oSnap = await tx.get(oldRef);
+          if (oSnap.exists && oSnap.data()?['uid'] == uid) {
+            tx.delete(oldRef);
+          }
+        }
+        tx.set(targetRef, {
+          'uid': uid,
+          'usernameLower': key,
+        });
+      }
+
+      final userUpdate = <String, dynamic>{
+        'firstName': fn,
+        'lastName': ln,
+        'name': fullName,
+        'username': key,
+        'usernameLower': key,
+        'profileUpdatedAt': FieldValue.serverTimestamp(),
+      };
+      if (charId != null) {
+        userUpdate['profileCharacterId'] = charId;
+        userUpdate['profileCharacterUpdatedAt'] = FieldValue.serverTimestamp();
+      }
+      tx.update(userRef, userUpdate);
+    });
+
+    try {
+      await currentUser!.updateDisplayName(fullName);
+    } catch (_) {}
   }
 
   // Kullanıcının cihazlarını getir
@@ -495,6 +690,11 @@ class AuthService {
       await _firestore!.collection('users').doc(currentUser!.uid).update({
         'devices': FieldValue.arrayUnion([normalizedDahiosId]),
       });
+
+      await _firestore!.collection('dahios_user_index').doc(normalizedDahiosId).set({
+        'ownerUid': currentUser!.uid,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
       rethrow; // Hata mesajını yukarı fırlat
     }
@@ -510,6 +710,13 @@ class AuthService {
       await _firestore!.collection('users').doc(currentUser!.uid).update({
         'devices': FieldValue.arrayRemove([normalizedDahiosId]),
       });
+
+      try {
+        final idx = await _firestore!.collection('dahios_user_index').doc(normalizedDahiosId).get();
+        if (idx.exists && idx.data()?['ownerUid'] == currentUser!.uid) {
+          await _firestore!.collection('dahios_user_index').doc(normalizedDahiosId).delete();
+        }
+      } catch (_) {}
     } catch (e) {
       rethrow; // Hata mesajını yukarı fırlat
     }

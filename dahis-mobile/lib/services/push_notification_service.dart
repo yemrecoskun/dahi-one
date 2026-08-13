@@ -54,14 +54,6 @@ class PushNotificationService {
           await _saveTokenToFirestore(_fcmToken!);
           
           // Topic'e subscribe ol (tüm kullanıcılar için)
-          // iOS'ta token alındıktan sonra kısa bir süre bekleyip subscribe ol
-          if (Platform.isIOS) {
-            debugPrint("📱 iOS: Topic'e subscribe olunuyor...");
-            await Future.delayed(const Duration(seconds: 1));
-          } else {
-            await Future.delayed(const Duration(milliseconds: 500));
-          }
-          
           try {
             await _messaging.subscribeToTopic("all_users");
             debugPrint("✅ Topic'e subscribe olundu: all_users");
@@ -100,7 +92,6 @@ class PushNotificationService {
         
         // Token yenilendiğinde topic'e tekrar subscribe ol
         try {
-          await Future.delayed(const Duration(milliseconds: 500));
           await _messaging.subscribeToTopic("all_users");
           debugPrint("✅ Token yenilendi, topic'e tekrar subscribe olundu");
         } catch (e) {

@@ -27,7 +27,7 @@
             <h1 class="memory-title" data-i18n="memory.title">One Eşleştirme</h1>
             <p class="memory-intro" data-i18n="memory.intro">Aynı One çiftini bul. Kartları çevir, eşleştir!</p>
             <div class="memory-bar">
-                <span class="memory-moves" id="memoryMoves"><span data-i18n="memory.moves_label"></span>: <span id="memoryMovesCount">0</span></span>
+                <span class="memory-moves" id="memoryMoves"><span data-i18n="memory.moves_label">Hamle</span>: <span id="memoryMovesCount">0</span></span>
                 <button type="button" class="memory-btn" id="memoryRestart" data-i18n="memory.restart">Yeniden başla</button>
             </div>
             <div class="memory-grid" id="memoryGrid"></div>
@@ -130,7 +130,9 @@
   }
 
   function showDone() {
-    doneMovesEl.textContent = moves + ' hamlede tamamladın.';
+    var tpl = (typeof window.getI18n === 'function') ? window.getI18n('memory.done_moves') : 'memory.done_moves';
+    if (tpl === 'memory.done_moves') tpl = '{n} hamlede tamamladın.';
+    doneMovesEl.textContent = tpl.replace('{n}', String(moves));
     doneEl.hidden = false;
   }
 

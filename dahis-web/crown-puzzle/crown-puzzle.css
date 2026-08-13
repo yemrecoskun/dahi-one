@@ -1,8 +1,11 @@
-/* Taç Yerleştir – 8x8, renkli bölgeler */
+/* Taç Yerleştir – 8×8, 8 renkli bölge (2×4 blok) */
 
 .crown-page {
   font-family: 'Poppins', sans-serif;
-  background: var(--bg-dark, #0a0a0f);
+  background:
+    radial-gradient(1200px 800px at 15% -10%, rgba(255, 215, 0, 0.14), transparent 55%),
+    radial-gradient(900px 700px at 90% 110%, rgba(255, 221, 68, 0.10), transparent 60%),
+    var(--bg-dark, #0a0a0f);
   color: var(--text-primary, #fff);
   min-height: 100vh;
   padding-bottom: 2rem;
@@ -22,7 +25,15 @@
 }
 .crown-back:hover { color: var(--text-primary); }
 
-.crown-title { font-size: clamp(1.35rem, 4vw, 1.75rem); font-weight: 700; margin-bottom: 0.2rem; }
+.crown-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #ffd700, #ffb300, #ff8844);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .crown-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
 
 .crown-main {
@@ -46,15 +57,16 @@
 
 .crown-grid {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  grid-template-rows: repeat(9, 1fr);
-  width: min(300px, 88vw);
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: min(340px, 92vw);
   aspect-ratio: 1;
-  gap: 1px;
-  background: #1a1a24;
-  border-radius: 10px;
+  gap: 2px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 12px;
   overflow: hidden;
-  border: 2px solid rgba(255,255,255,0.12);
+  padding: 2px;
+  border: 2px solid rgba(255,255,255,0.14);
 }
 
 .crown-cell {
@@ -64,35 +76,36 @@
   cursor: pointer;
   font-size: 1rem;
   font-weight: 700;
-  color: #333;
+  color: #1f2937;
   transition: filter 0.15s, transform 0.1s;
   min-height: 0;
   min-width: 0;
+  position: relative;
 }
-.crown-cell:hover { filter: brightness(1.15); }
-.crown-cell:active { transform: scale(0.97); }
+.crown-cell:hover { filter: brightness(1.12); }
+.crown-cell:active { transform: scale(0.94); }
 
-/* Bölge renkleri (9 bölge, 3x3) */
-.crown-cell[data-region="0"] { background: #e8d5f2; }
-.crown-cell[data-region="1"] { background: #c5e1c8; }
-.crown-cell[data-region="2"] { background: #bbdefb; }
-.crown-cell[data-region="3"] { background: #ffe0b2; }
-.crown-cell[data-region="4"] { background: #fff9c4; }
-.crown-cell[data-region="5"] { background: #ffccbc; }
-.crown-cell[data-region="6"] { background: #d7ccc8; }
-.crown-cell[data-region="7"] { background: #cfd8dc; }
-.crown-cell[data-region="8"] { background: #f8bbd0; }
+/* 8 bölge renkleri (Dahis paletiyle uyumlu, pastel) */
+.crown-cell[data-region="0"] { background: #fecaca; } /* Puls kırmızı */
+.crown-cell[data-region="1"] { background: #fed7aa; } /* Zest turuncu */
+.crown-cell[data-region="2"] { background: #fef08a; } /* Lumo sarı */
+.crown-cell[data-region="3"] { background: #bbf7d0; } /* Vigo yeşil */
+.crown-cell[data-region="4"] { background: #bfdbfe; } /* Aura mavi */
+.crown-cell[data-region="5"] { background: #ddd6fe; } /* Mor */
+.crown-cell[data-region="6"] { background: #fbcfe8; } /* Pembe */
+.crown-cell[data-region="7"] { background: #a7f3d0; } /* Turkuaz */
 
 .crown-cell.crown-x {
-  background: #37474f !important;
-  color: rgba(255,255,255,0.7);
-  font-size: 0.95rem;
+  color: rgba(0,0,0,0.5);
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .crown-cell.crown-w {
-  background: #2a2a38 !important;
-  font-size: clamp(0.85rem, 3vw, 1.1rem);
-  box-shadow: 0 0 10px currentColor;
+  color: #7c2d12;
+  font-size: clamp(0.95rem, 3.4vw, 1.35rem);
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+  filter: saturate(1.3);
 }
 
 .crown-actions {
@@ -172,4 +185,48 @@
 @keyframes crown-flash {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.4); box-shadow: 0 0 16px #ffd700; }
+}
+
+/* ---------- Light theme overrides ---------- */
+html[data-theme="light"] .crown-game-wrap {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .crown-grid {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+html[data-theme="light"] .crown-btn-undo {
+  background: rgba(0, 0, 0, 0.06);
+  color: #4b5563;
+}
+html[data-theme="light"] .crown-btn-undo:not(:disabled):hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+html[data-theme="light"] .crown-btn-hint {
+  background: #fff;
+  color: #1a1a24;
+  border-color: #d1d5db;
+}
+html[data-theme="light"] .crown-btn-hint:hover {
+  background: #f3f4f6;
+}
+html[data-theme="light"] .crown-how {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .crown-how summary {
+  color: #4b5563;
+}
+html[data-theme="light"] .crown-how-inner p,
+html[data-theme="light"] .crown-examples-inner p {
+  color: #4b5563;
+}
+html[data-theme="light"] .crown-win-box {
+  background: #fff;
+  color: #111827;
+  border-color: rgba(255, 215, 0, 0.5);
+}
+html[data-theme="light"] .crown-win-msg {
+  color: #4b5563;
 }

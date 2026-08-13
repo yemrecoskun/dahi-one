@@ -34,10 +34,10 @@
 
   function reveal(r, c) {
     if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
-    if (revealed[r][c] || flagged[r][c]) return;
     if (!gameStarted) startGame(r, c);
+    if (revealed[r][c] || flagged[r][c]) return;
     revealed[r][c] = true;
-    if (mines[r][c]) { render(); document.body.classList.add('glitch-gameover'); setTimeout(showGameOver, 400); return; }
+    if (mines[r][c]) { render(); var wrap = document.querySelector('.glitch-game-wrap'); if (wrap) wrap.classList.add('glitch-gameover'); setTimeout(showGameOver, 400); return; }
     if (countAdjacentMines(r, c) === 0) {
       for (var dr = -1; dr <= 1; dr++) for (var dc = -1; dc <= 1; dc++) reveal(r + dr, c + dc);
     }
@@ -62,7 +62,7 @@
     o.className = 'glitch-overlay';
     o.innerHTML = '<div class="glitch-overlay-box"><h2 data-i18n="glitch.gameover">Virüs!</h2><p data-i18n="glitch.gameover_msg">Veri tabanı bozuldu. Tekrar dene.</p><button id="glitchOverBtn" data-i18n="glitch.play_again">Tekrar oyna</button></div>';
     document.body.appendChild(o);
-    o.querySelector('#glitchOverBtn').onclick = function () { o.remove(); document.body.classList.remove('glitch-gameover'); gameStarted = false; render(); };
+    o.querySelector('#glitchOverBtn').onclick = function () { o.remove(); var wrap = document.querySelector('.glitch-game-wrap'); if (wrap) wrap.classList.remove('glitch-gameover'); gameStarted = false; render(); };
   }
   function showWin() {
     var o = document.createElement('div');

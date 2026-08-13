@@ -14,19 +14,36 @@
       [1, 2, 2, 1, 2, 1],
       [2, 1, 1, 2, 1, 2]
     ];
+    // Hand-picked edge visibility: guarantees puzzle uniqueness and
+    // consistent difficulty across sessions.
+    var hVisibleMask = [
+      [1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0],
+      [0, 1, 0, 0, 1],
+      [1, 0, 0, 0, 0],
+      [0, 0, 1, 0, 1],
+      [0, 1, 0, 0, 0]
+    ];
+    var vVisibleMask = [
+      [0, 1, 0, 0, 1, 0],
+      [1, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 1],
+      [1, 0, 0, 0, 1, 0],
+      [0, 1, 0, 1, 0, 0]
+    ];
     var hEdges = [], vEdges = [], hVisible = [], vVisible = [];
     for (var r = 0; r < SIZE; r++) {
       hEdges[r] = []; hVisible[r] = [];
       for (var c = 0; c < SIZE - 1; c++) {
         hEdges[r][c] = solution[r][c] === solution[r][c + 1] ? '=' : 'X';
-        hVisible[r][c] = Math.random() < 0.45;
+        hVisible[r][c] = hVisibleMask[r][c] === 1;
       }
     }
     for (var r = 0; r < SIZE - 1; r++) {
       vEdges[r] = []; vVisible[r] = [];
       for (var c = 0; c < SIZE; c++) {
         vEdges[r][c] = solution[r][c] === solution[r + 1][c] ? '=' : 'X';
-        vVisible[r][c] = Math.random() < 0.45;
+        vVisible[r][c] = vVisibleMask[r][c] === 1;
       }
     }
     var mask = [

@@ -1,17 +1,25 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-/// Genel amaçlı WebView ekranı (KVKK, Gizlilik Politikası vb. için)
+import '../services/auth_service.dart';
+import '../widgets/custom_toast.dart';
+
+/// Genel amaçlı WebView (KVKK, eğlence sayfaları vb.).
+/// [enableQuizCharacterBridge]: "Hangi One sensin?" sonucunda profil karakterini kaydetmek için.
 class WebViewScreen extends StatefulWidget {
   const WebViewScreen({
     super.key,
     required this.url,
     this.title = 'Sayfa',
+    this.enableQuizCharacterBridge = false,
   });
 
   final String url;
   final String title;
+  final bool enableQuizCharacterBridge;
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -25,7 +33,44 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void initState() {
     super.initState();
     _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setJavaScriptMode(JavaScriptMode.unrestricted);
+
+    if (widget.enableQuizCharacterBridge) {
+      _controller.addJavaScriptChannel(
+        'DahisQuiz',
+        onMessageReceived: (JavaScriptMessage message) async {
+          final raw = message.message.trim().toLowerCase();
+          if (raw.isEmpty || !mounted) return;
+          if (Firebase.apps.isEmpty || FirebaseAuth.instance.currentUser == null) {
+            if (mounted) {
+              CustomToast.showError(
+                context,
+                'Profil karakteri için giriş yapmalısın',
+              );
+            }
+            return;
+          }
+          try {
+            await AuthService().updateProfileCharacterId(raw);
+            if (mounted) {
+              CustomToast.showSuccess(
+                context,
+                'Profil karakterin test sonucuna göre kaydedildi',
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              CustomToast.showError(
+                context,
+                e.toString().replaceFirst('Exception: ', ''),
+              );
+            }
+          }
+        },
+      );
+    }
+
+    _controller
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {

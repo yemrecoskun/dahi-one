@@ -2310,7 +2310,10 @@ html[data-theme="light"] .nav-lang-switcher {
 .memory-section {
     min-height: 80vh;
     padding: 6rem 1rem 4rem;
-    background: radial-gradient(ellipse at center, #1a1a2e 0%, var(--bg-darker) 100%);
+    background:
+        radial-gradient(1200px 800px at 15% -10%, rgba(255, 221, 68, 0.14), transparent 55%),
+        radial-gradient(900px 700px at 90% 110%, rgba(56, 249, 215, 0.10), transparent 60%),
+        radial-gradient(ellipse at center, #1a1a2e 0%, var(--bg-darker) 100%);
 }
 
 .memory-container {
@@ -2323,10 +2326,11 @@ html[data-theme="light"] .nav-lang-switcher {
     font-weight: 800;
     text-align: center;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background: linear-gradient(135deg, #ffdd44 0%, #38f9d7 50%, #43e97b 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    color: transparent;
 }
 
 .memory-intro {
@@ -2471,6 +2475,29 @@ html[data-theme="light"] .nav-lang-switcher {
 .memory-done-moves {
     color: var(--text-secondary);
     margin-bottom: 1rem;
+}
+
+/* ---------- Memory light theme overrides ---------- */
+html[data-theme="light"] .memory-section {
+    background:
+        radial-gradient(1200px 800px at 15% -10%, rgba(255, 221, 68, 0.18), transparent 55%),
+        radial-gradient(900px 700px at 90% 110%, rgba(56, 249, 215, 0.14), transparent 60%),
+        radial-gradient(ellipse at center, #f6f7fb 0%, #e8eaf2 100%);
+}
+html[data-theme="light"] .memory-btn {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: #1a1a24;
+}
+html[data-theme="light"] .memory-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+html[data-theme="light"] .memory-card-front {
+    background: rgba(0, 0, 0, 0.04);
+}
+html[data-theme="light"] .memory-done {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
 }
 
 /* ========== Onelar arası uyum ========== */
