@@ -369,6 +369,11 @@ body.embed-app {
     position: relative;
 }
 
+/* Masaüstünde logo ana sayfaya götürdüğü için "Ana Sayfa" gizli; mobilde logo gizli olduğundan alt menüde gösterilir */
+.nav-menu li.nav-home {
+    display: none;
+}
+
 .nav-link {
     color: var(--text-secondary);
     text-decoration: none;
@@ -1770,6 +1775,10 @@ html[data-theme="light"] .nav-lang-switcher {
     .nav-menu li {
         flex: 1;
         text-align: center;
+    }
+
+    .nav-menu li.nav-home {
+        display: block;
     }
 
     .nav-link {

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sezon 2: Kayıp Saatler – dahi's One</title>
+    <meta name="robots" content="noindex">
+    <meta name="description" content="dahi's One Sezon 2: Kayıp Saatler. Gök Saati durdu. Gece hiç gelmedi.">
+    <meta property="og:title" content="Sezon 2: Kayıp Saatler – dahi's One">
+    <meta property="og:description" content="Gök Saati durdu. Gece hiç gelmedi.">
+    <meta property="og:image" content="https://dahis.io/siyah.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* 1080×1920 sahne, ekrana sığacak şekilde ölçeklenir (story formatı) */
+        :root {
+            --nox: #7c8496;
+            --nox-light: #a3aabb;
+            --mira: #aa44ff;
+            --nimbo: #88ccff;
+            --cora: #ff55aa;
+            --ease: cubic-bezier(.2, .7, .2, 1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; background: #000; overflow: hidden; }
+        body {
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Poppins', system-ui, sans-serif; color: #fff;
+        }
+        body.recording { cursor: none; }
+
+        .viewport { position: relative; width: 1080px; height: 1920px; transform-origin: center; flex-shrink: 0; }
+        .stage { position: absolute; inset: 0; overflow: hidden; background: #05060a; }
+
+        /* ---------- Gökyüzü ---------- */
+        .sky {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, #0b0d1a 0%, #1a1440 45%, #3a1f4f 70%, #120a1c 100%);
+            transition: filter 1.6s var(--ease), opacity 1s;
+        }
+        .sky::after { /* bitmeyen öğle parlaması */
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 22%, #fffbe6 0%, #ffe9a8 18%, #ffd27a33 45%, transparent 70%);
+            opacity: 0; transition: opacity 1.4s var(--ease);
+        }
+        .s-glare .sky::after { opacity: 1; }
+        .s-glare .sky { filter: brightness(1.8) saturate(.6); }
+
+        .stars { position: absolute; inset: 0; transition: opacity 1s; }
+        .star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: .6; animation: twinkle 2.4s infinite ease-in-out; }
+        @keyframes twinkle { 50% { opacity: .15; } }
+        .s-glare .stars { opacity: 0; }
+
+        /* ---------- Şehir ---------- */
+        .city { position: absolute; left: 0; right: 0; bottom: 0; height: 760px; opacity: 0; transform: translateY(40px); transition: opacity 1.4s var(--ease), transform 1.6s var(--ease), filter 1.4s; }
+        .s-city .city { opacity: 1; transform: none; }
+        .s-glare .city { filter: brightness(1.4) contrast(.8); }
+        .building { position: absolute; bottom: 0; background: linear-gradient(180deg, #11131f, #07080d); border-top: 2px solid #ffffff10; }
+        .win { position: absolute; width: 14px; height: 18px; border-radius: 2px; opacity: .85; box-shadow: 0 0 10px currentColor; background: currentColor; animation: flicker 3s infinite; }
+        @keyframes flicker { 92% { opacity: .85; } 94% { opacity: .2; } 96% { opacity: .85; } }
+        .s-freeze .win, .s-freeze .star { animation-play-state: paused; }
+
+        /* ---------- Gök Saati (LCD) ---------- */
+        .clock {
+            position: absolute; left: 50%; top: 360px; transform: translate(-50%, -30px) scale(.92);
+            width: 760px; padding: 44px 56px 52px; border-radius: 48px;
+            background: linear-gradient(160deg, #1b1d24, #0c0d12);
+            border: 6px solid #2c2f3a; box-shadow: 0 30px 80px #000a, inset 0 0 0 3px #3a5bd955;
+            opacity: 0; transition: opacity .9s var(--ease), transform 1s var(--ease);
+        }
+        .s-clock .clock { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        .lcd { border-radius: 22px; padding: 26px 34px 30px; background: #9fd8ff; color: #0b1a2b; font-family: 'Share Tech Mono', monospace; box-shadow: inset 0 0 30px #0003; transition: background .5s, color .5s; }
+        .lcd-top { display: flex; justify-content: space-between; font-size: 52px; letter-spacing: 4px; opacity: .85; }
+        .lcd-time { font-size: 168px; line-height: 1; letter-spacing: 6px; text-align: right; }
+        .lcd-time .sec { font-size: 104px; }
+        .clock-label { margin-top: 22px; text-align: center; font-weight: 600; letter-spacing: 10px; font-size: 30px; color: #c9cede; }
+        .s-stopped .lcd { animation: glitch .5s steps(2) 3; }
+        .s-stopped .lcd-time { color: #7a0e1a; }
+        @keyframes glitch {
+            0% { transform: translate(0); filter: none; }
+            25% { transform: translate(-8px, 3px); filter: hue-rotate(60deg); }
+            50% { transform: translate(6px, -4px); filter: invert(1); }
+            75% { transform: translate(-3px, 0); filter: none; }
+        }
+        .s-dark .clock { opacity: 0; transform: translate(-50%, 0) scale(.96); }
+
+        /* ---------- Altyazı ---------- */
+        .caption {
+            position: absolute; left: 90px; right: 90px; top: 1180px; text-align: center;
+            font-size: 64px; line-height: 1.25; font-weight: 600; text-shadow: 0 4px 30px #000c;
+            opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease), transform .8s var(--ease);
+        }
+        .caption.show { opacity: 1; transform: none; }
+        .caption em { font-style: normal; color: var(--nox-light); }
+
+        /* ---------- Karanlık + Nox ---------- */
+        .blackout { position: absolute; inset: 0; background: #020205; opacity: 0; transition: opacity .25s; }
+        .s-dark .blackout { opacity: 1; }
+        .nox {
+            position: absolute; left: 50%; top: 420px; width: 760px; transform: translateX(-50%) scale(.9);
+            opacity: 0; transition: opacity 1.4s var(--ease), transform 2.4s var(--ease);
+        }
+        .s-nox .nox { opacity: 1; transform: translateX(-50%) scale(1); }
+        .nox img { width: 100%; display: block; filter: drop-shadow(0 0 50px #3a5bd966); }
+        .nox::before { content: ''; position: absolute; inset: -120px; background: radial-gradient(circle, #3a5bd933, transparent 65%); z-index: -1; }
+        .scan { position: absolute; left: 22%; right: 22%; top: 34%; height: 4px; background: linear-gradient(90deg, transparent, #cfd6e8, transparent); opacity: 0; }
+        .s-nox .scan { animation: scan 1.6s .6s var(--ease) 2; }
+        @keyframes scan { 0% { top: 34%; opacity: 0; } 15% { opacity: .9; } 100% { top: 66%; opacity: 0; } }
+
+        /* "Es": zaman bir kalp atışı boyunca durur */
+        .ripple { position: absolute; left: 50%; top: 760px; width: 40px; height: 40px; margin: -20px; border-radius: 50%; border: 4px solid var(--nox-light); opacity: 0; }
+        .s-es .ripple { animation: ripple 1.4s var(--ease) forwards; }
+        .s-es .ripple.r2 { animation-delay: .25s; }
+        @keyframes ripple { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(60); } }
+        .s-es .stage-inner { animation: heartbeat 1s var(--ease); }
+        @keyframes heartbeat { 0%, 100% { filter: none; } 20% { filter: grayscale(1) contrast(1.4); } }
+
+        /* ---------- Başlık kartı ---------- */
+        .title {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 260px 80px 320px; text-align: center; opacity: 0; transition: opacity 1s var(--ease);
+        }
+        .s-title .title { opacity: 1; }
+        .s-title .nox { transform: translateX(-50%) translateY(-210px) scale(.62); opacity: .95; }
+        .t-season { font-size: 40px; letter-spacing: 22px; font-weight: 600; color: var(--nox-light); margin-top: 360px; transform: translateY(20px); opacity: 0; transition: all .9s .2s var(--ease); }
+        .t-name { font-size: 150px; line-height: .95; font-weight: 800; margin-top: 18px; letter-spacing: -2px;
+                  background: linear-gradient(180deg, #fff, #9aa3b8); -webkit-background-clip: text; background-clip: text; color: transparent;
+                  transform: translateY(30px); opacity: 0; transition: all 1s .45s var(--ease); }
+        .s-title .t-season, .s-title .t-name { transform: none; opacity: 1; }
+        .guardians { display: flex; gap: 46px; margin-top: 70px; }
+        .g { width: 110px; height: 110px; border-radius: 50%; display: grid; place-items: center; font-size: 48px; font-weight: 800; color: #ffffffaa;
+             border: 4px solid var(--c); box-shadow: 0 0 40px var(--c), inset 0 0 30px var(--c); background: #0008;
+             transform: scale(.4); opacity: 0; transition: transform .7s var(--ease), opacity .7s; }
+        .g.nox-dot { background: radial-gradient(circle, #1a1d26, #050608); }
+        .s-title .g { transform: none; opacity: 1; }
+        .s-title .g:nth-child(1) { transition-delay: .9s; }
+        .s-title .g:nth-child(2) { transition-delay: 1.05s; }
+        .s-title .g:nth-child(3) { transition-delay: 1.2s; }
+        .s-title .g:nth-child(4) { transition-delay: 1.35s; }
+        .t-tag { margin-top: 44px; font-size: 40px; color: #d6dae6; opacity: 0; transition: opacity .8s 1.7s; }
+        .t-url { margin-top: 26px; font-size: 36px; letter-spacing: 6px; color: var(--nox-light); opacity: 0; transition: opacity .8s 2.1s; }
+        .s-title .t-tag, .s-title .t-url { opacity: 1; }
+
+        /* ---------- Başlat ekranı ---------- */
+        .start {
+            position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+            background: #000d; color: #fff; text-align: center; padding: 24px; cursor: pointer;
+        }
+        .start strong { font-size: 22px; }
+        .start span { color: #aab; font-size: 15px; max-width: 360px; line-height: 1.5; }
+        .start .play { width: 84px; height: 84px; border-radius: 50%; border: 2px solid #fff; display: grid; place-items: center; font-size: 30px; padding-left: 6px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="viewport" id="viewport">
+        <div class="stage" id="stage">
+            <div class="stage-inner" style="position:absolute;inset:0">
+                <div class="sky"></div>
+                <div class="stars" id="stars"></div>
+                <div class="city" id="city"></div>
+
+                <div class="clock" aria-hidden="true">
+                    <div class="lcd">
+                        <div class="lcd-top"><span>SU</span><span>11</span></div>
+                        <div class="lcd-time"><span id="hm">3:06</span><span class="sec" id="sec">21</span></div>
+                    </div>
+                    <div class="clock-label">GÖK SAATİ</div>
+                </div>
+
+                <div class="blackout"></div>
+                <div class="nox"><img src="/siyah.png" alt="Nox"><div class="scan"></div></div>
+                <div class="ripple"></div><div class="ripple r2"></div>
+
+                <p class="caption" id="caption"></p>
+
+                <div class="title">
+                    <div class="t-season">SEZON 2</div>
+                    <div class="t-name">Kayıp<br>Saatler</div>
+                    <div class="guardians">
+                        <div class="g nox-dot" style="--c: var(--nox)"></div>
+                        <div class="g" style="--c: var(--mira)">?</div>
+                        <div class="g" style="--c: var(--nimbo)">?</div>
+                        <div class="g" style="--c: var(--cora)">?</div>
+                    </div>
+                    <div class="t-tag">Gökyüzünün bekçileri geliyor.</div>
+                    <div class="t-url">DAHIS.IO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="start" id="start">
+        <div class="play">▶</div>
+        <strong>Sezon 2 intro</strong>
+        <span>Ekran kaydını başlat, sonra ekrana dokun. Intro yaklaşık 16 saniye sürer. Tekrar oynatmak için sona geldiğinde ekrana dokun.</span>
+    </div>
+
+    <script>
+    (function () {
+        var vp = document.getElementById('viewport');
+        var stage = document.getElementById('stage');
+        var cap = document.getElementById('caption');
+        var secEl = document.getElementById('sec');
+        var startEl = document.getElementById('start');
+        var COLORS = ['#ff4444', '#ff8844', '#ffdd44', '#44dd88', '#4488ff'];
+
+        // Dikey telefonda (9:16'dan daha uzun) ekranı doldur, yanlardan hafifçe kırp; diğer ekranlarda tamamını göster
+        function fit() {
+            var w = window.innerWidth, h = window.innerHeight;
+            var s = (w / h < 1080 / 1920) ? h / 1920 : Math.min(w / 1080, h / 1920);
+            vp.style.transform = 'scale(' + s + ')';
+        }
+        window.addEventListener('resize', fit);
+        fit();
+
+        // Yıldızlar
+        var stars = document.getElementById('stars');
+        for (var i = 0; i < 70; i++) {
+            var st = document.createElement('div');
+            st.className = 'star';
+            st.style.left = (Math.random() * 100) + '%';
+            st.style.top = (Math.random() * 55) + '%';
+            st.style.animationDelay = (Math.random() * 2.4) + 's';
+            stars.appendChild(st);
+        }
+
+        // Şehir silueti: binalar ve beş kahramanın renklerinde yanan pencereler
+        var city = document.getElementById('city');
+        var x = -20;
+        while (x < 1080) {
+            var w = 110 + Math.floor(Math.random() * 120);
+            var h = 260 + Math.floor(Math.random() * 460);
+            var b = document.createElement('div');
+            b.className = 'building';
+            b.style.left = x + 'px'; b.style.width = w + 'px'; b.style.height = h + 'px';
+            for (var wy = 30; wy < h - 40; wy += 46) {
+                for (var wx = 18; wx < w - 24; wx += 34) {
+                    if (Math.random() < 0.42) {
+                        var win = document.createElement('div');
+                        win.className = 'win';
+                        win.style.left = wx + 'px'; win.style.top = wy + 'px';
+                        win.style.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                        win.style.animationDelay = (Math.random() * 3) + 's';
+                        b.appendChild(win);
+                    }
+                }
+            }
+            city.appendChild(b);
+            x += w + 6;
+        }
+
+        var timers = [];
+        function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+        function add(c) { stage.classList.add(c); }
+        function say(html) {
+            cap.classList.remove('show');
+            setTimeout(function () { cap.innerHTML = html; if (html) cap.classList.add('show'); }, html && cap.innerHTML ? 350 : 0);
+        }
+
+        var ended = false;
+        function play() {
+            timers.forEach(clearTimeout); timers = [];
+            stage.className = 'stage'; cap.className = 'caption'; cap.innerHTML = ''; secEl.textContent = '21'; ended = false;
+            void stage.offsetWidth;
+
+            at(200,   function () { add('s-city'); say('Harmonya hiç bu kadar<br>parlak olmamıştı.'); });
+            at(2300,  function () { add('s-clock'); say(''); });
+            at(3000,  function () { secEl.textContent = '22'; });
+            at(3600,  function () { secEl.textContent = '23'; });
+            at(4200,  function () { secEl.textContent = '24'; });
+            at(4700,  function () { add('s-stopped'); add('s-freeze'); say('Gök Saati <em>durdu</em>.'); });
+            at(6500,  function () { add('s-glare'); say('Ama gece…<br>hiç gelmedi.'); });
+            at(8600,  function () { add('s-dark'); say(''); });
+            at(9100,  function () { add('s-nox'); });
+            at(9800,  function () { say('Çatılarda biri var.<br>Saati <em>parlamıyor</em>.'); });
+            at(11800, function () { add('s-es'); say('“Her melodinin bir esi vardır.”'); });
+            at(14000, function () { say(''); add('s-title'); });
+            at(17500, function () { ended = true; });
+        }
+
+        startEl.addEventListener('click', function () {
+            startEl.classList.add('hidden');
+            document.body.classList.add('recording');
+            play();
+        });
+        document.addEventListener('click', function (e) {
+            if (ended && e.target !== startEl) play();
+        });
+    })();
+    </script>
+</body>
+</html>
