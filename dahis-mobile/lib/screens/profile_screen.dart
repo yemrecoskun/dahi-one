@@ -120,7 +120,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             padding: const EdgeInsets.all(14),
             clipBehavior: Clip.antiAlias,
-            child: Image.asset(ch.image, fit: BoxFit.contain),
+            child: Image.asset(
+              ch.image,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) =>
+                  Image.asset('assets/characters/favicon.png', fit: BoxFit.contain),
+            ),
           ),
         ],
       ),
