@@ -13,6 +13,7 @@
     { id: 'lumo', symbol: '🟡', name: 'Lumo', color: '#ffdd44' },
     { id: 'vigo', symbol: '🟢', name: 'Vigo', color: '#44dd88' },
     { id: 'aura', symbol: '🔵', name: 'Aura', color: '#4488ff' },
+    { id: 'nox',  symbol: '⚫', name: 'Nox',  color: '#7c8496' },
   ];
 
   /* ---- Game Constants ---- */
@@ -20,7 +21,7 @@
   var MIN_TIME        = 1.5;  // minimum seconds per character
   var TIME_DECREMENT  = 0.5;  // seconds removed per level
   var MIN_SLOTS       = 3;    // minimum number of target slots
-  var MAX_SLOTS       = 5;    // maximum number of target slots
+  var MAX_SLOTS       = 6;    // maximum number of target slots
   var SLOT_LEVEL_OFFSET = 2;  // slots = clamp(level + SLOT_LEVEL_OFFSET, MIN, MAX)
   var LEVEL_THRESHOLD = 5;    // correct placements required to level up
 
@@ -109,7 +110,7 @@
   /* ---- Build Slot Grid ---- */
   function buildSlots() {
     elSlots.innerHTML = '';
-    // Pick 3–5 slots depending on level
+    // Pick 3–6 slots depending on level
     var count = clamp(state.level + SLOT_LEVEL_OFFSET, MIN_SLOTS, MAX_SLOTS);
     var pool = shuffle(CHARACTERS).slice(0, count);
     state.slotOrder = pool.map(function (c) { return c.id; });
@@ -405,11 +406,11 @@
   /* ---- Start Button ---- */
   elStartBtn.addEventListener('click', startGame);
 
-  /* ---- Keyboard Shortcuts (1-5 for slots) ---- */
+  /* ---- Keyboard Shortcuts (1-6 for slots) ---- */
   document.addEventListener('keydown', function (e) {
     if (!state.running || !state.activeChar) return;
     var num = parseInt(e.key, 10);
-    if (num >= 1 && num <= 5) {
+    if (num >= 1 && num <= MAX_SLOTS) {
       var slots = elSlots.querySelectorAll('.zkr-slot');
       var slot = slots[num - 1];
       if (slot) handlePlacement(slot.dataset.charId, slot);

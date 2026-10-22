@@ -8,6 +8,7 @@ var MEMORY_CHARS = [
   { id: 'lumo', name: 'Lumo', image: 'sari.png', color: '#ffdd44' },
   { id: 'vigo', name: 'Vigo', image: 'yesil.png', color: '#44dd88' },
   { id: 'aura', name: 'Aura', image: 'mavi.png', color: '#4488ff' },
+  { id: 'nox', name: 'Nox', image: 'siyah.png', color: '#7c8496' },
 ];
 
 function getMemoryPairs() {

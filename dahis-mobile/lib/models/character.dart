@@ -71,6 +71,16 @@ class Character {
         traits: ['Stratejik', 'Sakin', 'Teknoloji Uzmanı'],
         fullDescription: 'Aura, Harmonya\'nın teknoloji dehasıdır. Mavi dahi\'s One saatiyle, karmaşık sistemleri analiz eder ve stratejik çözümler üretir. Sakin ve odaklanmış doğasıyla, ekibin planlama uzmanıdır.',
       ),
+      'nox': Character(
+        id: 'nox',
+        name: 'Nox',
+        color: 'Siyah',
+        colorCode: '#7c8496',
+        image: 'assets/characters/siyah.png',
+        description: 'Gizemli, sessiz ve koruyucu gece bekçisi. Herkes uyurken Harmonya\'yı izler.',
+        traits: ['Gizemli', 'Sessiz', 'Koruyucu'],
+        fullDescription: 'Nox, Harmonya\'nın gece bekçisidir. Bir zamanlar gölgelerden biriydi; Dahi-Link dalgası beş saatin ışığını içine doldurunca bütün renkler onda birleşti ve geriye siyah kaldı. Siyah dahi\'s One saatinin ekranı parlamaz ama karanlıkta herkesin göremediğini görür. Zamanı tek bir kalp atışı boyunca durdurabilen Nox, ekibin sessiz gözcüsüdür.',
+      ),
     };
   }
 }

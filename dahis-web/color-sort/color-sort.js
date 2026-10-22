@@ -10,8 +10,21 @@
     { id: 1, key: 'zest', name: 'Zest', img: '/turuncu.png', color: '#ff6f00' },
     { id: 2, key: 'lumo', name: 'Lumo', img: '/sari.png', color: '#ffc107' },
     { id: 3, key: 'vigo', name: 'Vigo', img: '/yesil.png', color: '#00c853' },
-    { id: 4, key: 'aura', name: 'Aura', img: '/mavi.png', color: '#1e88e5' }
+    { id: 4, key: 'aura', name: 'Aura', img: '/mavi.png', color: '#1e88e5' },
+    { id: 5, key: 'nox', name: 'Nox', img: '/siyah.png', color: '#5f6676' }
   ];
+
+  /** Bu oyunda kullanılan NUM_COLORS karakter (renk indeksi → karakter); her yeni oyunda CHARS içinden rastgele seçilir. */
+  var palette = CHARS.slice(0, NUM_COLORS);
+
+  function pickPalette() {
+    var pool = CHARS.slice();
+    for (var i = pool.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    palette = pool.slice(0, NUM_COLORS);
+  }
 
   var tubes = [];
   var selected = null;
@@ -157,6 +170,7 @@
   }
 
   function newGame() {
+    pickPalette();
     var st = parseLevelEncoded(FALLBACK_MIXED[Math.floor(Math.random() * FALLBACK_MIXED.length)]);
     if (!st || isWon(st)) st = parseLevelEncoded(FALLBACK_MIXED[0]);
     if (!st || isWon(st)) {
@@ -339,7 +353,7 @@
         for (var i = tube.length - 1; i >= 0; i--) {
           var slot = document.createElement('div');
           slot.className = 'colorsort-slot';
-          var ch = CHARS[tube[i]];
+          var ch = palette[tube[i]];
           var blk = document.createElement('div');
           blk.className = 'colorsort-block';
           blk.setAttribute('data-character', ch.key);

@@ -77,6 +77,20 @@ var CHARACTERS = {
       get desc() { return t('char.vigo.desc'); },
       once: true
     }
+  },
+  nox: {
+    id: 'nox',
+    name: 'Nox',
+    get title()          { return t('char.nox.title'); },
+    color: '#8b93a7',
+    gradient: 'linear-gradient(135deg,#3a3f4b,#8b93a7)',
+    emoji: '⚫',
+    image: '/siyah.png',
+    ability: {
+      get name() { return t('char.nox.ability'); },
+      get desc() { return t('char.nox.desc'); },
+      once: true
+    }
   }
 };
 
@@ -139,6 +153,20 @@ function executeAbility(character, game, actingPlayer) {
       result.success = true;
       result.pendingAction = { type: 'silentTheft', targets: targets.map(function(p){ return p.id; }) };
       result.message = t('ability.vigo.prompt');
+      break;
+
+    case 'nox':
+      var n = game.players.length;
+      var myIdx = game.players.indexOf(actingPlayer);
+      var nextPlayer = n > 1 && myIdx !== -1 ? game.players[(myIdx + (game.turnDirection || 1) + n) % n] : null;
+      if (!nextPlayer || nextPlayer.id === actingPlayer.id) {
+        result.message = t('ability.noTarget');
+        return result;
+      }
+      nextPlayer.skipNext = true;
+      actingPlayer.abilityUsed = true;
+      result.success = true;
+      result.message = t('ability.nox', { name: nextPlayer.name });
       break;
 
     default:

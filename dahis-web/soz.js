@@ -8,6 +8,7 @@ var SOZ_CHARACTERS = {
   lumo: { id: 'lumo', name: 'Lumo', color: '#ffdd44', image: 'sari.png' },
   vigo: { id: 'vigo', name: 'Vigo', color: '#44dd88', image: 'yesil.png' },
   aura: { id: 'aura', name: 'Aura', color: '#4488ff', image: 'mavi.png' },
+  nox: { id: 'nox', name: 'Nox', color: '#7c8496', image: 'siyah.png' },
 };
 
 var SOZ_QUOTES = {
@@ -50,6 +51,14 @@ var SOZ_QUOTES = {
     'Strateji, tesadüften güçlüdür.',
     'Adım adım her hedefe ulaşılır.',
     'Sakin kafayla en zor bulmaca çözülür.',
+  ],
+  nox: [
+    'Sessizlik de bir ritimdir.',
+    'Her melodinin bir esi vardır; sen de bir nefes al.',
+    'Karanlık korkutucu değil; sadece henüz bakmadığın yerdir.',
+    'Bir saniye, her şeyi değiştirmeye yeter.',
+    'En iyi koruyucular, teşekkür beklemeyenlerdir.',
+    'Az konuş, çok gör.',
   ],
 };
 

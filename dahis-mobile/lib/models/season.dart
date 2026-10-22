@@ -79,6 +79,23 @@ class Season {
           ),
         ],
       ),
+      'season2': Season(
+        id: 'season2',
+        title: 'Kayıp Saatler',
+        subtitle: 'Sezon 2',
+        summary: 'Ritmin Kristali\'nin dönüşünden sonra Harmonya\'da her şey yolunda görünüyordu. Ta ki bir gece, şehrin tepesindeki dev Gök Saati tam 3:06:24\'te durana kadar. O andan sonra güneş batmadı. Alacakaranlık, gece ve şafak gökyüzünden silindi; bulutlar buharlaşıp gitti. Harmonya, bitmeyen ve gürültülü bir öğle vaktine hapsoldu. Kimse uyuyamıyor, kimse rüya göremiyor, şarkılar birbirine karışıp tek bir uğultuya dönüşüyordu. Ama Gök Saati\'nin kimsenin bilmediği bir sırrı vardı: Günü Harmonya\'nın beş kahramanı korurdu, gökyüzünü ise dört bekçi. Saat durduğunda dördü de gökyüzünün dört bir yanına savrulmuştu. Puls ve ekibi, kayıp saatlerin bekçilerini bulmak ve Gök Saati\'ni yeniden çalıştırmak zorundaydı. Yoksa Harmonya bir daha asla gece görmeyecekti.',
+        episodes: [
+          Episode(
+            id: 'episode1',
+            number: 1,
+            title: 'Saat 3:06',
+            character: 'Nox',
+            characterColor: '#7c8496',
+            summary: 'Gök Saati gecenin ortasında durur ama gökyüzü kararmaz. Harmonya uykusuz kalır. Ekip, çatılarda dolaşan, saati parlamayan siyah bir figürün peşine düşer. Figür, Lumo\'yu düşen bir tabeladan kurtarır ve tek bir cümle bırakıp kaybolur.',
+            content: 'Harmonya, Ritmin Kristali\'nin dönüşünü haftalarca kutladı. Sokaklarda müzik, meydanlarda dans, gökyüzünde renk renk ışıklar vardı.\n\nBir pazar gecesi, şehrin en yüksek kulesinin tepesindeki dev Gök Saati bir tık sesiyle durdu. Kadranında tek bir zaman donup kaldı: SU 11 · 3:06:24. Gecenin tam ortası. Ama gökyüzü kararmadı. Güneş, sanki biri onu oraya çivilemiş gibi tepede asılı kaldı.\n\nÜçüncü günün sonunda Harmonya bitkindi. İnsanlar uyuyamıyor, kuşlar susmayı unutmuş gibi durmadan ötüyor, şarkılar birbirine karışıp tek bir uğultuya dönüşüyordu. Bulutlar bile buharlaşıp gitmişti. Gökyüzü göz kamaştıran, bomboş bir aynaya dönmüştü.\n\nPuls ekibi Dahi Karargahı\'nda topladı. Gözlerinin altı mosmordu. "Kristali kurtardık ama bir şey çok yanlış. Ritim var ama… hiç durmuyor."\n\nAura mavi ekranına baktı. "Şehrin frekansında tek bir boşluk yok. Normalde her ritmin arasında küçük sessizlikler olur. Şu an hiçbiri yok. Biri sessizliği silmiş."\n\nO sırada Lumo pencereye koştu. "Orada biri var!" Karşı binanın çatısında, neon ışıkların arasında simsiyah bir siluet duruyordu. Bileğindeki saat parlamıyordu. Bütün şehir ışık saçarken o saat, aydınlıkta açılmış küçük bir delik gibiydi.\n\nZest çoktan dışarı fırlamıştı. Ekip çatıdan çatıya atlayarak figürü kovaladı. Ama siluet her seferinde bir gölgenin içine giriyor, bambaşka bir gölgeden çıkıyordu.\n\nTam o anda Lumo\'nun üstündeki dev neon tabela gıcırdadı ve koptu. Vigo "Lumo!" diye bağırdı. Ama tabela düşerken her şey bir anlığına durdu. Rüzgâr, ses, havada asılı kalan kıvılcımlar… Zaman, tek bir kalp atışı boyunca nefesini tuttu. Kalp atışı geri geldiğinde Lumo birkaç metre ötede, güvendeydi. Tabela boş çatıya çarpıp paramparça oldu.\n\nSiyah figür kenarda duruyordu. Puls\'a baktı ve tek bir cümle söyledi: "Her melodinin bir esi vardır. Biri onu çaldı."\n\nSonra yine bir gölgenin içine girdi ve gitti.\n\nLumo titreyerek doğruldu. "O… beni kurtardı. Ama kim o?"\n\nPuls, kulenin tepesindeki donmuş kadrana baktı. 3:06:24. "Bilmiyorum," dedi. "Ama öğreneceğiz."',
+          ),
+        ],
+      ),
     };
   }
 }

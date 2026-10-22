@@ -10,7 +10,8 @@
     { name: 'Zest', image: '/turuncu.png' },
     { name: 'Lumo', image: '/sari.png' },
     { name: 'Vigo', image: '/yesil.png' },
-    { name: 'Aura', image: '/mavi.png' }
+    { name: 'Aura', image: '/mavi.png' },
+    { name: 'Nox', image: '/siyah.png' }
   ];
 
   var tiles = [];
