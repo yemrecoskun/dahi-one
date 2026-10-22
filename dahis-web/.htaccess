@@ -28,6 +28,7 @@
     RewriteRule ^season/?$ season.html [L]
     RewriteRule ^tag-detail/?$ tag-detail.html [L]
     RewriteRule ^intro/?$ intro.html [L]
+    RewriteRule ^sezon-2/?$ sezon2-intro.html [L]
     RewriteRule ^characters/?$ characters.html [L]
     RewriteRule ^which-dahis-character-are-you/?$ quiz.html [L]
     RewriteRule ^dahis-personality-test/?$ quiz.html [L]
