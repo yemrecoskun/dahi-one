@@ -43,6 +43,14 @@ const QUIZ_CHARACTERS = {
     description: 'Odaklanmış, sakin ve stratejik düşünen teknoloji uzmanı. Mantıklı ve planlayıcı.',
     traits: ['Stratejik', 'Sakin', 'Planlayıcı'],
   },
+  nox: {
+    id: 'nox',
+    name: 'Nox',
+    color: '#7c8496',
+    image: 'siyah.png',
+    description: 'Gizemli, sessiz ve koruyucu gece bekçisi. Herkes uyurken Harmonya\'yı izler.',
+    traits: ['Gizemli', 'Sessiz', 'Koruyucu'],
+  },
 };
 
 const QUIZ_QUESTIONS = [
@@ -55,6 +63,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Sanat, müzik veya yaratıcı bir proje', character: 'lumo' },
       { text: 'Doğa yürüyüşü, kitap veya sessiz bir ortam', character: 'vigo' },
       { text: 'Evde bir proje veya teknik bir işe odaklanmak', character: 'aura' },
+      { text: 'Gece geç saatlere kadar sessizce kendi işimle uğraşmak', character: 'nox' },
     ],
   },
   {
@@ -66,6 +75,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Farklı fikirler ve çözümler üretirim', character: 'lumo' },
       { text: 'Araştırır, analiz ederim', character: 'vigo' },
       { text: 'Plan yapıp adım adım çözerim', character: 'aura' },
+      { text: 'Önce sessizce gözlemler, herkes paniklerken sakin kalırım', character: 'nox' },
     ],
   },
   {
@@ -77,6 +87,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Fikir üreten, yaratıcı beyin', character: 'lumo' },
       { text: 'Uzlaştıran, denge kuran', character: 'vigo' },
       { text: 'Organize eden, strateji kuran', character: 'aura' },
+      { text: 'Arka planda kalıp herkesi kollayan gözcü', character: 'nox' },
     ],
   },
   {
@@ -88,6 +99,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Yaratıcı iş yaparken', character: 'lumo' },
       { text: 'Doğada veya sessizlikte', character: 'vigo' },
       { text: 'Odaklanmış, tek bir işe gömülürken', character: 'aura' },
+      { text: 'Gece, herkes uyurken tek başıma', character: 'nox' },
     ],
   },
   {
@@ -99,6 +111,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Yaratıcı', character: 'lumo' },
       { text: 'Huzurlu', character: 'vigo' },
       { text: 'Mantıklı', character: 'aura' },
+      { text: 'Gizemli', character: 'nox' },
     ],
   },
   {
@@ -110,6 +123,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Renkleri ve ipuçlarını birleştirip bulurdum', character: 'lumo' },
       { text: 'Doğayı dinleyip onun rehberliğinde ilerlerdim', character: 'vigo' },
       { text: 'Harita çıkarıp adım adım strateji uygulardım', character: 'aura' },
+      { text: 'Geceyi beklerdim; karanlıkta herkesin kaçırdığı izleri görürdüm', character: 'nox' },
     ],
   },
   {
@@ -121,6 +135,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Farklı, yaratıcı fikirler atarım', character: 'lumo' },
       { text: 'Dinler, sonra özetlerim', character: 'vigo' },
       { text: 'Not alır, madde madde takip ederim', character: 'aura' },
+      { text: 'Az konuşurum ama her şeyi fark ederim', character: 'nox' },
     ],
   },
   {
@@ -132,6 +147,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Sanat, müzik, atölye ve kültür turları', character: 'lumo' },
       { text: 'Doğa, kamp, sessiz bir köşe', character: 'vigo' },
       { text: 'Planlı şehir turu veya tek temalı bir gezi', character: 'aura' },
+      { text: 'Yıldızların altında, kalabalıktan uzak sessiz bir kaçamak', character: 'nox' },
     ],
   },
   {
@@ -143,6 +159,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Yaratıcı yollar ve alternatifler denerim', character: 'lumo' },
       { text: 'Sabırla, adım adım', character: 'vigo' },
       { text: 'Plan yapar, checklist\'e göre ilerlerim', character: 'aura' },
+      { text: 'Sessizce, kimseye söylemeden; sonuçla konuşurum', character: 'nox' },
     ],
   },
   {
@@ -154,6 +171,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Yaratıcı, fikir dolu', character: 'lumo' },
       { text: 'Sakin, güvenilir', character: 'vigo' },
       { text: 'Mantıklı, düzenli', character: 'aura' },
+      { text: 'Sessiz ama güvenilir, hep arkalarında', character: 'nox' },
     ],
   },
   {
@@ -165,6 +183,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Üretken olurum, bir şeyler üretir dağılırım', character: 'lumo' },
       { text: 'Doğaya veya sessiz bir yere çekilirim', character: 'vigo' },
       { text: 'Liste yapar, plana göre ilerlerim', character: 'aura' },
+      { text: 'Bir an durur, nefes alır, sonra sakin kafayla hareket ederim', character: 'nox' },
     ],
   },
   {
@@ -176,6 +195,7 @@ const QUIZ_QUESTIONS = [
       { text: 'Görsel, renkli ve yaratıcı materyallerle', character: 'lumo' },
       { text: 'Araştırarak, derinlemesine', character: 'vigo' },
       { text: 'Mantık sırasına göre, adım adım', character: 'aura' },
+      { text: 'Kendi başıma, gece sessizliğinde derinlemesine', character: 'nox' },
     ],
   },
 ];
@@ -189,7 +209,7 @@ function getQuizQuestions() {
 }
 
 function computeQuizResult(answers) {
-  const scores = { puls: 0, zest: 0, lumo: 0, vigo: 0, aura: 0 };
+  const scores = { puls: 0, zest: 0, lumo: 0, vigo: 0, aura: 0, nox: 0 };
   answers.forEach(function (character) {
     if (scores.hasOwnProperty(character)) scores[character] += 1;
   });

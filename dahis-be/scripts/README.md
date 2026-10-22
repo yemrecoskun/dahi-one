@@ -34,7 +34,7 @@ node scripts/push-data-to-firestore.js
 ## Veri Yapısı
 
 ### Characters Collection
-- `id`: Karakter ID'si (puls, zest, lumo, vigo, aura)
+- `id`: Karakter ID'si (puls, zest, lumo, vigo, aura, nox)
 - `name`: Karakter adı
 - `color`: Renk adı (Kırmızı, Turuncu, vb.)
 - `colorCode`: Hex renk kodu

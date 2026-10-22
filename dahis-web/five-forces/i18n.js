@@ -155,6 +155,7 @@ var I18n = (function () {
       'char.zest.title':       'The Chaotic',
       'char.puls.title':       'The Strategist',
       'char.vigo.title':       'The Silent',
+      'char.nox.title':        'The Watcher',
 
       // ── Character ability names ──────────────────────────────
       'char.aura.ability':     'Foresight',
@@ -162,6 +163,7 @@ var I18n = (function () {
       'char.zest.ability':     'Chaos Shift',
       'char.puls.ability':     'Precision Swap',
       'char.vigo.ability':     'Silent Theft',
+      'char.nox.ability':      'Rest',
 
       // ── Character ability descriptions ───────────────────────
       'char.aura.desc':        'Look at the top 3 cards of the deck and choose one. Return the others.',
@@ -169,6 +171,7 @@ var I18n = (function () {
       'char.zest.desc':        'When playing an action card, apply its effect to an additional target.',
       'char.puls.desc':        'Secretly swap one card in your hand with another player\'s card.',
       'char.vigo.desc':        'Steal a random card from another player.',
+      'char.nox.desc':         'Freeze time for one heartbeat: the next player skips their turn.',
 
       // ── Game log messages ────────────────────────────────────
       'log.start':             'Game started! {n} players, {deck} cards remaining.',
@@ -192,6 +195,7 @@ var I18n = (function () {
       'ability.puls.done':     'Precision Swap: swapped secretly with {name}.',
       'ability.vigo.prompt':   'Silent Theft: choose a player to steal from.',
       'ability.vigo.done':     'Silent Theft: stole a card from {name}.',
+      'ability.nox':           'Rest: time stops — {name} will skip their next turn.',
       'ability.blocked':       'Your ability is blocked this turn!',
       'ability.alreadyUsed':   'Ability already used this game.',
       'ability.noTarget':      'No valid swap targets.',
@@ -379,6 +383,7 @@ var I18n = (function () {
       'char.zest.title':       'Kaotik',
       'char.puls.title':       'Stratejist',
       'char.vigo.title':       'Sessiz',
+      'char.nox.title':        'Gözcü',
 
       // ── Karakter yetenek isimleri ────────────────────────────
       'char.aura.ability':     'Öngörü',
@@ -386,6 +391,7 @@ var I18n = (function () {
       'char.zest.ability':     'Kaos Kayması',
       'char.puls.ability':     'Hassas Takas',
       'char.vigo.ability':     'Sessiz Hırsızlık',
+      'char.nox.ability':      'Es',
 
       // ── Karakter yetenek açıklamaları ────────────────────────
       'char.aura.desc':        'Destenin üstündeki 3 kartı gör ve birini seç. Diğerlerini geri koy.',
@@ -393,6 +399,7 @@ var I18n = (function () {
       'char.zest.desc':        'Aksiyon kartı oynarken etkisini ek bir hedefe de uygula.',
       'char.puls.desc':        'Elindeki bir kartı gizlice başka bir oyuncunun kartıyla değiştir.',
       'char.vigo.desc':        'Başka bir oyuncudan rastgele bir kart çal.',
+      'char.nox.desc':         'Zamanı bir kalp atışı boyunca durdur: sıradaki oyuncu turunu kaçırır.',
 
       // ── Oyun günlüğü mesajları ───────────────────────────────
       'log.start':             'Oyun başladı! {n} oyuncu, {deck} kart kaldı.',
@@ -416,6 +423,7 @@ var I18n = (function () {
       'ability.puls.done':     'Hassas Takas: {name} ile gizlice takas edildi.',
       'ability.vigo.prompt':   'Sessiz Hırsızlık: kart çalmak istediğin oyuncuyu seç.',
       'ability.vigo.done':     'Sessiz Hırsızlık: {name}\'den kart çalındı.',
+      'ability.nox':           'Es: zaman durdu — {name} sıradaki turunu kaçıracak.',
       'ability.blocked':       'Bu turda yeteneğin engellendi!',
       'ability.alreadyUsed':   'Yetenek bu oyunda zaten kullanıldı.',
       'ability.noTarget':      'Geçerli takas hedefi bulunamadı.',

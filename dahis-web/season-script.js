@@ -177,6 +177,7 @@ function setupScrollEffects() {
     const navbar = document.querySelector('.navbar');
     
     window.addEventListener('scroll', () => {
+        if (!navbar) return;
         const currentScroll = window.pageYOffset;
         
         if (currentScroll > 100) {

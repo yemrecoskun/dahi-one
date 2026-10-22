@@ -6,3 +6,7 @@ firebase-debug.*.log
 .DS_Store
 functions/node_modules/
 
+
+# Firebase service account keys (never commit)
+serviceAccountKey.json
+*-firebase-adminsdk-*.json

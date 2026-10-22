@@ -8,6 +8,7 @@ var UYUM_CHARACTERS = {
   lumo: { id: 'lumo', name: 'Lumo', color: '#ffdd44', image: 'sari.png' },
   vigo: { id: 'vigo', name: 'Vigo', color: '#44dd88', image: 'yesil.png' },
   aura: { id: 'aura', name: 'Aura', color: '#4488ff', image: 'mavi.png' },
+  nox: { id: 'nox', name: 'Nox', color: '#7c8496', image: 'siyah.png' },
 };
 
 // Sıralı çiftler (a < b), ilişki tipi ve açıklama (seçilen karakterin diğeriyle uyumu anlatılırken kullanılır)
@@ -31,7 +32,16 @@ var UYUM_PAIRS = [
   { a: 'lumo', b: 'aura', type: 'es', label: 'Eş uyumu',
     aciklama: 'Lumo fikir üretir, Aura strateji kurar; yaratıcılık ve mantık birbirini tamamlar. Birlikte hem hayal kurup hem işi kotarırlar.' },
   { a: 'vigo', b: 'aura', type: 'es', label: 'Eş uyumu',
-    aciklama: 'Vigo ile Aura ikisi de sakin ve odaklı. Huzur ve düzen isteği aynı; az konuşup çok anlaşır, derin bir uyum yaşarlar.' },
+    aciklama: 'Vigo ile Aura ikisi de sakin ve odaklı. Huzur ve düzen isteği aynı; az konuşup çok anlaşır, derin bir uyum yaşarlar.' },  { a: 'puls', b: 'nox', type: 'anlasamaz', label: 'Anlaşamaz',
+    aciklama: 'Puls her şeyi açıkta ve hemen çözmek ister, Nox gölgede kalıp sessizce izlemeyi seçer. Puls kolay güvenmez, Nox da kendini açıklamaz; ama birbirlerinin kalbini duyduklarında aynı şeyi korumaya çalıştıklarını fark ederler.' },
+  { a: 'zest', b: 'nox', type: 'anlasir', label: 'Anlaşır',
+    aciklama: 'Zest hiç durmaz, Nox durmanın gücünü bilir. Zest\'in hızı ile Nox\'un bir anlık "es"i birleşince en tehlikeli anlarda bile doğru zamanlamayı bulurlar.' },
+  { a: 'lumo', b: 'nox', type: 'arkadas', label: 'Arkadaş',
+    aciklama: 'Lumo ışık, Nox karanlık; ama ikisi de herkesin göremediğini görür. Nox\'un onu düşen tabeladan kurtardığı geceden beri Lumo, Nox\'un sessizliğine renk katan en yakın dostudur.' },
+  { a: 'vigo', b: 'nox', type: 'es', label: 'Eş uyumu',
+    aciklama: 'Vigo doğanın sesini, Nox sessizliğin sesini dinler. İkisi de acele etmez, az konuşur ve sabrın değerini bilir; yan yana sessizce oturmaları bile bir sohbet gibidir.' },
+  { a: 'aura', b: 'nox', type: 'arkadas', label: 'Arkadaş',
+    aciklama: 'Aura, Nox\'un frekansının beş saatin toplamı olduğunu ilk fark eden kişidir. İkisi de sakin, odaklı ve gözlemci; Aura analiz eder, Nox hisseder ve birlikte kusursuz bir gözcü ikilisi olurlar.' },
 ];
 
 var UYUM_TYPES = {
@@ -45,7 +55,7 @@ function getUyumCharacters() { return UYUM_CHARACTERS; }
 function getUyumPairs() { return UYUM_PAIRS; }
 function getUyumTypes() { return UYUM_TYPES; }
 
-/** Seçilen karakterin diğer dört karakterle ilişkilerini döndürür (other, type, label, aciklama). */
+/** Seçilen karakterin diğer karakterlerle ilişkilerini döndürür (other, type, label, aciklama). */
 function getRelationsForCharacter(charId) {
   var list = [];
   UYUM_PAIRS.forEach(function (p) {

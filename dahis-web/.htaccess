@@ -63,7 +63,7 @@
     RewriteRule ^five-forces/.+ - [R=404,L]
 
     # Karakter: /character/puls -> character/puls.html (tanımlı karakterler)
-    RewriteRule ^character/(puls|zest|lumo|vigo|aura)/?$ character/$1.html [L]
+    RewriteRule ^character/(puls|zest|lumo|vigo|aura|nox)/?$ character/$1.html [L]
 
     # Fallback: dosya/dizin yoksa index.html
     RewriteCond %{REQUEST_FILENAME} !-f

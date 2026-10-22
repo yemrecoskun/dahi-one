@@ -165,6 +165,8 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen> {
                     child: Image.asset(
                       character.image,
                       fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) =>
+                          Image.asset('assets/characters/favicon.png', fit: BoxFit.contain),
                     ),
                   ),
                 ),

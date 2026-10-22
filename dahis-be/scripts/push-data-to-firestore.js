@@ -110,6 +110,16 @@ const charactersData = {
     description: 'Odaklanmış, sakin ve stratejik düşünen teknoloji uzmanı. Mantıklı ve planlayıcı.',
     traits: ['Stratejik', 'Sakin', 'Teknoloji Uzmanı'],
     fullDescription: 'Aura, Harmonya\'nın teknoloji dehasıdır. Mavi dahi\'s One saatiyle, karmaşık sistemleri analiz eder ve stratejik çözümler üretir. Sakin ve odaklanmış doğasıyla, ekibin planlama uzmanıdır.'
+  },
+  nox: {
+    id: 'nox',
+    name: 'Nox',
+    color: 'Siyah',
+    colorCode: '#7c8496',
+    image: 'assets/characters/siyah.png',
+    description: 'Gizemli, sessiz ve koruyucu gece bekçisi. Herkes uyurken Harmonya\'yı izler.',
+    traits: ['Gizemli', 'Sessiz', 'Koruyucu'],
+    fullDescription: 'Nox, Harmonya\'nın gece bekçisidir. Bir zamanlar gölgelerden biriydi; Dahi-Link dalgası beş saatin ışığını içine doldurunca bütün renkler onda birleşti ve geriye siyah kaldı. Siyah dahi\'s One saatinin ekranı parlamaz ama karanlıkta herkesin göremediğini görür. Zamanı tek bir kalp atışı boyunca durdurabilen Nox, ekibin sessiz gözcüsüdür.'
   }
 };
 
@@ -174,6 +184,23 @@ const seasonsData = {
         characterColor: '#667eea',
         summary: 'Gölge Varlıklarla yüzleşme anı. Sadece tek bir karakterin gücü yetmez. Beş saatin de birbirine bağlanması (Dahi-Link) gerekir. Kristal yerine takılır, şehir eski haline döner ama yeni bir tehdit ufukta görünür...',
         content: 'Kristali aldılar ama mağaradan çıktıklarında, karşılarında ritmi emen gölge benzeri varlıklar belirdi. Bu varlıklar, kristalin gücünü çalmaya çalışıyordu.\n\n"İşte bu!" diye fısıldadı Puls. "Kristali korumalıyız ama önce bu gölgeleri def etmeliyiz."\n\nAura, mavi saatinden bir plan yayınladı. "Bu gölgeler, düzensiz frekanslarla besleniyor. Eğer Harmonya\'nın gerçek ritmini geri getirebilirsek, dağılırlar. Ama tek başına hiçbirimiz yeterli değiliz."\n\nVigo, mağaranın nemli duvarlarından çıkan bitkilere dokundu. "Bitkiler bile acı çekiyor. Doğanın sesi, kristal olmadan tam değil." Yeşil saatinden yayılan rahatlatıcı enerjiyle, solmuş bir çiçeği canlandırdı.\n\nZest, "Peki nasıl bir ritim?" diye sordu. "En eğlenceli ritim olsun!"\n\nKırmızı saatinden yansıyan enerjiyle Puls, "Hepimizden gelen ritim! Harmonya\'nın ruhu, neşe, uyum ve cesaretle beslenir!" diye bağırdı. "Beş saati birleştirmeliyiz! Dahi-Link!"\n\nEkip, yan yana geldi. Puls, cesaretin ritmini kalbinden akıttı. Zest, neşenin ve maceranın enerjisini etrafa saçtı. Aura, mükemmel zamanlamayla notaları ayarladı. Vigo, doğanın sakinleştirici frekanslarını yaydı. Ve Lumo, tüm bu elementleri bir araya getirerek, Harmonya\'nın eşsiz, canlandırıcı melodisini yarattı.\n\nBeş dahi\'s One saati de aynı anda parladı ve güçleri birleşerek devasa bir ses dalgası yarattı. Bu dalga, gölge varlıklara çarptığında, onlar bir duman gibi dağıldılar. Ritmin Kristali, göz kamaştırıcı bir ışıkla parlamaya başladı ve etrafa neşeli bir melodi yayıldı.\n\nRitmin Kristali\'ni alan dahi\'s One ekibi, Harmonya\'ya döndüğünde, şehir tekrar neşe ve müzikle dolup taşıyordu. dahi\'s One\'lar, sadece bir saatin ötesinde, Harmonya\'nın kalbini ve ruhunu koruyan gerçek kahramanlar olmuşlardı.\n\nHerkes, beş renkli kahramanın cesaretini, zekasını ve işbirliğini kutluyordu. Onlar, dahi\'s One saatlerinin gücüyle, Harmonya\'nın ritmini sonsuza dek koruyacaklardı.\n\nAncak ufukta, yeni bir tehdit belirmeye başlamıştı... Şehir güvendeydi ama macera henüz bitmemişti.'
+      }
+    ]
+  },
+  season2: {
+    id: 'season2',
+    title: 'Kayıp Saatler',
+    subtitle: 'Sezon 2',
+    summary: 'Ritmin Kristali\'nin dönüşünden sonra Harmonya\'da her şey yolunda görünüyordu. Ta ki bir gece, şehrin tepesindeki dev Gök Saati tam 3:06:24\'te durana kadar. O andan sonra güneş batmadı. Alacakaranlık, gece ve şafak gökyüzünden silindi; bulutlar buharlaşıp gitti. Harmonya, bitmeyen ve gürültülü bir öğle vaktine hapsoldu. Kimse uyuyamıyor, kimse rüya göremiyor, şarkılar birbirine karışıp tek bir uğultuya dönüşüyordu. Ama Gök Saati\'nin kimsenin bilmediği bir sırrı vardı: Günü Harmonya\'nın beş kahramanı korurdu, gökyüzünü ise dört bekçi. Saat durduğunda dördü de gökyüzünün dört bir yanına savrulmuştu. Puls ve ekibi, kayıp saatlerin bekçilerini bulmak ve Gök Saati\'ni yeniden çalıştırmak zorundaydı. Yoksa Harmonya bir daha asla gece görmeyecekti.',
+    episodes: [
+      {
+        id: 'episode1',
+        number: 1,
+        title: 'Saat 3:06',
+        character: 'Nox',
+        characterColor: '#7c8496',
+        summary: 'Gök Saati gecenin ortasında durur ama gökyüzü kararmaz. Harmonya uykusuz kalır. Ekip, çatılarda dolaşan, saati parlamayan siyah bir figürün peşine düşer. Figür, Lumo\'yu düşen bir tabeladan kurtarır ve tek bir cümle bırakıp kaybolur.',
+        content: 'Harmonya, Ritmin Kristali\'nin dönüşünü haftalarca kutladı. Sokaklarda müzik, meydanlarda dans, gökyüzünde renk renk ışıklar vardı.\n\nBir pazar gecesi, şehrin en yüksek kulesinin tepesindeki dev Gök Saati bir tık sesiyle durdu. Kadranında tek bir zaman donup kaldı: SU 11 · 3:06:24. Gecenin tam ortası. Ama gökyüzü kararmadı. Güneş, sanki biri onu oraya çivilemiş gibi tepede asılı kaldı.\n\nÜçüncü günün sonunda Harmonya bitkindi. İnsanlar uyuyamıyor, kuşlar susmayı unutmuş gibi durmadan ötüyor, şarkılar birbirine karışıp tek bir uğultuya dönüşüyordu. Bulutlar bile buharlaşıp gitmişti. Gökyüzü göz kamaştıran, bomboş bir aynaya dönmüştü.\n\nPuls ekibi Dahi Karargahı\'nda topladı. Gözlerinin altı mosmordu. "Kristali kurtardık ama bir şey çok yanlış. Ritim var ama… hiç durmuyor."\n\nAura mavi ekranına baktı. "Şehrin frekansında tek bir boşluk yok. Normalde her ritmin arasında küçük sessizlikler olur. Şu an hiçbiri yok. Biri sessizliği silmiş."\n\nO sırada Lumo pencereye koştu. "Orada biri var!" Karşı binanın çatısında, neon ışıkların arasında simsiyah bir siluet duruyordu. Bileğindeki saat parlamıyordu. Bütün şehir ışık saçarken o saat, aydınlıkta açılmış küçük bir delik gibiydi.\n\nZest çoktan dışarı fırlamıştı. Ekip çatıdan çatıya atlayarak figürü kovaladı. Ama siluet her seferinde bir gölgenin içine giriyor, bambaşka bir gölgeden çıkıyordu.\n\nTam o anda Lumo\'nun üstündeki dev neon tabela gıcırdadı ve koptu. Vigo "Lumo!" diye bağırdı. Ama tabela düşerken her şey bir anlığına durdu. Rüzgâr, ses, havada asılı kalan kıvılcımlar… Zaman, tek bir kalp atışı boyunca nefesini tuttu. Kalp atışı geri geldiğinde Lumo birkaç metre ötede, güvendeydi. Tabela boş çatıya çarpıp paramparça oldu.\n\nSiyah figür kenarda duruyordu. Puls\'a baktı ve tek bir cümle söyledi: "Her melodinin bir esi vardır. Biri onu çaldı."\n\nSonra yine bir gölgenin içine girdi ve gitti.\n\nLumo titreyerek doğruldu. "O… beni kurtardı. Ama kim o?"\n\nPuls, kulenin tepesindeki donmuş kadrana baktı. 3:06:24. "Bilmiyorum," dedi. "Ama öğreneceğiz."'
       }
     ]
   }

@@ -55,6 +55,10 @@ window.__TRANSLATIONS__ = {
         'index.aura_t1': 'Stratejik',
         'index.aura_t2': 'Sakin',
         'index.aura_t3': 'Teknoloji Uzmanı',
+        'index.nox_desc': 'Gizemli, sessiz ve koruyucu gece bekçisi. Herkes uyurken Harmonya\'yı izler.',
+        'index.nox_t1': 'Gizemli',
+        'index.nox_t2': 'Sessiz',
+        'index.nox_t3': 'Koruyucu',
 
         // --- Index: NFC / dahiOS ---
         'index.nfc_title': 'dahiOS',
@@ -68,7 +72,7 @@ window.__TRANSLATIONS__ = {
 
         // --- Characters page ---
         'chars.title': "dahi's One Karakterleri",
-        'chars.lead': "Harmonya'nın ritmini koruyan beş kahraman. Her biri farklı bir kişilik ve güçle donatılmış. Seni en iyi yansıtan karakteri keşfet.",
+        'chars.lead': "Harmonya'nın ritmini koruyan kahramanlar. Her biri farklı bir kişilik ve güçle donatılmış. Seni en iyi yansıtan karakteri keşfet.",
         'chars.puls_title': 'Puls – The Strategist',
         'chars.puls_sub': ' – The Strategist',
         'chars.puls_desc': 'Cesur, hızlı karar veren ve liderlik ruhuna sahip tutkulu deha. Ekibin doğal lideri; kriz anlarında strateji üretir ve herkesi motive eder.',
@@ -80,6 +84,9 @@ window.__TRANSLATIONS__ = {
         'chars.vigo_desc': 'Doğayı seven, huzurlu ve sürdürülebilir enerji dehası. Bilge, araştırmacı; ekibi dengeleyen ve uzlaştıran güç.',
         'chars.aura_sub': ' – The Analyst',
         'chars.aura_desc': 'Odaklanmış, sakin ve stratejik düşünen teknoloji uzmanı. Mantıklı, planlayıcı; detayları görür ve sistematik ilerler.',
+        'chars.nox_title': 'Nox – The Watcher',
+        'chars.nox_sub': ' – The Watcher',
+        'chars.nox_desc': 'Gizemli, sessiz ve koruyucu gece bekçisi. Bir zamanlar gölgelerden biriydi; şimdi herkes uyurken Harmonya\'yı izliyor.',
         'chars.trait_leader': 'Lider',
         'chars.trait_brave': 'Cesur',
         'chars.trait_passionate': 'Tutkulu',
@@ -95,6 +102,9 @@ window.__TRANSLATIONS__ = {
         'chars.trait_strategic': 'Stratejik',
         'chars.trait_calm': 'Sakin',
         'chars.trait_tech': 'Teknoloji Uzmanı',
+        'chars.trait_mysterious': 'Gizemli',
+        'chars.trait_silent': 'Sessiz',
+        'chars.trait_protective': 'Koruyucu',
         'chars.lists_heading': 'Listeler',
         'chars.quiz_heading': "Hangi dahi's One karakteri sana benziyor?",
         'chars.quiz_lead': 'Kısa bir kişilik testiyle seni en iyi yansıtan karakteri bul.',
@@ -402,7 +412,7 @@ window.__TRANSLATIONS__ = {
 
         // --- About ---
         'about.title': 'Hakkımızda',
-        'about.intro': "dahi's One, Harmonya'nın ritmini koruyan kahramanların hikâyesini anlatan bir markadır. Karakterlerimiz (Puls, Zest, Lumo, Vigo, Aura) ile birlikte sizlere hem dijital içerik hem de dahiOS NFC ürünleri sunuyoruz.",
+        'about.intro': "dahi's One, Harmonya'nın ritmini koruyan kahramanların hikâyesini anlatan bir markadır. Karakterlerimiz (Puls, Zest, Lumo, Vigo, Aura, Nox) ile birlikte sizlere hem dijital içerik hem de dahiOS NFC ürünleri sunuyoruz.",
         'about.mission_title': 'Misyonumuz',
         'about.mission_text': "Kullanıcılarımızın günlük hayatında kolayca paylaşabileceği, kişiselleştirilebilir ve eğlenceli bir deneyim sunmak. dahiOS etiketleri ile iletişim bilgilerinizi, sosyal medya veya ödeme bilgilerinizi tek dokunuşla paylaşmanızı sağlıyoruz.",
         'about.what_title': 'Ne Sunuyoruz?',
@@ -431,7 +441,7 @@ window.__TRANSLATIONS__ = {
         'contact.response_text': 'E-posta taleplerinize genellikle 1-3 iş günü içinde yanıt veriyoruz. Acil durumlar için lütfen e-posta konu başlığında "ACİL" ibaresini kullanın.',
 
         'quiz.title': 'Hangi One sensin?',
-        'quiz.intro': 'Which Dahis character matches your personality? Birkaç soruyla seni en iyi yansıtan dahi\'s One karakterini keşfet – Puls, Zest, Lumo, Vigo veya Aura.',
+        'quiz.intro': 'Which Dahis character matches your personality? Birkaç soruyla seni en iyi yansıtan dahi\'s One karakterini keşfet – Puls, Zest, Lumo, Vigo, Aura veya Nox.',
         'quiz.start': 'Başla',
         'quiz.prev': 'Geri',
         'quiz.next': 'İleri',
@@ -442,7 +452,7 @@ window.__TRANSLATIONS__ = {
 
         'dahios.hero_desc': 'Onelara entegre akıllı NFC teknolojisi — tek dokunuşla keşfet, paylaş, yönlendir.',
         'dahios.what_title': 'dahiOS Nedir?',
-        'dahios.what_text': "dahiOS, dahi's One karakterleri (Puls, Zest, Lumo, Vigo, Aura) ile entegre çalışan, NFC tabanlı akıllı etiket sistemidir. dahi's One ürünleri ile telefonunuzu etikete yaklaştırdığınızda sizin belirlediğiniz yönlendirmelere anında ulaşırsınız.",
+        'dahios.what_text': "dahiOS, dahi's One karakterleri (Puls, Zest, Lumo, Vigo, Aura, Nox) ile entegre çalışan, NFC tabanlı akıllı etiket sistemidir. dahi's One ürünleri ile telefonunuzu etikete yaklaştırdığınızda sizin belirlediğiniz yönlendirmelere anında ulaşırsınız.",
         'dahios.use_title': 'Ne İşe Yarar?',
         'dahios.use_1': 'Anında yönlendirme: Etiketi okutan herkes, sizin uygulamadan tanımladığınız yönlendirmelere tek dokunuşla ulaşır.',
         'dahios.use_2': 'One karakteriyle kişiselleştirme: Etiketinizi bir One karakterine bağlayıp, o karakterin renk ve temasıyla yönlendirme sayfasını gösterebilirsiniz.',
@@ -496,8 +506,8 @@ window.__TRANSLATIONS__ = {
         'memory.play_again': 'Tekrar oyna',
 
         'list.top_title': "En Popüler dahi's One Karakterleri",
-        'list.top_lead': "Harmonya evreninin en sevilen beş kahramanı. Her biri farklı bir kişilik ve güçle öne çıkıyor; hangisinin seni yansıttığını keşfetmek için karakter sayfalarına göz at.",
-        'list.top_h2': "Top 5 dahi's One Karakteri",
+        'list.top_lead': "Harmonya evreninin en sevilen kahramanları. Her biri farklı bir kişilik ve güçle öne çıkıyor; hangisinin seni yansıttığını keşfetmek için karakter sayfalarına göz at.",
+        'list.top_h2': "Top dahi's One Karakterleri",
         'list.all_chars': 'Tüm Karakterler',
         'list.top_link': 'En Popüler Karakterler',
         'list.smartest_link': 'En Zeki Karakterler',
@@ -520,6 +530,7 @@ window.__TRANSLATIONS__ = {
         'list.card_lumo': 'Yaratıcı, neşeli ve zeki. Fikirleriyle ekibe ilham veren vizyoner.',
         'list.card_vigo': 'Bilge, huzurlu ve doğa sever. Denge ve uzlaşma getiren bilge.',
         'list.card_aura': 'Stratejik, sakin ve planlayıcı. Analitik zeka ile öne çıkan karakter.',
+        'list.card_nox': 'Gizemli, sessiz ve koruyucu. Zamanı bir kalp atışı boyunca durdurabilen gece bekçisi.',
         'list.related': 'İlgili sayfalar',
 
         'char_detail.back': '← Tüm Onelar',
@@ -588,6 +599,10 @@ window.__TRANSLATIONS__ = {
         'index.aura_t1': 'Strategic',
         'index.aura_t2': 'Calm',
         'index.aura_t3': 'Tech Expert',
+        'index.nox_desc': 'Mysterious, silent and protective. The night watcher who guards Harmonya while everyone sleeps.',
+        'index.nox_t1': 'Mysterious',
+        'index.nox_t2': 'Silent',
+        'index.nox_t3': 'Protective',
 
         'index.nfc_title': 'dahiOS',
         'index.nfc_desc': 'NFC technology integrated with our One characters. Tap your phone to the tag and reach your link instantly.',
@@ -598,7 +613,7 @@ window.__TRANSLATIONS__ = {
         'index.back_season': 'Back to Season',
 
         'chars.title': "dahi's One Characters",
-        'chars.lead': 'Five heroes who keep the rhythm of Harmonya. Each has a unique personality and power. Find the character that best reflects you.',
+        'chars.lead': 'The heroes who keep the rhythm of Harmonya. Each has a unique personality and power. Find the character that best reflects you.',
         'chars.puls_title': 'Puls – The Strategist',
         'chars.puls_sub': ' – The Strategist',
         'chars.puls_desc': 'Brave, decisive leader. The natural strategist who motivates the team in a crisis.',
@@ -614,6 +629,9 @@ window.__TRANSLATIONS__ = {
         'chars.aura_title': 'Aura – The Analyst',
         'chars.aura_sub': ' – The Analyst',
         'chars.aura_desc': 'Focused, calm, strategic. The logical planner who sees every detail.',
+        'chars.nox_title': 'Nox – The Watcher',
+        'chars.nox_sub': ' – The Watcher',
+        'chars.nox_desc': 'Mysterious, silent, protective. Once a shadow, now the night watcher who guards Harmonya while everyone sleeps.',
         'chars.trait_leader': 'Leader',
         'chars.trait_brave': 'Brave',
         'chars.trait_passionate': 'Passionate',
@@ -629,6 +647,9 @@ window.__TRANSLATIONS__ = {
         'chars.trait_strategic': 'Strategic',
         'chars.trait_calm': 'Calm',
         'chars.trait_tech': 'Tech Expert',
+        'chars.trait_mysterious': 'Mysterious',
+        'chars.trait_silent': 'Silent',
+        'chars.trait_protective': 'Protective',
         'chars.lists_heading': 'Lists',
         'chars.quiz_heading': 'Which dahi\'s One character are you?',
         'chars.quiz_lead': 'Find the character that best matches you with a short personality test.',
@@ -929,7 +950,7 @@ window.__TRANSLATIONS__ = {
         'colorsort.tube_label': 'Tube',
 
         'about.title': 'About',
-        'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura), we offer both digital content and dahiOS NFC products.",
+        'about.intro': "dahi's One is a brand that tells the story of the heroes who keep the rhythm of Harmonya. With our characters (Puls, Zest, Lumo, Vigo, Aura, Nox), we offer both digital content and dahiOS NFC products.",
         'about.mission_title': 'Our Mission',
         'about.mission_text': 'To offer an easy-to-share, personalizable, and fun experience in daily life. With dahiOS tags, you can share your contact info, social media, or payment details with a single tap.',
         'about.what_title': 'What We Offer',
@@ -958,7 +979,7 @@ window.__TRANSLATIONS__ = {
         'contact.response_text': 'We usually respond within 1–3 business days. For urgent matters, please add "URGENT" in the email subject.',
 
         'quiz.title': 'Which One are you?',
-        'quiz.intro': 'A few questions to find the dahi\'s One character that best matches you — Puls, Zest, Lumo, Vigo or Aura.',
+        'quiz.intro': 'A few questions to find the dahi\'s One character that best matches you — Puls, Zest, Lumo, Vigo, Aura or Nox.',
         'quiz.start': 'Start',
         'quiz.prev': 'Back',
         'quiz.next': 'Next',
@@ -969,7 +990,7 @@ window.__TRANSLATIONS__ = {
 
         'dahios.hero_desc': 'Smart NFC technology integrated with the Ones — discover, share, and redirect with one tap.',
         'dahios.what_title': 'What is dahiOS?',
-        'dahios.what_text': 'dahiOS is an NFC-based smart tag system that works with dahi\'s One characters (Puls, Zest, Lumo, Vigo, Aura). When you hold your phone to a dahi\'s One product, you instantly reach your chosen redirects.',
+        'dahios.what_text': 'dahiOS is an NFC-based smart tag system that works with dahi\'s One characters (Puls, Zest, Lumo, Vigo, Aura, Nox). When you hold your phone to a dahi\'s One product, you instantly reach your chosen redirects.',
         'dahios.use_title': 'What does it do?',
         'dahios.use_1': 'Instant redirect: Anyone who taps the tag reaches your app-defined redirects with one tap.',
         'dahios.use_2': 'Personalize with a One: Link your tag to a One character and show a redirect page in that character\'s theme.',
@@ -1023,8 +1044,8 @@ window.__TRANSLATIONS__ = {
         'memory.play_again': 'Play again',
 
         'list.top_title': "Most popular dahi's One characters",
-        'list.top_lead': 'The five most loved heroes of Harmonya. Each has a unique personality and power — discover who reflects you.',
-        'list.top_h2': "Top 5 dahi's One characters",
+        'list.top_lead': 'The most loved heroes of Harmonya. Each has a unique personality and power — discover who reflects you.',
+        'list.top_h2': "Top dahi's One characters",
         'list.all_chars': 'All characters',
         'list.top_link': 'Top characters',
         'list.smartest_link': 'Smartest characters',
@@ -1047,6 +1068,7 @@ window.__TRANSLATIONS__ = {
         'list.card_lumo': 'Creative, cheerful, witty. The visionary who inspires with ideas.',
         'list.card_vigo': 'Wise, peaceful, nature lover. The sage who brings balance.',
         'list.card_aura': 'Strategic, calm, planner. The character who stands out with analytical mind.',
+        'list.card_nox': 'Mysterious, silent, protective. The night watcher who can stop time for a single heartbeat.',
         'list.related': 'Related pages',
 
         'char_detail.back': '← All Characters',

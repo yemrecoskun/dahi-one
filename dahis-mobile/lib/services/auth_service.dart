@@ -18,6 +18,7 @@ class AuthService {
     'lumo',
     'vigo',
     'aura',
+    'nox',
   };
 
   FirebaseAuth? get _auth {
@@ -518,7 +519,7 @@ class AuthService {
     }
   }
 
-  /// Kişilik testi / manuel seçim — `profileCharacterId` (puls, zest, lumo, vigo, aura).
+  /// Kişilik testi / manuel seçim — `profileCharacterId` (puls, zest, lumo, vigo, aura, nox).
   Future<void> updateProfileCharacterId(String rawId) async {
     if (_firestore == null || currentUser == null) {
       throw Exception('Oturum gerekli');

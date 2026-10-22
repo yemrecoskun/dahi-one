@@ -16,7 +16,8 @@
     { name: 'Zest', color: '#ff8844' },
     { name: 'Lumo', color: '#ffdd44' },
     { name: 'Vigo', color: '#44dd88' },
-    { name: 'Aura', color: '#4488ff' }
+    { name: 'Aura', color: '#4488ff' },
+    { name: 'Nox', color: '#7c8496' }
   ];
   var path = [], history = [], selectedCharIndex = 0;
   var gridEl = document.getElementById('grid');
