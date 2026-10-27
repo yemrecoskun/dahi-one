@@ -4,8 +4,26 @@
     {
       "name": "dahis-web",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "dahis-web"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8765",
+        "--directory",
+        "dahis-web"
+      ],
       "port": 8765
+    },
+    {
+      "name": "dahis-panel",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8766",
+        "--directory",
+        "dahis-panel"
+      ],
+      "port": 8766
     }
   ]
 }
