@@ -15,6 +15,40 @@ function generateDahiosUrl(characterId, redirectType, customUrl) {
     }
 }
 
+// Karakter listeleri: Firestore'daki `characters` koleksiyonundan doldurulur (herkese açık okuma).
+// HTML'deki seçenekler yedek olarak kalır; Firestore'da olup listede olmayan karakterler sona eklenir.
+const CHARACTERS_URL = 'https://firestore.googleapis.com/v1/projects/dahisio/databases/(default)/documents/characters?pageSize=100';
+const CHARACTER_SELECT_IDS = ['characterId', 'filterCharacter', 'statsCharacterId', 'editCharacterId'];
+
+async function loadCharacterOptions() {
+    try {
+        const response = await fetch(CHARACTERS_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const characters = (data.documents || [])
+            .map(doc => {
+                const fields = doc.fields || {};
+                const id = doc.name.split('/').pop();
+                const name = (fields.name && fields.name.stringValue) || id;
+                const color = (fields.color && fields.color.stringValue) || '';
+                return { id, label: color ? `${name} (${color})` : name };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label, 'tr'));
+
+        CHARACTER_SELECT_IDS.forEach(selectId => {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            const existing = new Set(Array.from(select.options).map(o => o.value));
+            characters.forEach(c => {
+                if (existing.has(c.id)) return;
+                select.appendChild(new Option(c.label, c.id));
+            });
+        });
+    } catch (error) {
+        console.warn('Karakter listesi Firestore\'dan alınamadı, sabit liste kullanılıyor:', error);
+    }
+}
+
 // Format Firestore Timestamp to Date String
 function formatDate(timestamp) {
     if (!timestamp) return 'Belirtilmemiş';
@@ -603,6 +637,8 @@ window.onclick = function(event) {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     console.log('dahi\'s One Admin Panel yüklendi');
+
+    loadCharacterOptions();
     
     // Load tag list when list tab is opened
     const listTab = document.querySelector('[data-tab="list"]');
