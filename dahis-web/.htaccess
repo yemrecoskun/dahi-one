@@ -40,6 +40,10 @@
     RewriteRule ^funniest-dahis-characters/?$ funniest-dahis-characters.html [L]
     RewriteRule ^best-strategic-dahis-characters/?$ best-strategic-dahis-characters.html [L]
 
+    # Saat atölyesi
+    RewriteRule ^saatler/?$ saatler/index.html [L]
+    RewriteRule ^saat-atolyesi/?$ saat-atolyesi/index.html [L]
+
     # Eğlence alt klasör oyunları: /oyun → oyun/index.html
     RewriteRule ^number-link/?$ number-link/index.html [L]
     RewriteRule ^character-sudoku/?$ character-sudoku/index.html [L]
