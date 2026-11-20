@@ -11,6 +11,9 @@ dahi's One karakterleri **Casio F91W** tarzı dijital saatler olarak somutlaşı
 ```
 dahi-one/
 ├── dahis-web/          # Web uygulaması (HTML/CSS/JS)
+│   ├── watch-catalog.js # Karakter verisine bağlı ortak saat kataloğu
+│   ├── saatler/        # 3 Casio modeli ve 6 dahi's One karakter saati
+│   └── saat-atolyesi/  # 4 saat modeli × 6 karakter rengi × 2 ekran görünümü
 ├── dahis-mobile/       # React Native mobil uygulaması
 └── dahis-be/          # Firebase Backend (Functions + Firestore)
 ```

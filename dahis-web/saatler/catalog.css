@@ -1,0 +1,31 @@
+.watch-catalog { padding-top: 130px; padding-bottom: 64px; }
+.catalog-intro { max-width: 740px; margin-bottom: 48px; }
+.catalog-eyebrow { color: #667eea; font-weight: 700; margin-bottom: 10px; }
+.catalog-intro h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.1; margin-bottom: 18px; }
+.catalog-intro > p:not(.catalog-eyebrow), .catalog-section > p { color: var(--text-secondary); line-height: 1.6; }
+.catalog-action { display: inline-block; margin-top: 24px; padding: 13px 20px; border-radius: 12px; background: #667eea; color: #fff; font-weight: 600; text-decoration: none; }
+.catalog-section + .catalog-section { margin-top: 56px; }
+.catalog-section h2 { font-size: clamp(1.4rem, 4vw, 2rem); margin-bottom: 10px; }
+.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 24px; }
+.catalog-card { min-width: 0; display: flex; flex-direction: column; padding: 22px; border: 1px solid #80808045; border-radius: 20px; color: var(--text-primary); text-decoration: none; background: var(--bg-darker); transition: border-color .2s, transform .2s; }
+.catalog-card:hover { border-color: var(--watch-color, #667eea); transform: translateY(-4px); }
+.catalog-card:focus-visible, .catalog-action:focus-visible { outline: 3px solid #667eea; outline-offset: 5px; }
+.catalog-visual { height: 280px; display: grid; place-items: center; border-radius: 12px; background: radial-gradient(ellipse, #8794b72b, transparent 70%); margin-bottom: 18px; }
+.catalog-visual img { width: 100%; height: 260px; object-fit: contain; }
+.catalog-card-character .catalog-visual { height: 195px; background: radial-gradient(ellipse, color-mix(in srgb, var(--watch-color) 25%, transparent), transparent 72%); }
+.catalog-card-character .catalog-visual img { height: 165px; }
+.catalog-card h3 { font-size: 1.25rem; margin-bottom: 8px; }
+.catalog-card > p { color: var(--text-secondary); font-size: 1rem; }
+.catalog-card-action { margin-top: 18px; color: var(--text-primary); font-size: .9375rem; font-weight: 600; }
+@media (max-width: 768px) {
+  .watch-catalog { padding-top: 36px; }
+  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .catalog-card { padding: 16px; }
+  .catalog-visual { height: 220px; }
+  .catalog-visual img { height: 200px; }
+  .catalog-card-character .catalog-visual { height: 150px; }
+  .catalog-card-character .catalog-visual img { height: 130px; }
+}
+@media (max-width: 440px) {
+  .catalog-grid { grid-template-columns: 1fr; }
+}

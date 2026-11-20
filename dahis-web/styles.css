@@ -361,6 +361,7 @@ body.embed-app {
 
 .nav-menu {
     display: flex;
+    flex-wrap: wrap;
     list-style: none;
     gap: 2rem;
 }
@@ -415,7 +416,7 @@ body.embed-app {
 .nav-menu li:nth-child(3) .nav-link:hover { text-shadow: 0 0 20px rgba(255, 221, 68, 0.4); }
 .nav-menu li:nth-child(4) .nav-link:hover { text-shadow: 0 0 20px rgba(255, 136, 68, 0.4); }
 .nav-menu li:nth-child(5) .nav-link:hover { text-shadow: 0 0 20px rgba(68, 136, 255, 0.4); }
-.nav-menu li:nth-child(6) .store-btn:hover { box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5), 0 0 30px rgba(245, 87, 108, 0.3); }
+.nav-menu .store-btn:hover { box-shadow: 0 6px 24px rgba(102, 126, 234, 0.5), 0 0 30px rgba(245, 87, 108, 0.3); }
 
 .store-btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1716,7 +1717,7 @@ html[data-theme="light"] .nav-lang-switcher {
 
     /* Mobile Bottom Navigation */
     body {
-        padding-bottom: 160px; /* Altta sabit navbar yüksekliği, footer görünsün */
+        padding-bottom: 240px; /* Sarılan menü dahil alttaki sabit navbar için boşluk */
     }
 
     .navbar {
@@ -1766,6 +1767,7 @@ html[data-theme="light"] .nav-lang-switcher {
 
     .nav-menu {
         gap: 0.5rem;
+        row-gap: 0;
         font-size: 0.75rem;
         width: 100%;
         justify-content: space-around;
@@ -1773,7 +1775,7 @@ html[data-theme="light"] .nav-lang-switcher {
     }
 
     .nav-menu li {
-        flex: 1;
+        flex: 1 0 auto;
         text-align: center;
     }
 
